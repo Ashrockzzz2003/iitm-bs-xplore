@@ -15,5 +15,3 @@ class Edge:
     target: str
     type: str
     properties: Dict[str, object]
-
-

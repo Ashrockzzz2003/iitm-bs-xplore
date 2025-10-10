@@ -26,7 +26,10 @@ def heading_level_of(el: Tag) -> Optional[int]:
     if m:
         return int(m.group(1))
     if name in ("p", "div", "span") and (
-        ("font-weight-600" in classes and ("text-dark" in classes or "text-secondary" in classes))
+        (
+            "font-weight-600" in classes
+            and ("text-dark" in classes or "text-secondary" in classes)
+        )
         or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
     ):
         return 2
@@ -83,5 +86,3 @@ def build_outline(soup: BeautifulSoup) -> List[SectionOutline]:
             stack[-1].children.append(node)
         stack.append(node)
     return roots
-
-

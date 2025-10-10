@@ -5,7 +5,9 @@ from .outline import build_outline, SectionOutline
 from .utils import slugify
 
 
-def parse_generic_html(html: str, root_id: str = "doc:ROOT", root_title: str = "Document") -> Dict[str, object]:
+def parse_generic_html(
+    html: str, root_id: str = "doc:ROOT", root_title: str = "Document"
+) -> Dict[str, object]:
     soup = BeautifulSoup(html, "lxml")
     outline_roots = build_outline(soup)
 
@@ -24,7 +26,9 @@ def parse_generic_html(html: str, root_id: str = "doc:ROOT", root_title: str = "
 
     def next_sibling_section_content(header: Tag) -> List[Tag]:
         content_nodes: List[Tag] = []
-        level = int(header.name[1]) if header.name and header.name.startswith("h") else 7
+        level = (
+            int(header.name[1]) if header.name and header.name.startswith("h") else 7
+        )
         node = header
         while True:
             node = node.find_next_sibling()
@@ -44,14 +48,16 @@ def parse_generic_html(html: str, root_id: str = "doc:ROOT", root_title: str = "
             table_data: List[List[str]] = []
             for tr in tbody.find_all("tr"):
                 cells = tr.find_all(["th", "td"])
-                row = [ (c.get_text(" ", strip=True) or "").strip() for c in cells ]
+                row = [(c.get_text(" ", strip=True) or "").strip() for c in cells]
                 if any(cell for cell in row):
                     table_data.append(row)
             if table_data:
                 tables_rows.append(table_data)
         return tables_rows
 
-    def register_outline(node: SectionOutline, parent_id: Optional[str], depth: int) -> None:
+    def register_outline(
+        node: SectionOutline, parent_id: Optional[str], depth: int
+    ) -> None:
         sec_id = f"section:{slugify(node.title) or (node.tag_id or 'untitled')}"
         props = {
             "title": node.title,
@@ -63,7 +69,14 @@ def parse_generic_html(html: str, root_id: str = "doc:ROOT", root_title: str = "
         if node.tag_id:
             props["anchorId"] = node.tag_id
         sec_node = ensure_node(sec_id, "Section", props)
-        edges.append(Edge(source=(parent_id or root.id), target=sec_node.id, type="HAS_SECTION", properties={"hierarchical": True}))
+        edges.append(
+            Edge(
+                source=(parent_id or root.id),
+                target=sec_node.id,
+                type="HAS_SECTION",
+                properties={"hierarchical": True},
+            )
+        )
         for child in node.children:
             register_outline(child, sec_node.id, depth + 1)
 
@@ -96,15 +109,15 @@ def parse_generic_html(html: str, root_id: str = "doc:ROOT", root_title: str = "
 
     parents_ = [n for n in iter_outline(outline_roots) if n.child_count() > 0]
     for p in parents_:
-        outline_summary.append({
-            "parent": pack_outline(p),
-            "children": [pack_outline(c) for c in p.children],
-        })
+        outline_summary.append(
+            {
+                "parent": pack_outline(p),
+                "children": [pack_outline(c) for c in p.children],
+            }
+        )
 
     return {
         "nodes": [n.__dict__ for n in nodes.values()],
         "edges": [e.__dict__ for e in edges],
         "meta": {"outlineSummary": outline_summary},
     }
-
-

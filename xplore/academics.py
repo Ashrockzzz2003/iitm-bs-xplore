@@ -38,14 +38,19 @@ def collect_headings(soup: BeautifulSoup) -> List[Tag]:
             continue
         if name in ("p", "div", "span") and (
             re.search(r"\bh[1-6]\b", classes)
-            or ("font-weight-600" in classes and ("text-dark" in classes or "text-secondary" in classes))
+            or (
+                "font-weight-600" in classes
+                and ("text-dark" in classes or "text-secondary" in classes)
+            )
             or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
         ):
             heading_like.append(el)
     return heading_like
 
 
-def fuzzy_find_section(soup: BeautifulSoup, targets: List[str], min_score: int = 70) -> Dict[str, Tag]:
+def fuzzy_find_section(
+    soup: BeautifulSoup, targets: List[str], min_score: int = 70
+) -> Dict[str, Tag]:
     result: Dict[str, Tag] = {}
     headings = collect_headings(soup)
     heading_texts = [text_of(h) for h in headings]
@@ -92,6 +97,12 @@ def extract_bullets(nodes: List[Tag]) -> List[str]:
 def extract_paragraphs(nodes: List[Tag]) -> List[str]:
     paras: List[str] = []
     for n in nodes:
+        # If the node itself is a paragraph, include its text
+        if n.name == "p":
+            t = text_of(n)
+            if t:
+                paras.append(t)
+        # Also look for paragraph tags inside the node
         for p in n.select("p"):
             t = text_of(p)
             if t:
@@ -116,7 +127,9 @@ def parse_labeled_fields(nodes: List[Tag]) -> Dict[str, str]:
             for sib in strong.next_siblings:
                 if isinstance(sib, Tag) and sib.name and sib.name.startswith("h"):
                     break
-                txt = normalize_whitespace(getattr(sib, "get_text", lambda *_: str(sib))(" ", strip=True))
+                txt = normalize_whitespace(
+                    getattr(sib, "get_text", lambda *_: str(sib))(" ", strip=True)
+                )
                 if txt:
                     value_parts.append(txt)
             value = normalize_whitespace(" ".join(value_parts))
@@ -140,7 +153,29 @@ def extract_tables(nodes: List[Tag]) -> List[List[List[str]]]:
     return tables_rows
 
 
-def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str, object]:
+def classify_heading(text: str) -> Optional[str]:
+    """Classify a heading text to determine its level (foundation, diploma, degree, etc.)."""
+    level_defs = [
+        {"id": "level:foundation", "title": "Foundation", "match": ["Foundation Level", "Foundation"]},
+        {"id": "level:diploma", "title": "Diploma", "match": ["Diploma Level", "Diploma"]},
+        {"id": "level:degree", "title": "Degree", "match": ["Degree Level", "Degree"]},
+    ]
+    
+    t = normalize_whitespace(text)
+    best_score = 0
+    best_id: Optional[str] = None
+    for ld in level_defs:
+        for pattern in ld["match"]:
+            score = fuzz.token_set_ratio(t, pattern)
+            if score > best_score:
+                best_score = score
+                best_id = ld["id"]
+    return best_id if best_score >= 70 else None
+
+
+def parse_academics_html(
+    html: str, base_url: Optional[str] = None
+) -> Dict[str, object]:
     soup = BeautifulSoup(html, "lxml")
 
     outline_roots = build_outline(soup)
@@ -172,18 +207,42 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
             nodes[nid].properties.update(props)
         return nodes[nid]
 
-    root = ensure_node("program:IITM_BS", "Program", {"name": "IIT Madras BS Degree Program"})
+    root = ensure_node(
+        "program:IITM_BS", "Program", {"name": "IIT Madras BS Degree Program"}
+    )
 
-    def register_outline(node: SectionOutline, parent_id: Optional[str], depth: int) -> None:
+    def register_outline(
+        node: SectionOutline, parent_id: Optional[str], depth: int
+    ) -> None:
         sec_id = f"section:{slugify(node.title) or (node.tag_id or 'untitled')}"
-        props = {"title": node.title, "level": node.level, "childCount": node.child_count(), "depth": depth, "isParent": node.child_count() > 0}
+        props = {
+            "title": node.title,
+            "level": node.level,
+            "childCount": node.child_count(),
+            "depth": depth,
+            "isParent": node.child_count() > 0,
+        }
         if node.tag_id:
             props["anchorId"] = node.tag_id
         sec_node = ensure_node(sec_id, "Section", props)
         if parent_id:
-            edges.append(Edge(source=parent_id, target=sec_node.id, type="HAS_SECTION", properties={"hierarchical": True}))
+            edges.append(
+                Edge(
+                    source=parent_id,
+                    target=sec_node.id,
+                    type="HAS_SECTION",
+                    properties={"hierarchical": True},
+                )
+            )
         else:
-            edges.append(Edge(source=root.id, target=sec_node.id, type="HAS_SECTION", properties={"hierarchical": True}))
+            edges.append(
+                Edge(
+                    source=root.id,
+                    target=sec_node.id,
+                    type="HAS_SECTION",
+                    properties={"hierarchical": True},
+                )
+            )
         for child in node.children:
             register_outline(child, sec_node.id, depth + 1)
 
@@ -205,7 +264,9 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
             yield n
             for c in iter_outline(n.children):
                 yield c
+
     parents_ = [n for n in iter_outline(outline_roots) if n.child_count() > 0]
+
     def pack_outline(n: SectionOutline) -> Dict[str, object]:
         return {
             "title": n.title,
@@ -213,19 +274,51 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
             "anchorId": n.tag_id,
             "sectionId": f"section:{slugify(n.title) or (n.tag_id or 'untitled')}",
         }
+
     for p in parents_:
-        outline_summary.append({
-            "parent": pack_outline(p),
-            "children": [pack_outline(c) for c in p.children],
-        })
+        outline_summary.append(
+            {
+                "parent": pack_outline(p),
+                "children": [pack_outline(c) for c in p.children],
+            }
+        )
 
     level_defs = [
-        {"id": "level:foundation", "title": "Foundation", "match": ["Foundation Level", "Foundation"]},
-        {"id": "level:diploma", "title": "Diploma", "match": ["Diploma Level", "Diploma"]},
-        {"id": "level:diploma_programming", "title": "Diploma - Programming", "match": ["Diploma in Programming", "Programming Diploma"]},
-        {"id": "level:diploma_ds", "title": "Diploma - Data Science", "match": ["Diploma in Data Science", "Data Science Diploma", "Diploma DS", "DS Diploma"]},
-        {"id": "level:bsc", "title": "BSc Degree", "match": ["BSc Degree Level", "BSc Level", "BSc Degree"]},
-        {"id": "level:bs", "title": "BS Degree", "match": ["BS Degree Level", "BS Level", "BS Degree"]},
+        {
+            "id": "level:foundation",
+            "title": "Foundation",
+            "match": ["Foundation Level", "Foundation"],
+        },
+        {
+            "id": "level:diploma",
+            "title": "Diploma",
+            "match": ["Diploma Level", "Diploma"],
+        },
+        {
+            "id": "level:diploma_programming",
+            "title": "Diploma - Programming",
+            "match": ["Diploma in Programming", "Programming Diploma"],
+        },
+        {
+            "id": "level:diploma_ds",
+            "title": "Diploma - Data Science",
+            "match": [
+                "Diploma in Data Science",
+                "Data Science Diploma",
+                "Diploma DS",
+                "DS Diploma",
+            ],
+        },
+        {
+            "id": "level:bsc",
+            "title": "BSc Degree",
+            "match": ["BSc Degree Level", "BSc Level", "BSc Degree"],
+        },
+        {
+            "id": "level:bs",
+            "title": "BS Degree",
+            "match": ["BS Degree Level", "BS Level", "BS Degree"],
+        },
         {"id": "level:degree", "title": "Degree", "match": ["Degree Level", "Degree"]},
     ]
 
@@ -250,11 +343,17 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
         classes = " ".join(el.get("class", []))
         is_heading_like = bool(
             re.fullmatch(r"h[1-6]", name)
-            or (name in ("p", "div", "span") and (
-                re.search(r"\bh[1-6]\b", classes)
-                or ("font-weight-600" in classes and ("text-dark" in classes or "text-secondary" in classes))
-                or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
-            ))
+            or (
+                name in ("p", "div", "span")
+                and (
+                    re.search(r"\bh[1-6]\b", classes)
+                    or (
+                        "font-weight-600" in classes
+                        and ("text-dark" in classes or "text-secondary" in classes)
+                    )
+                    or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
+                )
+            )
         )
         if is_heading_like:
             heading_level_ctx[id(el)] = current_level
@@ -276,9 +375,18 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
         )
         ctx = heading_level_ctx.get(id(header))
         if ctx:
-            edges.append(Edge(source=ctx, target=sec_node.id, type="HAS_SECTION", properties={}))
+            edges.append(
+                Edge(source=ctx, target=sec_node.id, type="HAS_SECTION", properties={})
+            )
         else:
-            edges.append(Edge(source=root.id, target=sec_node.id, type="HAS_SECTION", properties={}))
+            edges.append(
+                Edge(
+                    source=root.id,
+                    target=sec_node.id,
+                    type="HAS_SECTION",
+                    properties={},
+                )
+            )
 
     courses_by_level: Dict[str, List[Dict[str, str]]] = defaultdict(list)
     current_level = None
@@ -289,11 +397,17 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
         classes = " ".join(el.get("class", []))
         is_heading_like = bool(
             re.fullmatch(r"h[1-6]", name)
-            or (name in ("p", "div", "span") and (
-                re.search(r"\bh[1-6]\b", classes)
-                or ("font-weight-600" in classes and ("text-dark" in classes or "text-secondary" in classes))
-                or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
-            ))
+            or (
+                name in ("p", "div", "span")
+                and (
+                    re.search(r"\bh[1-6]\b", classes)
+                    or (
+                        "font-weight-600" in classes
+                        and ("text-dark" in classes or "text-secondary" in classes)
+                    )
+                    or (el.has_attr("id") and re.match(r"AC\d+", el.get("id", "")))
+                )
+            )
         )
         if is_heading_like:
             hid = classify_heading(text_of(el))
@@ -306,24 +420,48 @@ def parse_academics_html(html: str, base_url: Optional[str] = None) -> Dict[str,
             cid = guess_course_id_from_text(label) or guess_course_id_from_href(href)
             if cid:
                 key = current_level or "level:unknown"
-                courses_by_level[key].append({"courseId": cid, "label": label, "href": href})
+                courses_by_level[key].append(
+                    {"courseId": cid, "label": label, "href": href}
+                )
 
     for level_key, items in courses_by_level.items():
         if not items:
             continue
         if level_key != "level:unknown":
-            lnode = ensure_node(level_key, "Level", {"title": level_key.split(":", 1)[-1].upper()})
-            edges.append(Edge(source=root.id, target=lnode.id, type="HAS_LEVEL", properties={}))
-            list_node = ensure_node(f"list:courses:{level_key}", "Collection", {"title": f"Courses - {lnode.properties.get('title')}", "items": items})
-            edges.append(Edge(source=lnode.id, target=list_node.id, type="HAS", properties={"what": "courses"}))
+            lnode = ensure_node(
+                level_key, "Level", {"title": level_key.split(":", 1)[-1].upper()}
+            )
+            edges.append(
+                Edge(source=root.id, target=lnode.id, type="HAS_LEVEL", properties={})
+            )
+            list_node = ensure_node(
+                f"list:courses:{level_key}",
+                "Collection",
+                {"title": f"Courses - {lnode.properties.get('title')}", "items": items},
+            )
+            edges.append(
+                Edge(
+                    source=lnode.id,
+                    target=list_node.id,
+                    type="HAS",
+                    properties={"what": "courses"},
+                )
+            )
         else:
-            list_node = ensure_node("list:courses", "Collection", {"title": "Courses", "items": items})
-            edges.append(Edge(source=root.id, target=list_node.id, type="HAS", properties={"what": "courses"}))
+            list_node = ensure_node(
+                "list:courses", "Collection", {"title": "Courses", "items": items}
+            )
+            edges.append(
+                Edge(
+                    source=root.id,
+                    target=list_node.id,
+                    type="HAS",
+                    properties={"what": "courses"},
+                )
+            )
 
     return {
         "nodes": [n.__dict__ for n in nodes.values()],
         "edges": [e.__dict__ for e in edges],
         "meta": {"outlineSummary": outline_summary},
     }
-
-

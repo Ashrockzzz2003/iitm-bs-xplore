@@ -11,32 +11,45 @@ pip install -r requirements.txt
 
 ### Usage
 
-- Parse academics page only:
+- Parse any URL with automatic parser detection (recommended):
+
+```bash
+python app.py --url https://study.iitm.ac.in/ds/academics.html --output kg_academics.json
+```
+
+- Parse a course page (automatic detection):
+
+```bash
+python app.py --url https://study.iitm.ac.in/ds/course_pages/BSDA1001.html --output kg_course.json
+```
+
+- Parse any other website (uses generic parser):
+
+```bash
+python app.py --url https://example.com/some-page.html --output kg_generic.json
+```
+
+- Parse from local files (backward compatibility):
 
 ```bash
 python app.py --academics test/data/academics.html --output kg_academics.json
-```
-
-- Parse a sample course page:
-
-```bash
 python app.py --course-files test/data/course.html --output kg_course.json
 ```
 
-- Parse both and merge into one knowledge graph:
+### Automatic Parser Detection
 
-```bash
-python app.py --academics test/data/academics.html \
-  --course-files test/data/course.html \
-  --output kg_all.json
-```
+The application automatically detects which parser to use based on the URL:
+
+- **IITM Academics pages** (`study.iitm.ac.in/ds/academics.html`) → `academics` parser
+- **IITM Course pages** (`study.iitm.ac.in/ds/course_pages/*.html`) → `course` parser  
+- **All other URLs** → `generic` parser
 
 ### Outline Summary
 
 - Print a logical summary of parents and their immediate children:
 
 ```bash
-python app.py --academics test/data/academics.html --outline-summary
+python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
 ```
 
 - The same outline summary is embedded into the KG JSON under `meta.outlineSummary` when you generate the KG with `--output`.
