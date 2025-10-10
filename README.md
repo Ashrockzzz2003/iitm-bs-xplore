@@ -1,3 +1,48 @@
+## Parser & Knowledge Graph
+
+This repo includes a parser for IITM BS sample HTML pages that extracts program sections, rules, and course information into a simple knowledge graph JSON.
+
+### Setup
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### Usage
+
+- Parse academics page only:
+
+```bash
+python app.py --academics test/data/academics.html --output kg_academics.json
+```
+
+- Parse a sample course page:
+
+```bash
+python app.py --course-files test/data/course.html --output kg_course.json
+```
+
+- Parse both and merge into one knowledge graph:
+
+```bash
+python app.py --academics test/data/academics.html \
+  --course-files test/data/course.html \
+  --output kg_all.json
+```
+
+### Outline Summary
+
+- Print a logical summary of parents and their immediate children:
+
+```bash
+python app.py --academics test/data/academics.html --outline-summary
+```
+
+- The same outline summary is embedded into the KG JSON under `meta.outlineSummary` when you generate the KG with `--output`.
+
+The output contains `nodes` and `edges` arrays. Nodes include `Program`, `Section`, `Collection`, and `Course`. Edges include relations like `HAS_SECTION`, `HAS`, and `REQUIRES` (for prerequisites).
+
 # IITM BS Xplore
 
 ## Problem Statement
@@ -8,6 +53,34 @@
 ✦ Similar challenges exist in most universities and online education platforms where course structures are complex and requirements vary.
 
 ---
+
+## How it works (Parser logic)
+
+- Heading/outline detection
+  - The parser builds an outline from heading tags (`h1`–`h6`) and heading-like elements (e.g., classes `h1`–`h6`, strong-styled headers, anchors like `AC11`).
+  - Each outline node gets: `title`, `level` (heading level), `depth` (hierarchy depth), `anchorId` (if present), and `childCount`.
+  - Low-signal headings are filtered (pure numeric/price-like strings, very short tokens), and consecutive duplicates at the same level are de-duplicated.
+
+- Hierarchy → Knowledge Graph
+  - For every outline node, a `Section` node is created.
+  - Hierarchical edges: `HAS_SECTION` from parent to child (`properties.hierarchical=true`).
+  - Sections also appear under the root `Program` when they have no parent in the outline.
+
+- Level detection and grouping
+  - Fuzzy matches classify headings into levels (e.g., Foundation, Diploma, BSc, BS).
+  - Level nodes (type `Level`) are linked to the program via `HAS_LEVEL`.
+  - Anchors like `AC11`–`AC16` further segment content per level for precise grouping.
+
+- Content extraction per section/segment
+  - For matched/segmented areas, the parser captures bullets, paragraphs, and labeled fields (`dl/dt/dd` and `strong: value` patterns) and attaches them to the `Section` node.
+
+- Course links and collections
+  - Within level contexts and anchor segments, course links are parsed from tables first (preferred), then anchors as fallback.
+  - Courses are grouped into `Collection` nodes (e.g., `Courses - Diploma`) with `HAS` edges from the level.
+
+- Outline summary in output and CLI
+  - The same parent→children summary you see with `--outline-summary` is written into the KG JSON under `meta.outlineSummary` when you use `--output`.
+  - Use `--outline-summary` to print a compact human-readable summary for quick validation.
 
 ## Target Users
 
