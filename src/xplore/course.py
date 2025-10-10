@@ -15,6 +15,11 @@ from .academics import (
 
 
 def guess_course_id_from_text(text: str) -> Optional[str]:
+    """Extract course ID from text using regex pattern matching.
+    
+    Looks for patterns like 'BSDA1001', 'CS-2001', etc. in the given text.
+    This is a duplicate of the function in academics.py for course-specific parsing.
+    """
     m = re.search(r"\b[A-Z]{2,4}\s?-?\d{3,4}\b", text or "")
     if m:
         return m.group(0).replace(" ", "").upper()
@@ -24,8 +29,14 @@ def guess_course_id_from_text(text: str) -> Optional[str]:
 def parse_course_html(
     html: str, source_path: Optional[str] = None
 ) -> Dict[str, object]:
+    """Parse course HTML and extract structured course information.
+    
+    This function extracts course details from individual course pages,
+    including title, code, credits, prerequisites, and other metadata.
+    """
     soup = BeautifulSoup(html, "lxml")
 
+    # Extract course title from various possible selectors
     title = ""
     code = None
     h1 = soup.select_one("h1, .course-title, .tw\\:text-2xl, .tw\\:text-3xl")
@@ -36,6 +47,7 @@ def parse_course_html(
             title = normalize_whitespace(soup.title.string)
     code = guess_course_id_from_text(title)
 
+    # If we couldn't extract code from title, try to find it in labeled fields
     if not code:
         for cand in [
             ("Code", 80),
@@ -54,6 +66,8 @@ def parse_course_html(
             if code:
                 break
 
+    # Define all possible course fields to extract
+    # These are the common field names used across different course pages
     possible_fields = [
         "Title",
         "Course Title",
