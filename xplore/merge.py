@@ -146,6 +146,58 @@ def merge_graphs(graphs: List[Dict[str, object]]) -> Dict[str, object]:
                     )
                 )
 
+    # Deduplicate course attributes to remove duplicate content
+    for node_id, node in node_map.items():
+        if node.type == "Course":
+            properties = node.properties
+            if "attributes" in properties:
+                attributes = properties["attributes"]
+                # Find and remove duplicate content across different fields
+                content_signatures = {}
+                fields_to_remove = []
+                
+                for field_name, field_content in attributes.items():
+                    if isinstance(field_content, dict):
+                        # Check paragraphs
+                        if "paragraphs" in field_content:
+                            paragraphs = field_content["paragraphs"]
+                            if paragraphs:
+                                # Create a signature based on the first paragraph (usually the title)
+                                signature = paragraphs[0].strip() if paragraphs else ""
+                                if signature and signature in content_signatures:
+                                    # This is a duplicate, mark for removal
+                                    fields_to_remove.append(field_name)
+                                else:
+                                    content_signatures[signature] = field_name
+                        
+                        # Check bullets for duplicates
+                        elif "bullets" in field_content:
+                            bullets = field_content["bullets"]
+                            if bullets:
+                                # Create signature from first bullet
+                                signature = bullets[0].strip() if bullets else ""
+                                if signature and signature in content_signatures:
+                                    fields_to_remove.append(field_name)
+                                else:
+                                    content_signatures[signature] = field_name
+                        
+                        # Check fields for duplicates
+                        elif "fields" in field_content:
+                            fields = field_content["fields"]
+                            if fields:
+                                # Create signature from field values
+                                field_values = list(fields.values())
+                                if field_values:
+                                    signature = field_values[0].strip() if field_values else ""
+                                    if signature and signature in content_signatures:
+                                        fields_to_remove.append(field_name)
+                                    else:
+                                        content_signatures[signature] = field_name
+                
+                # Remove duplicate fields
+                for field_name in fields_to_remove:
+                    del attributes[field_name]
+
     seen = set()
     unique_edges: List[Edge] = []
     for e in edges:

@@ -27,7 +27,7 @@ This guide explains how to visualize your knowledge graph data using the `visual
 python visualize_kg.py outputs/production_full_courses.json
 ```
 
-This creates four different visualizations in the `visualizations/` directory:
+This creates four different visualizations in the `outputs/viz/` directory:
 - `hierarchical_graph.png` - Shows program structure (Program → Level → Section)
 - `course_graph.png` - Focuses on courses and their relationships
 - `network_graph.png` - Shows all nodes and relationships in a network layout
