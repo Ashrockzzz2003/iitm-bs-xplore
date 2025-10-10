@@ -1,6 +1,49 @@
-## Parser & Knowledge Graph
+# IITM BS Xplore - Parser & Knowledge Graph
 
-This repo includes a parser for IITM BS sample HTML pages that extracts program sections, rules, and course information into a simple knowledge graph JSON.
+A comprehensive parser for IITM BS sample HTML pages that extracts program sections, rules, and course information into a structured knowledge graph JSON. The system features automatic parser detection, modular architecture, and advanced visualization capabilities.
+
+## 🏗️ Architecture
+
+### Directory Structure
+
+```
+iitm-bs-xplore/
+├── app.py                          # Main application entry point
+├── visualize_kg.py                 # Visualization CLI entry point
+├── requirements.txt                # Dependencies
+├── src/                            # Main source code
+│   ├── processors/                 # Data processing modules
+│   │   ├── url_processor.py        # URL fetching and processing
+│   │   └── file_processor.py       # File-based processing
+│   ├── visualizers/                # Visualization modules
+│   │   ├── kg_visualizer.py        # Core visualization logic
+│   │   └── visualization_cli.py    # Visualization CLI
+│   ├── utils/                      # Utility modules
+│   │   ├── argument_parser.py      # CLI argument parsing
+│   │   ├── output_handler.py       # Output file handling
+│   │   └── outline_printer.py      # Outline summary printing
+│   └── xplore/                     # Core parsing modules
+│       ├── academics.py
+│       ├── course.py
+│       ├── generic.py
+│       ├── merge.py
+│       ├── outline.py
+│       ├── types.py
+│       └── utils.py
+└── outputs/                        # Generated data files
+    ├── *.json                      # Knowledge graph data files
+    └── viz/                        # Visualization outputs (PNG, DOT files)
+```
+
+### Key Features
+
+1. **Single Responsibility**: Each module has one clear purpose
+2. **Clean Separation**: Processing, visualization, and utilities are separate
+3. **Maintainable**: Easy to modify individual components
+4. **Testable**: Each module can be tested independently
+5. **Scalable**: Easy to add new processors or visualizers
+
+## 🚀 Quick Start
 
 ### Setup
 
@@ -9,32 +52,67 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Usage
+### Basic Usage
 
-- Parse any URL with automatic parser detection (recommended):
+#### Parse from URLs (Recommended)
 
 ```bash
+# Parse IITM academics page
 python app.py --url https://study.iitm.ac.in/ds/academics.html --output kg_academics.json
-```
 
-- Parse a course page (automatic detection):
-
-```bash
+# Parse a course page
 python app.py --url https://study.iitm.ac.in/ds/course_pages/BSDA1001.html --output kg_course.json
-```
 
-- Parse any other website (uses generic parser):
-
-```bash
+# Parse any other website (uses generic parser)
 python app.py --url https://example.com/some-page.html --output kg_generic.json
 ```
 
-- Parse from local files (backward compatibility):
+#### Parse from Local Files
 
 ```bash
 python app.py --academics test/data/academics.html --output kg_academics.json
 python app.py --course-files test/data/course.html --output kg_course.json
 ```
+
+#### Generate Outline Summary
+
+```bash
+python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
+```
+
+## 🎯 Problem Statement
+
+- Students face difficulty planning academic progression (which courses to take according to prerequisite requirements, academic goals, number of terms in which they wish to complete the program)
+- Information is spread across websites, student handbooks, grading documents, and other PDFs
+- Similar challenges exist in most universities and online education platforms where course structures are complex and requirements vary
+
+## 🔧 How It Works
+
+### Parser Logic
+
+1. **Heading/Outline Detection**
+   - Builds an outline from heading tags (`h1`–`h6`) and heading-like elements
+   - Each outline node gets: `title`, `level`, `depth`, `anchorId`, and `childCount`
+   - Filters low-signal headings and de-duplicates consecutive duplicates
+
+2. **Hierarchy → Knowledge Graph**
+   - Creates `Section` nodes for every outline node
+   - Hierarchical edges: `HAS_SECTION` from parent to child
+   - Sections appear under root `Program` when they have no parent
+
+3. **Level Detection and Grouping**
+   - Fuzzy matches classify headings into levels (Foundation, Diploma, BSc, BS)
+   - Level nodes linked to program via `HAS_LEVEL`
+   - Anchors like `AC11`–`AC16` segment content per level
+
+4. **Content Extraction**
+   - Captures bullets, paragraphs, and labeled fields
+   - Attaches content to appropriate `Section` nodes
+
+5. **Course Links and Collections**
+   - Parses course links from tables and anchors
+   - Groups courses into `Collection` nodes
+   - Links collections to levels via `HAS` edges
 
 ### Automatic Parser Detection
 
@@ -44,155 +122,170 @@ The application automatically detects which parser to use based on the URL:
 - **IITM Course pages** (`study.iitm.ac.in/ds/course_pages/*.html`) → `course` parser  
 - **All other URLs** → `generic` parser
 
-### Outline Summary
+## 📊 Visualization
 
-- Print a logical summary of parents and their immediate children:
+### Prerequisites
 
+1. **Install Graphviz**:
+   ```bash
+   # macOS
+   brew install graphviz
+   
+   # Ubuntu/Debian
+   sudo apt-get install graphviz
+   
+   # Windows: Download from https://graphviz.org/download/
+   ```
+
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Generate Visualizations
+
+#### All Visualizations
 ```bash
-python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
+python visualize_kg.py outputs/production_full_courses.json
 ```
 
-- The same outline summary is embedded into the KG JSON under `meta.outlineSummary` when you generate the KG with `--output`.
+This creates four different visualizations in the `outputs/viz/` directory:
+- `hierarchical_graph.png` - Shows program structure (Program → Level → Section)
+- `course_graph.png` - Focuses on courses and their relationships
+- `network_graph.png` - Shows all nodes and relationships in a network layout
+- `focused_network.png` - Less cluttered network view with key nodes only
 
-The output contains `nodes` and `edges` arrays. Nodes include `Program`, `Section`, `Collection`, and `Course`. Edges include relations like `HAS_SECTION`, `HAS`, and `REQUIRES` (for prerequisites).
+#### Specific Layouts
 
-# IITM BS Xplore
+```bash
+# Hierarchical layout (program structure)
+python visualize_kg.py outputs/production_full_courses.json --layout hierarchical
 
-## Problem Statement
+# Course-focused layout
+python visualize_kg.py outputs/production_full_courses.json --layout network --node-types Course
 
--   Students face difficulty planning academic progression (which courses to take according to prerequisite requirements, academic goals, number of terms in which they wish to complete the program).
--   Information is spread across websites, student handbooks, grading documents, and other PDFs.
+# Focused network (less cluttered)
+python visualize_kg.py outputs/production_full_courses.json --layout focused
 
-✦ Similar challenges exist in most universities and online education platforms where course structures are complex and requirements vary.
+# Circular layout
+python visualize_kg.py outputs/production_full_courses.json --layout circular
+```
 
----
+#### Filtering Options
 
-## How it works (Parser logic)
+```bash
+# Limit number of nodes
+python visualize_kg.py outputs/production_full_courses.json --max-nodes 50
 
-- Heading/outline detection
-  - The parser builds an outline from heading tags (`h1`–`h6`) and heading-like elements (e.g., classes `h1`–`h6`, strong-styled headers, anchors like `AC11`).
-  - Each outline node gets: `title`, `level` (heading level), `depth` (hierarchy depth), `anchorId` (if present), and `childCount`.
-  - Low-signal headings are filtered (pure numeric/price-like strings, very short tokens), and consecutive duplicates at the same level are de-duplicated.
+# Filter by node types
+python visualize_kg.py outputs/production_full_courses.json --node-types Program Level Course
 
-- Hierarchy → Knowledge Graph
-  - For every outline node, a `Section` node is created.
-  - Hierarchical edges: `HAS_SECTION` from parent to child (`properties.hierarchical=true`).
-  - Sections also appear under the root `Program` when they have no parent in the outline.
+# Show statistics
+python visualize_kg.py outputs/production_full_courses.json --stats
 
-- Level detection and grouping
-  - Fuzzy matches classify headings into levels (e.g., Foundation, Diploma, BSc, BS).
-  - Level nodes (type `Level`) are linked to the program via `HAS_LEVEL`.
-  - Anchors like `AC11`–`AC16` further segment content per level for precise grouping.
+# Custom output directory
+python visualize_kg.py outputs/production_full_courses.json --output-dir my_visualizations
+```
 
-- Content extraction per section/segment
-  - For matched/segmented areas, the parser captures bullets, paragraphs, and labeled fields (`dl/dt/dd` and `strong: value` patterns) and attaches them to the `Section` node.
+### Understanding Visualizations
 
-- Course links and collections
-  - Within level contexts and anchor segments, course links are parsed from tables first (preferred), then anchors as fallback.
-  - Courses are grouped into `Collection` nodes (e.g., `Courses - Diploma`) with `HAS` edges from the level.
+#### Node Colors
+- **Red**: Program nodes
+- **Teal**: Level nodes  
+- **Blue**: Section nodes
+- **Green**: Course nodes
+- **Yellow**: Collection nodes
+- **Plum**: Other node types
 
-- Outline summary in output and CLI
-  - The same parent→children summary you see with `--outline-summary` is written into the KG JSON under `meta.outlineSummary` when you use `--output`.
-  - Use `--outline-summary` to print a compact human-readable summary for quick validation.
+#### Edge Colors
+- **Dark Blue**: HAS_LEVEL relationships
+- **Dark Gray**: HAS_SECTION relationships
+- **Green**: HAS relationships
+- **Red**: REQUIRES relationships (prerequisites)
+- **Gray**: Other relationships
 
-## Target Users
+## 🎯 Target Users
 
--   Students enrolled in the online program
--   Academic advisors/staff assisting students with course planning
--   Prospective learners exploring program requirements
+- Students enrolled in the online program
+- Academic advisors/staff assisting students with course planning
+- Prospective learners exploring program requirements
+- Can extend to learners across MOOCs, degree programs, or professional certifications
 
-✦ Can extend to learners across MOOCs, degree programs, or professional certifications.
+## 📚 Data Sources
 
----
+### DS (Data Science)
+- [Academics page](https://study.iitm.ac.in/ds/academics.html#AC1) - All course subpages
+- [Admissions page](https://study.iitm.ac.in/ds/admissions.html#AD0)
+- [Student Handbook](https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub)
+- [Grading Policy](https://docs.google.com/document/u/1/d/e/2PACX-1vRKOWaLjxsts3qAM4h00EDvlB-GYRSPqqVXTfq3nGWFQBx91roxcU1qGv2ksS7jT4EQPNo8Rmr2zaE9/pub#h.cbcq4ial1xkk)
 
-## Feasibility & Data Sources
+### ES (Electronics Systems)
+- [Academics page](https://study.iitm.ac.in/es/academics.html#AC1) - All course subpages
+- [Admissions page](https://study.iitm.ac.in/es/admissions.html#AD0)
+- Additional pages: inthemedia, archive, faq
 
--   **IITM online degree website**: Academics page, Course pages, NPTEL website for electives
--   **Documents**: Grading document, Student handbook
--   **Control UI**: Allows staff to configure additional URLs/PDFs
+### Additional Sources
+- Student life pages, testimonials, achievements
+- Future sources: bsinsider.in, podgoodies.iitmadrasonline.in
+- Any additional PDF docs can be added through Control UI
 
-✦ Generic sources: University/college/MOOC websites, program brochures, policy handbooks.
+## 🚀 Proposed Solution
 
-### Data Sources List
-
-#### DS
-
--   [https://study.iitm.ac.in/ds/academics.html\#AC1](https://study.iitm.ac.in/ds/academics.html#AC1)
-    -   All course subpages linked in this page
-    -   Pattern \- [https://study.iitm.ac.in/ds/course_pages/{course_id}.html](https://study.iitm.ac.in/ds/course_pages/BSSE2001.html)
--   [https://study.iitm.ac.in/ds/admissions.html\#AD0](https://study.iitm.ac.in/ds/admissions.html#AD0)
--   Student Handbook \- link sourced from [acegrade.in](http://acegrade.in)
-    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub](https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub)
--   Grading Policy \- link sourced from [acegrade.in](http://acegrade.in)
-    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vRKOWaLjxsts3qAM4h00EDvlB-GYRSPqqVXTfq3nGWFQBx91roxcU1qGv2ksS7jT4EQPNo8Rmr2zaE9/pub\#h.cbcq4ial1xkk](https://docs.google.com/document/u/1/d/e/2PACX-1vRKOWaLjxsts3qAM4h00EDvlB-GYRSPqqVXTfq3nGWFQBx91roxcU1qGv2ksS7jT4EQPNo8Rmr2zaE9/pub#h.cbcq4ial1xkk)
-
-#### ES
-
--   [https://study.iitm.ac.in/es/academics.html\#AC1](https://study.iitm.ac.in/es/academics.html#AC1)
-    -   All course subpages linked in this page
-    -   Pattern \- [https://study.iitm.ac.ine/es/course_pages/{course_id}.html](https://study.iitm.ac.ine/es/course_pages/{course_id}.html)
--   [https://study.iitm.ac.in/es/admissions.html\#AD0](https://study.iitm.ac.in/es/admissions.html#AD0)
--   [https://study.iitm.ac.in/es/inthemedia.html](https://study.iitm.ac.in/es/inthemedia.html)
--   [https://study.iitm.ac.in/es/archive.html](https://study.iitm.ac.in/es/archive.html)
--   [https://study.iitm.ac.in/es/faq.html](https://study.iitm.ac.in/es/faq.html)
--   Similarly other links for ES
-
-#### Anonymous
-
--   [https://study.iitm.ac.in/ds/student_life.html](https://study.iitm.ac.in/ds/student_life.html)
--   [https://paradox-showcase.web.app/](https://paradox-showcase.web.app/)
--   [https://study.iitm.ac.in/student-achievements/interns](https://study.iitm.ac.in/student-achievements/interns)
--   [https://study.iitm.ac.in/ds/testimonials.html](https://study.iitm.ac.in/ds/testimonials.html)
--   [https://study.iitm.ac.in/student-achievements/toppers](https://study.iitm.ac.in/student-achievements/toppers)
--   [https://study.iitm.ac.in/student-achievements/projects](https://study.iitm.ac.in/student-achievements/projects)
--   Docs listed in
-    -   [https://study.iitm.ac.in/ds/archive.html](https://study.iitm.ac.in/ds/archive.html)
--   [https://study.iitm.ac.in/ds/aboutIITM.html](https://study.iitm.ac.in/ds/aboutIITM.html)
--   Future
-    -   [https://bsinsider.in/](https://bsinsider.in/)
-    -   [https://podgoodies.iitmadrasonline.in/](https://podgoodies.iitmadrasonline.in/)
--   Any Additional PDF docs can be added through Control UI by authorized personnel.
-
----
-
-## Existing Solutions & Limitations
-
--   Dedicated sessions for course selection and orientation sessions for different courses
--   Scattered information across websites & documents
-
-✦ Existing university chatbots are often FAQ/rule-based and lack personalization or academic planning capability.
-
----
-
-## Proposed Solution
-
-A **scraper** to extract structured/unstructured data from websites & documents.
-
-### Approach I: KG + RAG based pipeline
-
--   **Knowledge Graph (KG)** will store rules: Course prerequisites, Credit requirements for any level, Course mapping to levels, Compulsory courses per level
--   **Retrieval Augmented Generation (RAG)** will store unstructured descriptive context about a course or topic.
+### Approach I: KG + RAG Pipeline
+- **Knowledge Graph (KG)** stores rules: Course prerequisites, Credit requirements, Course mapping to levels, Compulsory courses per level
+- **Retrieval Augmented Generation (RAG)** stores unstructured descriptive context about courses or topics
 
 ### Approach II: Multi-Agent Orchestration
-
-Each agent will have its own responsibility:
-
--   **Data Agent** – Fetch info about a particular course or topic
--   **Validation Agent** – Check prerequisites for a course
--   **Recommendation Agent** – Suggest courses/paths
+Each agent has specific responsibilities:
+- **Data Agent** – Fetch info about courses or topics
+- **Validation Agent** – Check prerequisites for courses
+- **Recommendation Agent** – Suggest courses/paths
 
 ### UI for Students
-
-Natural language query interface, e.g.:
-
--   _"I have completed 2 courses (X & Y) of the diploma level (DS) and plan to complete my diploma in the next 2 terms. Which courses should I take next term that continue from X & Y?"_
--   _"I have already completed the Deep Learning course and want to do some hands-on work. Which elective course would best help me with this?"_
+Natural language query interface:
+- _"I have completed 2 courses (X & Y) of the diploma level (DS) and plan to complete my diploma in the next 2 terms. Which courses should I take next term that continue from X & Y?"_
+- _"I have already completed the Deep Learning course and want to do some hands-on work. Which elective course would best help me with this?"_
 
 ### Control UI for Staff
+- Manage/update data sources dynamically
+- Add new sources (websites, PDFs, brochures)
 
--   Manage/update data sources dynamically
--   Add new sources (websites, PDFs, brochures)
+## 📋 Output Format
 
-✦ **Generic applicability**: The same pipeline can be applied to any academic institution or program.
+The knowledge graph contains `nodes` and `edges` arrays:
+
+- **Nodes**: `Program`, `Section`, `Collection`, `Course`, `Level`
+- **Edges**: `HAS_SECTION`, `HAS`, `REQUIRES` (prerequisites), `HAS_LEVEL`
+- **Metadata**: Outline summary embedded in `meta.outlineSummary`
+
+## 🔧 Troubleshooting
+
+### Graphviz Issues
+If you get "Graphviz not found" error:
+1. Install Graphviz using the commands above
+2. Make sure it's in your system PATH
+3. Try running `dot -V` to verify installation
+
+### Large Graphs
+For very large knowledge graphs:
+- Use `--max-nodes` to limit the number of nodes
+- Use `--node-types` to focus on specific node types
+- Consider using the course-focused layout for course-heavy graphs
+
+### Memory Issues
+If you encounter memory issues with large graphs:
+- Reduce `--max-nodes` value
+- Use more specific `--node-types` filters
+- Process the graph in smaller chunks
+
+## 🎯 Generic Applicability
+
+The same pipeline can be applied to any academic institution or program, making it suitable for:
+- University/college websites
+- MOOC platforms
+- Professional certification programs
+- Program brochures and policy handbooks
 
 ---
+
+This modular, production-ready system provides a comprehensive solution for academic course planning and knowledge graph visualization! 🚀

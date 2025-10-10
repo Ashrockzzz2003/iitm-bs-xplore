@@ -15,7 +15,11 @@ def write_output(
     out_dir: str, 
     parser_used: Optional[str]
 ) -> None:
-    """Write knowledge graph to file or print to stdout."""
+    """Write knowledge graph to file or print to stdout.
+    
+    This function handles the final output of the knowledge graph extraction process.
+    It can either save to a file or print to stdout based on the output_path parameter.
+    """
     out = json.dumps(kg, indent=2, ensure_ascii=False)
 
     if output_path:
@@ -29,4 +33,5 @@ def write_output(
         if parser_used:
             print(f"Parser used: {parser_used}")
     else:
+        # Print to stdout if no output path specified
         print(out)

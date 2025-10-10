@@ -23,7 +23,11 @@ from xplore.utils import text_of
 
 
 def fetch_html_from_url(url: str) -> str:
-    """Fetch HTML content from a URL with proper error handling."""
+    """Fetch HTML content from a URL with proper error handling.
+    
+    This function handles network requests with timeout and proper error handling
+    to ensure robust URL fetching for the knowledge graph extraction process.
+    """
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
@@ -33,16 +37,21 @@ def fetch_html_from_url(url: str) -> str:
 
 
 def detect_parser_from_url(url: str) -> str:
-    """Detect which parser to use based on URL pattern."""
+    """Detect which parser to use based on URL pattern.
+    
+    This function analyzes the URL structure to automatically determine
+    which parser should be used for optimal knowledge graph extraction.
+    """
     parsed_url = urlparse(url)
     domain = parsed_url.netloc.lower()
     path = parsed_url.path.lower()
 
-    # IITM Academics pages
+    # IITM Academics pages - contains program structure and course listings
     if "study.iitm.ac.in" in domain and "/ds/academics.html" in path:
         return "academics"
 
-    # IITM Course pages (pattern: /ds/course_pages/*.html)
+    # IITM Course pages - individual course detail pages
+    # Pattern: /ds/course_pages/*.html
     if (
         "study.iitm.ac.in" in domain
         and "/ds/course_pages/" in path
@@ -51,21 +60,30 @@ def detect_parser_from_url(url: str) -> str:
         return "course"
 
     # Default to generic parser for unknown URLs
+    # This handles any other website or document structure
     return "generic"
 
 
 def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[str, str]]:
-    """Extract course URLs from academics page HTML."""
+    """Extract course URLs from academics page HTML.
+    
+    This function parses the academics page to find all course links and
+    extract their metadata including course ID, label, and level information.
+    """
     soup = BeautifulSoup(html, "lxml")
     course_urls = []
     seen_courses = set()  # To avoid duplicates
     current_level = None
     
+    # Iterate through all HTML elements to find headings and course links
     for el in soup.descendants:
         if not isinstance(el, Tag):
             continue
         name = el.name or ""
         classes = " ".join(el.get("class", []))
+        
+        # Detect heading-like elements (h1-h6, styled divs, etc.)
+        # This helps us track the current level/section context
         is_heading_like = bool(
             re.fullmatch(r"h[1-6]", name)
             or (
@@ -80,18 +98,20 @@ def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[st
                 )
             )
         )
+        
+        # Update current level context when we find a heading
         if is_heading_like:
             hid = classify_heading(text_of(el))
             if hid:
                 current_level = hid
             continue
-        # Check for regular <a> tags with href
+        # Check for regular <a> tags with href (course links)
         if el.name == "a" and el.has_attr("href"):
             label = text_of(el)
             href = el.get("href", "")
             cid = guess_course_id_from_text(label) or guess_course_id_from_href(href)
             
-            # If this is a "coming soon" link, try to extract course ID from the table row
+            # Handle "coming soon" links - extract course ID from table row context
             if not cid and "coming-soon.html" in href:
                 # Look for course ID in the same table row
                 row = el.find_parent("tr")
@@ -99,8 +119,9 @@ def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[st
                     row_text = text_of(row)
                     cid = guess_course_id_from_text(row_text)
             
+            # Add course to list if we found a valid course ID and haven't seen it before
             if cid and cid not in seen_courses:
-                # Convert relative URLs to absolute
+                # Convert relative URLs to absolute URLs
                 full_url = urljoin(base_url, href)
                 # Only include course pages, not other links
                 if "/course_pages/" in full_url or "/ds/" in full_url:
@@ -139,12 +160,20 @@ def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[st
 
 
 def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], str]:
-    """Process URL input and return knowledge graph and parser type."""
+    """Process URL input and return knowledge graph and parser type.
+    
+    This is the main URL processing function that:
+    1. Fetches HTML content from the URL
+    2. Detects the appropriate parser based on URL pattern
+    3. Parses the content using the detected parser
+    4. For academics pages, also extracts and parses all course pages
+    """
     print(f"Fetching URL: {url}")
     html = fetch_html_from_url(url)
     parser_type = detect_parser_from_url(url)
     print(f"Detected parser: {parser_type}")
 
+    # Map parser types to their corresponding parsing functions
     parser_functions = {
         "academics": lambda html, url: parse_academics_html(html, base_url=url),
         "course": lambda html, url: parse_course_html(html, source_path=url),
@@ -155,9 +184,10 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
         ),
     }
     
+    # Parse the main content using the detected parser
     graph = parser_functions[parser_type](html, url)
 
-    # If it's an academics page, also parse all course pages
+    # Special handling for academics pages: extract and parse all course pages
     if parser_type == "academics":
         print("Extracting course URLs from academics page...")
         course_urls = extract_course_urls_from_academics(html, url)
@@ -173,6 +203,7 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
             max_courses = len(course_urls)
             print(f"Processing all {max_courses} courses...")
             
+            # Parse each course page individually
             for i, course_info in enumerate(course_urls[:max_courses], 1):
                 try:
                     print(f"  [{i}/{max_courses}] Parsing {course_info['courseId']}: {course_info['label']}")
@@ -180,6 +211,7 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
                     course_graph = parse_course_html(course_html, source_path=course_info['href'])
                     
                     # Make course IDs unique by prefixing with the actual course ID
+                    # This prevents conflicts when merging multiple course graphs
                     for node in course_graph.get("nodes", []):
                         if node.get("type") == "Course":
                             # Update the node ID to include the course ID for uniqueness
@@ -194,7 +226,7 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
                                 if edge.get("target") == original_id:
                                     edge["target"] = node["id"]
                     
-                    # Add level information to the course graph
+                    # Add level information to the course graph metadata
                     if "meta" not in course_graph:
                         course_graph["meta"] = {}
                     course_graph["meta"]["level"] = course_info['level']
@@ -205,7 +237,7 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
                     successful += 1
                 except Exception as e:
                     print(f"    Warning: Failed to parse {course_info['courseId']}: {e}")
-                    # Add a placeholder entry for failed courses
+                    # Add a placeholder entry for failed courses to maintain consistency
                     failed_course = {
                         "nodes": [],
                         "edges": [],
@@ -225,6 +257,7 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
                 print(f"Course parsing complete: {successful} successful, {failed} failed")
                 all_graphs = [graph] + course_graphs
                 graph = merge_graphs(all_graphs)
+                # Add comprehensive metadata about course parsing results
                 graph["meta"]["courses_parsed"] = len(course_graphs)
                 graph["meta"]["courses_successful"] = successful
                 graph["meta"]["courses_failed"] = failed

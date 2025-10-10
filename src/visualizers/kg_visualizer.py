@@ -14,7 +14,12 @@ import sys
 
 
 class KnowledgeGraphVisualizer:
-    """Visualizes knowledge graphs using Graphviz DOT format."""
+    """Visualizes knowledge graphs using Graphviz DOT format.
+    
+    This class provides comprehensive visualization capabilities for knowledge graphs,
+    including different layout styles, filtering options, and color schemes to make
+    complex academic program structures easily understandable.
+    """
     
     def __init__(self, kg_data: Dict[str, Any]):
         self.kg_data = kg_data
@@ -22,44 +27,55 @@ class KnowledgeGraphVisualizer:
         self.edges = kg_data.get("edges", [])
         
         # Color schemes for different node types
+        # Each node type has a distinct color for easy identification
         self.node_colors = {
-            "Program": "#FF6B6B",      # Red
-            "Level": "#4ECDC4",        # Teal
-            "Section": "#45B7D1",      # Blue
-            "Course": "#96CEB4",       # Green
-            "Collection": "#FFEAA7",   # Yellow
-            "default": "#DDA0DD"       # Plum
+            "Program": "#FF6B6B",      # Red - Main program nodes
+            "Level": "#4ECDC4",        # Teal - Academic levels (Foundation, Diploma, etc.)
+            "Section": "#45B7D1",      # Blue - Content sections
+            "Course": "#96CEB4",       # Green - Individual courses
+            "Collection": "#FFEAA7",   # Yellow - Course collections
+            "default": "#DDA0DD"       # Plum - Other node types
         }
         
         # Edge colors for different relationship types
+        # Colors help distinguish between different types of relationships
         self.edge_colors = {
-            "HAS_LEVEL": "#2C3E50",      # Dark blue
-            "HAS_SECTION": "#34495E",    # Dark gray
-            "HAS": "#27AE60",            # Green
-            "CONTAINS": "#27AE60",       # Green (same as HAS for level-course relationships)
-            "REQUIRES": "#E74C3C",       # Red
-            "default": "#7F8C8D"         # Gray
+            "HAS_LEVEL": "#2C3E50",      # Dark blue - Program has levels
+            "HAS_SECTION": "#34495E",    # Dark gray - Level has sections
+            "HAS": "#27AE60",            # Green - General containment
+            "CONTAINS": "#27AE60",       # Green - Level contains courses
+            "REQUIRES": "#E74C3C",       # Red - Prerequisite relationships
+            "default": "#7F8C8D"         # Gray - Other relationships
         }
 
     def sanitize_id(self, node_id: str) -> str:
-        """Sanitize node ID for DOT format."""
+        """Sanitize node ID for DOT format.
+        
+        Graphviz DOT format has specific requirements for node IDs.
+        This function ensures the ID is valid by replacing special characters
+        and ensuring it starts with a letter.
+        """
         # Replace problematic characters with underscores
         sanitized = re.sub(r'[^a-zA-Z0-9_]', '_', node_id)
-        # Ensure it starts with a letter
+        # Ensure it starts with a letter (DOT requirement)
         if sanitized and sanitized[0].isdigit():
             sanitized = f"node_{sanitized}"
         return sanitized or "empty_id"
 
     def get_node_label(self, node: Dict[str, Any]) -> str:
-        """Generate a readable label for a node."""
+        """Generate a readable label for a node.
+        
+        Creates a human-readable label by combining the node's title/name
+        with its type, truncating long titles for better visualization.
+        """
         node_type = node.get("type", "Unknown")
         properties = node.get("properties", {})
         
-        # Try to get a meaningful title/name
+        # Try to get a meaningful title/name from various possible fields
         title = properties.get("name") or properties.get("courseId") or properties.get("title")
         
         if title:
-            # Truncate long titles
+            # Truncate long titles to keep visualization clean
             if len(title) > 30:
                 title = title[:27] + "..."
             return f"{title}\\n({node_type})"

@@ -9,6 +9,10 @@ from .utils import normalize_whitespace, text_of, slugify
 
 
 def guess_course_id_from_text(text: str) -> Optional[str]:
+    """Extract course ID from text using regex pattern matching.
+    
+    Looks for patterns like 'BSDA1001', 'CS-2001', etc. in the given text.
+    """
     match = re.search(r"\b[A-Z]{2,4}\s?-?\d{3,4}\b", text or "")
     if match:
         return match.group(0).replace(" ", "").upper()
@@ -16,6 +20,13 @@ def guess_course_id_from_text(text: str) -> Optional[str]:
 
 
 def guess_course_id_from_href(href: str) -> Optional[str]:
+    """Extract course ID from URL/href using multiple pattern matching strategies.
+    
+    Tries different patterns to find course IDs in URLs:
+    1. Query parameter id=COURSE_ID
+    2. Path segment /COURSE_ID.html or /COURSE_ID/
+    3. Any occurrence of COURSE_ID pattern in the URL
+    """
     m = re.search(r"[?&#]id=([A-Za-z0-9_-]+)", href)
     if m:
         return m.group(1).upper()
@@ -29,13 +40,22 @@ def guess_course_id_from_href(href: str) -> Optional[str]:
 
 
 def collect_headings(soup: BeautifulSoup) -> List[Tag]:
+    """Collect all heading-like elements from the HTML soup.
+    
+    This function identifies both standard HTML headings (h1-h6) and
+    elements that are styled to look like headings (divs with heading classes).
+    """
     heading_like = []
     for el in soup.find_all(True):
         name = el.name or ""
         classes = " ".join(el.get("class", []))
+        
+        # Standard HTML headings
         if re.fullmatch(r"h[1-6]", name):
             heading_like.append(el)
             continue
+            
+        # Styled elements that act as headings
         if name in ("p", "div", "span") and (
             re.search(r"\bh[1-6]\b", classes)
             or (
