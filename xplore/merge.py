@@ -55,6 +55,97 @@ def merge_graphs(graphs: List[Dict[str, object]]) -> Dict[str, object]:
             if "total_courses_found" in gm:
                 meta["total_courses_found"] = gm["total_courses_found"]
 
+    # Create direct level-to-course relationships
+    # Find all level nodes
+    level_nodes = {node_id: node for node_id, node in node_map.items() 
+                  if node.type == "Level"}
+    
+    # Find all course nodes
+    course_nodes = {node_id: node for node_id, node in node_map.items() 
+                   if node.type == "Course"}
+    
+    # Ensure Foundation level exists
+    foundation_level_id = "level:foundation"
+    if foundation_level_id not in level_nodes:
+        foundation_level = Node(
+            id=foundation_level_id,
+            type="Level",
+            properties={"title": "FOUNDATION"}
+        )
+        node_map[foundation_level_id] = foundation_level
+        level_nodes[foundation_level_id] = foundation_level
+        # Connect Foundation level to program
+        edges.append(
+            Edge(
+                source="program:IITM_BS",
+                target=foundation_level_id,
+                type="HAS_LEVEL",
+                properties={}
+            )
+        )
+
+    # Create level-to-course mapping based on course metadata and course codes
+    for course_id, course in course_nodes.items():
+        course_meta = None
+        # Find course metadata from the merged graphs
+        for g in graphs:
+            # Check if this graph has course metadata
+            if "meta" in g and "level" in g["meta"]:
+                course_id_from_meta = g["meta"].get("course_id")
+                if course_id_from_meta == course.properties.get("courseId"):
+                    course_meta = g["meta"]
+                    break
+            # Also check the courses array format
+            if "meta" in g and "courses" in g["meta"]:
+                for course_info in g["meta"]["courses"]:
+                    if course_info.get("course_id") == course.properties.get("courseId"):
+                        course_meta = course_info
+                        break
+            if course_meta:
+                break
+        
+        # Determine level from metadata or course code
+        level_name = None
+        if course_meta and course_meta.get("level"):
+            level_name = course_meta["level"]
+        else:
+            # Infer level from course code
+            course_code = course.properties.get("courseId", "")
+            if course_code.startswith(("BSMA100", "BSCS100", "BSHS100")):
+                level_name = "Foundation"
+            elif course_code.startswith(("BSMA200", "BSCS200", "BSHS200", "BSMS200", "BSSE200", "BSDA200")):
+                level_name = "Diploma"
+            elif course_code.startswith(("BSMA300", "BSCS300", "BSHS300", "BSMS300", "BSSE300", "BSDA300", "BSGN300")):
+                level_name = "Degree"
+            elif course_code.startswith(("BSMA400", "BSCS400", "BSHS400", "BSMS400", "BSSE400", "BSDA400", "BSBT400")):
+                level_name = "Degree"
+            elif course_code.startswith(("BSMA500", "BSCS500", "BSHS500", "BSMS500", "BSSE500", "BSDA500", "BSEE500")):
+                level_name = "Degree"
+            elif course_code.startswith(("BSMA600", "BSCS600", "BSHS600", "BSMS600", "BSSE600", "BSDA600")):
+                level_name = "Degree"
+            elif course_code.startswith(("BSMA690", "BSCS690", "BSHS690", "BSMS690", "BSSE690", "BSDA690")):
+                level_name = "Degree"
+        
+        if level_name:
+            # Find matching level node
+            matching_level = None
+            for level_id, level in level_nodes.items():
+                level_title = level.properties.get("title", "").upper()
+                if level_name.upper() in level_title or level_title in level_name.upper():
+                    matching_level = level_id
+                    break
+            
+            if matching_level:
+                # Create direct edge from level to course
+                edges.append(
+                    Edge(
+                        source=matching_level,
+                        target=course_id,
+                        type="CONTAINS",
+                        properties={"what": "course"}
+                    )
+                )
+
     seen = set()
     unique_edges: List[Edge] = []
     for e in edges:
