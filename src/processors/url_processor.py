@@ -12,14 +12,14 @@ from typing import List, Dict, Any, Optional
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup, Tag
 
-from xplore import (
+from src.xplore import (
     parse_academics_html,
     parse_course_html,
     parse_generic_html,
     merge_graphs,
 )
-from xplore.academics import guess_course_id_from_text, guess_course_id_from_href, classify_heading
-from xplore.utils import text_of
+from src.xplore.academics import guess_course_id_from_text, guess_course_id_from_href, classify_heading
+from src.xplore.utils import text_of
 
 
 def fetch_html_from_url(url: str) -> str:

@@ -7,7 +7,7 @@ Handles processing of local HTML files and file-based inputs.
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from xplore import (
+from src.xplore import (
     parse_academics_html,
     parse_course_html,
     parse_generic_html,

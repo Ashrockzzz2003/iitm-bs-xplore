@@ -6,7 +6,7 @@ Handles printing logical summaries of document structure.
 
 from typing import List
 from bs4 import BeautifulSoup
-from xplore.outline import build_outline, SectionOutline
+from src.xplore.outline import build_outline, SectionOutline
 
 
 def print_outline_summary(html: str) -> None:

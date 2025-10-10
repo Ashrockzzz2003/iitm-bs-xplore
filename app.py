@@ -13,7 +13,7 @@ from src.processors.file_processor import process_file_inputs
 from src.utils.argument_parser import parse_arguments
 from src.utils.output_handler import write_output
 from src.utils.outline_printer import print_outline_summary
-from xplore import merge_graphs
+from src.xplore import merge_graphs
 
 
 def add_parser_metadata(kg: Dict[str, Any], parser_used: Optional[str]) -> None:
