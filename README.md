@@ -134,9 +134,14 @@ src/
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Parse URLs (auto-generates filename in outputs/kg/)
+# Parse single URLs (auto-generates filename in outputs/kg/)
 python app.py --url https://study.iitm.ac.in/ds/academics.html
+python app.py --url https://study.iitm.ac.in/es/academics.html
 python app.py --url https://study.iitm.ac.in/ds/course_pages/BSDA1001.html --output kg_course.json
+python app.py --url https://study.iitm.ac.in/es/course_pages/BSEE1001.html --output kg_course.json
+
+# Parse multiple data sources with unified hierarchy
+python app.py --data-sources https://study.iitm.ac.in/ds/academics.html https://study.iitm.ac.in/es/academics.html --neo4j
 
 # Parse local files
 python app.py --academics test/data/academics.html --output kg_academics.json
@@ -153,7 +158,15 @@ python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
 4. **Content Extraction**: Captures bullets, paragraphs, and labeled fields
 5. **Course Parsing**: Groups courses into collections with prerequisite relationships
 
-**Auto-detection**: IITM pages → specialized parsers, other URLs → generic parser
+**Auto-detection**: IITM pages (both /ds/ and /es/) → specialized parsers, other URLs → generic parser
+
+### Unified Program Hierarchy
+
+When using `--data-sources`, the system creates a proper hierarchy:
+- **IITM BS** (main program) → **DS** (Data Science sub-program) → courses, levels, sections
+- **IITM BS** (main program) → **ES** (Electronics Systems sub-program) → courses, levels, sections
+
+This allows querying across both programs while maintaining clear separation and relationships.
 
 ## 📊 Visualization
 

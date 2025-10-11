@@ -50,6 +50,13 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         help="Print logical summary: each parent section and its immediate children",
     )
+    parser.add_argument(
+        "--data-sources",
+        type=str,
+        nargs="*",
+        help="Multiple data sources (URLs) to process and create unified hierarchy",
+        default=None,
+    )
     
     # Neo4j integration options
     neo4j_group = parser.add_argument_group('Neo4j Integration')

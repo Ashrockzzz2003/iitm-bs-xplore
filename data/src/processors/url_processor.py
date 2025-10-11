@@ -47,14 +47,15 @@ def detect_parser_from_url(url: str) -> str:
     path = parsed_url.path.lower()
 
     # IITM Academics pages - contains program structure and course listings
-    if "study.iitm.ac.in" in domain and "/ds/academics.html" in path:
+    # Support both /ds/ and /es/ programs
+    if "study.iitm.ac.in" in domain and ("/ds/academics.html" in path or "/es/academics.html" in path):
         return "academics"
 
     # IITM Course pages - individual course detail pages
-    # Pattern: /ds/course_pages/*.html
+    # Pattern: /ds/course_pages/*.html or /es/course_pages/*.html
     if (
         "study.iitm.ac.in" in domain
-        and "/ds/course_pages/" in path
+        and ("/ds/course_pages/" in path or "/es/course_pages/" in path)
         and path.endswith(".html")
     ):
         return "course"
@@ -123,8 +124,8 @@ def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[st
             if cid and cid not in seen_courses:
                 # Convert relative URLs to absolute URLs
                 full_url = urljoin(base_url, href)
-                # Only include course pages, not other links
-                if "/course_pages/" in full_url or "/ds/" in full_url:
+                # Only include course pages, not other links (support both /ds/ and /es/)
+                if "/course_pages/" in full_url or "/ds/" in full_url or "/es/" in full_url:
                     course_urls.append({
                         "courseId": cid,
                         "label": label,
@@ -141,8 +142,8 @@ def extract_course_urls_from_academics(html: str, base_url: str) -> List[Dict[st
             if cid and cid not in seen_courses:
                 # Convert relative URLs to absolute
                 full_url = urljoin(base_url, data_url)
-                # Only include course pages, not other links
-                if "/course_pages/" in full_url or "/ds/" in full_url:
+                # Only include course pages, not other links (support both /ds/ and /es/)
+                if "/course_pages/" in full_url or "/ds/" in full_url or "/es/" in full_url:
                     # Try to get a meaningful label from the element
                     label = text_of(el)
                     if not label or len(label.strip()) < 3:
