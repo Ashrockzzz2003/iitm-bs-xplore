@@ -37,12 +37,12 @@ def parse_arguments() -> argparse.Namespace:
         default=None,
     )
     parser.add_argument(
-        "--output", type=str, help="Path to write KG JSON (default: print)"
+        "--output", type=str, help="Path to write KG JSON (default: auto-generated filename in out-dir)"
     )
     parser.add_argument(
         "--out-dir",
         type=str,
-        default="outputs",
+        default="outputs/kg",
         help="Directory for generated JSON files when a bare filename is given",
     )
     parser.add_argument(

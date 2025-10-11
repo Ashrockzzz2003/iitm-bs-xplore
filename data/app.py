@@ -5,7 +5,6 @@ IITM BS Xplore - Main Application
 Main entry point for the knowledge graph extraction and visualization tool.
 """
 
-import sys
 import logging
 from typing import List, Dict, Any, Optional
 
@@ -13,7 +12,6 @@ from src.processors.url_processor import process_url_input
 from src.processors.file_processor import process_file_inputs
 from src.utils.argument_parser import parse_arguments
 from src.utils.output_handler import write_output
-from src.utils.outline_printer import print_outline_summary
 from src.xplore import merge_graphs
 from src.neo4j_integration import create_neo4j_uploader
 
