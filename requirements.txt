@@ -3,4 +3,5 @@ lxml>=5.3.0
 rapidfuzz>=3.9.7
 requests>=2.31.0
 graphviz>=0.20.1
+neo4j>=5.15.0
 

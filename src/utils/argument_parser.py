@@ -50,4 +50,42 @@ def parse_arguments() -> argparse.Namespace:
         action="store_true",
         help="Print logical summary: each parent section and its immediate children",
     )
+    
+    # Neo4j integration options
+    neo4j_group = parser.add_argument_group('Neo4j Integration')
+    neo4j_group.add_argument(
+        "--neo4j",
+        action="store_true",
+        help="Upload knowledge graph to Neo4j database"
+    )
+    neo4j_group.add_argument(
+        "--neo4j-uri",
+        type=str,
+        default="neo4j://127.0.0.1:7687",
+        help="Neo4j URI (default: neo4j://127.0.0.1:7687)"
+    )
+    neo4j_group.add_argument(
+        "--neo4j-username",
+        type=str,
+        default="neo4j",
+        help="Neo4j username (default: neo4j)"
+    )
+    neo4j_group.add_argument(
+        "--neo4j-password",
+        type=str,
+        default="password",
+        help="Neo4j password (default: password)"
+    )
+    neo4j_group.add_argument(
+        "--neo4j-database",
+        type=str,
+        default="neo4j",
+        help="Neo4j database name (default: neo4j)"
+    )
+    neo4j_group.add_argument(
+        "--neo4j-clear",
+        action="store_true",
+        help="Clear Neo4j database before uploading"
+    )
+    
     return parser.parse_args()

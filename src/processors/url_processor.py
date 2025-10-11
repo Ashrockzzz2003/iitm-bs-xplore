@@ -219,6 +219,18 @@ def process_url_input(url: str, outline_summary: bool) -> tuple[Dict[str, Any], 
                             course_id = course_info['courseId']
                             node["id"] = f"course:{course_id}"
                             node["properties"]["courseId"] = course_id
+                            
+                            # Use the label from the academics page as the title if we have a generic title
+                            course_label = course_info['label']
+                            current_title = node["properties"].get("title", "")
+                            
+                            # If we have a meaningful course label and the current title is generic, use the label
+                            if (course_label and course_label != course_id and 
+                                (not current_title or 
+                                 current_title in ["Course Page - IIT Madras Degree Program", "IIT Madras Degree Program", "Course Information"] or
+                                 current_title.startswith("COURSE:"))):
+                                node["properties"]["title"] = course_label
+                            
                             # Update any edges that reference this node
                             for edge in course_graph.get("edges", []):
                                 if edge.get("source") == original_id:
