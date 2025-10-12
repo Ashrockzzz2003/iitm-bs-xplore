@@ -268,6 +268,13 @@ def parse_course_html(
         or f"COURSE:{hash(title) & 0xFFFFFFFF:08X}"
     ).upper()
 
+    # Use course ID as title if we have a generic HTML page title or hash-based title
+    # This ensures meaningful course names instead of generic page titles
+    if (not title or 
+        title in ["Course Page - IIT Madras Degree Program", "IIT Madras Degree Program", "Course Information"] or
+        title.startswith("COURSE:")):
+        title = course_id
+
     node = Node(
         id=f"course:{course_id}",
         type="Course",
