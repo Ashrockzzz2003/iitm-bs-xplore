@@ -2,3 +2,4 @@
 __pycache__/
 **/outputs/**/*.json
 **/outputs/**/*.txt
+chroma_data/
