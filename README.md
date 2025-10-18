@@ -111,26 +111,47 @@ Natural language query interface, e.g.:
 
 ---
 
-## 🚀 Parser & Knowledge Graph
+## 🚀 Current Implementation Status
 
-Parser component that extracts program sections, rules, and course information from HTML pages into structured knowledge graph JSON.
+### ✅ Completed Features
 
-## 🏗️ Architecture
+-   **Knowledge Graph Parser**: Extracts program sections, rules, and course information from HTML pages into structured JSON
+-   **Multi-Agent AI System**: Implemented with ChromaDB integration for RAG capabilities
+-   **Neo4j Integration**: Full knowledge graph database with advanced querying capabilities
+-   **Text Aggregation Pipeline**: Hierarchical text extraction and organization from multiple sources
+-   **Dual Database Architecture**: Separate course-specific and generic knowledge graphs
+-   **ChromaDB RAG Pipeline**: Vector embeddings using Google Gemini for semantic search
+
+### 🏗️ Architecture
 
 ```
-src/
-├── processors/          # URL & file processing
-├── visualizers/         # Graph visualization
-├── utils/              # CLI & output handling
-└── xplore/             # Core parsing modules
+├── kg/                     # Knowledge Graph & Neo4j Integration
+│   ├── src/
+│   │   ├── processors/     # URL & file processing
+│   │   ├── visualizers/    # Graph visualization
+│   │   ├── neo4j_integration/ # Neo4j upload & query system
+│   │   └── xplore/         # Core parsing modules
+│   └── app.py             # Main KG processing app
+├── xplorer/               # Text Aggregation & ChromaDB
+│   ├── util/
+│   │   ├── chromadb/      # ChromaDB upload & query tools
+│   │   └── hierarchical_aggregator.py
+│   └── app.py             # Text aggregation pipeline
+└── ai/                    # Multi-Agent AI System
+    ├── agents/
+    │   ├── ds/foundation/ # Data Science Foundation Level Agent
+    │   └── tools/         # ChromaDB query tools
+    └── requirements.txt
 ```
 
-**Key Features**: Modular design, automatic parser detection, knowledge graph visualization
+**Key Features**: Modular design, automatic parser detection, dual database architecture, AI agent orchestration
 
 ## 🚀 Quick Start
 
+### 1. Knowledge Graph Processing (WIP to integrate it with ai as a tool)
+
 ```bash
-# Setup
+cd kg/
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
@@ -138,7 +159,6 @@ pip install -r requirements.txt
 python app.py --url https://study.iitm.ac.in/ds/academics.html
 python app.py --url https://study.iitm.ac.in/es/academics.html
 python app.py --url https://study.iitm.ac.in/ds/course_pages/BSDA1001.html --output kg_course.json
-python app.py --url https://study.iitm.ac.in/es/course_pages/BSEE1001.html --output kg_course.json
 
 # Parse multiple data sources with unified hierarchy
 python app.py --data-sources https://study.iitm.ac.in/ds/academics.html https://study.iitm.ac.in/es/academics.html --neo4j
@@ -150,59 +170,60 @@ python app.py --academics test/data/academics.html --output kg_academics.json
 python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
 ```
 
+### 2. Text Aggregation & ChromaDB Setup
+
+```bash
+cd xplorer/
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# Start ChromaDB server (in separate terminal)
+chroma run --host localhost --port 8000
+
+# Run text aggregation and upload to ChromaDB
+python app.py
+```
+
+### 3. AI Agents Setup
+
+```bash
+cd ai/
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# Set environment variables
+export CHROMA_HOST=localhost
+export CHROMA_PORT=8000
+export GOOGLE_API_KEY=your_gemini_api_key
+
+# Run foundation level agent and interact with web UI
+cd ai/agents/ds/
+adk web
+```
+
 ## 🔧 How It Works
+
+### Knowledge Graph Pipeline
 
 1. **Outline Detection**: Extracts headings (`h1`-`h6`) and builds hierarchical structure
 2. **Knowledge Graph**: Creates `Section` nodes with `HAS_SECTION` relationships
 3. **Level Detection**: Classifies content into levels (Foundation, Diploma, BSc, BS)
 4. **Content Extraction**: Captures bullets, paragraphs, and labeled fields
 5. **Course Parsing**: Groups courses into collections with prerequisite relationships
+6. **Neo4j Upload**: Automatically uploads structured data to Neo4j database
+
+### Text Aggregation Pipeline
+
+1. **Hierarchical Extraction**: Organizes content by program (DS/ES) and level
+2. **Content Processing**: Extracts and cleans text from multiple sources
+3. **ChromaDB Upload**: Creates vector embeddings using Google Gemini
+4. **Collection Management**: Organizes content into searchable collections
+
+### AI Agent System
+
+1. **Agent Initialization**: Specialized agents for different program levels
+2. **ChromaDB Integration**: Agents query vector database for context
+3. **RAG Pipeline**: Retrieval-Augmented Generation for accurate responses
+4. **Tool Integration**: ChromaDB query tools for information retrieval
 
 **Auto-detection**: IITM pages (both /ds/ and /es/) → specialized parsers, other URLs → generic parser
-
-### Unified Program Hierarchy
-
-When using `--data-sources`, the system creates a proper hierarchy:
-- **IITM BS** (main program) → **DS** (Data Science sub-program) → courses, levels, sections
-- **IITM BS** (main program) → **ES** (Electronics Systems sub-program) → courses, levels, sections
-
-This allows querying across both programs while maintaining clear separation and relationships.
-
-## 📊 Visualization
-
-```bash
-# Install Graphviz
-brew install graphviz  # macOS
-sudo apt-get install graphviz  # Ubuntu
-
-# Generate all visualizations
-python visualize_kg.py outputs/kg/production_full_courses.json
-
-# Specific layouts
-python visualize_kg.py outputs/kg/production_full_courses.json --layout hierarchical
-python visualize_kg.py outputs/kg/production_full_courses.json --layout network --node-types Course
-```
-
-**Output**: PNG files in `outputs/viz/` showing program structure, course relationships, and network layouts
-
-## 📋 Output Format
-
-- **Nodes**: `Program`, `Section`, `Collection`, `Course`, `Level`
-- **Edges**: `HAS_SECTION`, `HAS`, `REQUIRES` (prerequisites), `HAS_LEVEL`
-- **Metadata**: Outline summary in `meta.outlineSummary`
-
-## 🎯 Use Cases
-
-- **Academic Planning**: Course recommendation and prerequisite validation
-- **Data Extraction**: Convert unstructured course websites to structured data
-- **Research**: Study course prerequisites and program structures
-- **Integration**: Build educational platforms and planning tools
-
-## 🚀 Next Steps
-
-This parser enables building:
-- Intelligent course recommendation systems
-- Academic planning assistants
-- Prerequisite validation tools
-- Curriculum analysis dashboards
-- Multi-agent educational platforms
