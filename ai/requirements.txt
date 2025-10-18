@@ -1,0 +1,3 @@
+google-adk
+chromadb
+google-genai

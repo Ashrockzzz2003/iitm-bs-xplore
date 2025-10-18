@@ -6,19 +6,12 @@ Each txt file becomes a separate collection named after its folder path.
 Uses Google Gemini embeddings for vectorization.
 """
 
-import re
+import chromadb, re, os
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import chromadb
-from chromadb.config import Settings
-
 from google import genai
 from google.genai import types
-
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 def get_collection_name(file_path: str) -> str:
@@ -119,10 +112,11 @@ def upload_to_collection(
     )
 
 
-def upload_all_files(outputs_dir: str, persist_directory: str = "chroma_data") -> None:
+def upload_all_files(outputs_dir: str) -> None:
     """Upload all txt files from outputs directory to ChromaDB."""
-    client = chromadb.PersistentClient(
-        path=persist_directory, settings=Settings(anonymized_telemetry=False)
+    client = chromadb.HttpClient(
+        host=os.getenv("CHROMA_HOST", "localhost"),
+        port=int(os.getenv("CHROMA_PORT", "8000")),
     )
 
     print(f"Reading txt files from {outputs_dir}...")

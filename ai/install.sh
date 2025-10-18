@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Installing IITM BS Xplorer..."
+echo "Installing IITM BS Agents..."
 
 # Check if Python 3.+ is available
 python_version=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")
@@ -25,5 +25,3 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 echo "✓ Dependencies installed successfully"
-
-chmod +x app.py

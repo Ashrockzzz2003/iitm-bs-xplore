@@ -16,6 +16,10 @@ from typing import Any, Dict
 from util.hierarchical_aggregator import HierarchicalTextAggregator
 from util.chromadb.chroma_uploader import upload_all_files
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def cleanup_directories() -> None:
     """Clean up outputs and chroma_data directories before running."""
@@ -108,7 +112,7 @@ def main() -> None:
         # Step 3: Upload to ChromaDB
         print("\nStep 3: Uploading to ChromaDB...")
         try:
-            upload_all_files("outputs", "chroma_data")
+            upload_all_files("outputs")
             print("✓ ChromaDB upload completed successfully!")
         except Exception as e:
             print(f"⚠ ChromaDB upload failed: {e}")
