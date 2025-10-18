@@ -1,14 +1,22 @@
-# Direct Text Extraction Pipeline
+# IITM BS Xplore - Direct Text Extraction Pipeline
 
-A streamlined pipeline for extracting text content from HTML pages and uploading to Neo4j for automatic knowledge graph generation.
+A production-ready pipeline for extracting text content from HTML pages and organizing it hierarchically.
 
 ## Overview
 
-This pipeline:
+This pipeline provides two storage modes:
+
+### Single File Mode (Legacy)
 1. Fetches HTML from multiple parent URLs (DS, ES academics pages) and all linked course pages
 2. Extracts plain text content from HTML (removing tags, scripts, styles)
 3. Combines all text into a single large txt file with clear URL separators
-4. Uploads the text file to Neo4j to leverage its NLP/AI features for automatic KG generation
+
+### Hierarchical Mode (Recommended)
+1. Fetches and extracts text content as above
+2. Organizes content into hierarchical directory structure:
+   - `outputs/generic/content.txt` - Main/academics content from all programs
+   - `outputs/ds/{level}/content.txt` - DS program courses by level
+   - `outputs/es/{level}/content.txt` - ES program courses by level
 
 ## Quick Start
 
@@ -25,62 +33,35 @@ pip install -r ../data/requirements.txt
 ### 2. Basic Usage
 
 ```bash
-# Extract text from DS program only
-python main.py --programs ds
+# Extract text from DS program only (single file mode)
+python main.py ds
 
-# Extract text from both DS and ES programs
-python main.py --programs ds es
+# Extract text from both DS and ES programs (single file mode)
+python main.py ds es
 
-# Extract and upload to Neo4j
-python main.py --programs ds es --neo4j
-
-# Custom output file
-python main.py --programs ds es --output my_text.txt
-
-# Clear Neo4j database before upload
-python main.py --programs ds es --neo4j --neo4j-clear
-```
-
-### 3. Advanced Usage
-
-```bash
-# Custom Neo4j connection
-python main.py --programs ds es --neo4j \
-  --neo4j-uri neo4j://localhost:7687 \
-  --neo4j-username neo4j \
-  --neo4j-password mypassword \
-  --neo4j-database neo4j
-
-# Verbose output with error details
-python main.py --programs ds es --verbose
+# Extract with hierarchical storage (recommended)
+python main.py ds es --hierarchical
 
 # Dry run to see what would be processed
-python main.py --programs ds es --dry-run
+python main.py ds es --hierarchical --dry-run
 ```
 
 ## Command Line Options
 
 ### Required Arguments
-- `--programs`: Programs to process (ds, es, or both)
+- `programs`: Programs to process (ds, es, or both) - positional argument
 
-### Output Options
-- `--output`: Output text file name (default: combined_text.txt)
-- `--output-dir`: Output directory (default: outputs)
-
-### Neo4j Options
-- `--neo4j`: Upload to Neo4j after text extraction
-- `--neo4j-uri`: Neo4j URI (default: neo4j://127.0.0.1:7687)
-- `--neo4j-username`: Neo4j username (default: neo4j)
-- `--neo4j-password`: Neo4j password (default: password)
-- `--neo4j-database`: Neo4j database name (default: neo4j)
-- `--neo4j-clear`: Clear Neo4j database before uploading
-
-### Processing Options
-- `--verbose`: Enable verbose output
+### Optional Flags
+- `--hierarchical`: Use hierarchical storage structure (recommended)
 - `--dry-run`: Show what would be done without actually doing it
 
-## Output Format
+### Configuration
+- Output directory: `outputs/` (fixed)
+- Single file output: `outputs/combined_text.txt` (fixed)
 
+## Storage Modes
+
+### Single File Mode
 The pipeline generates a combined text file with the following structure:
 
 ```
@@ -112,98 +93,46 @@ LEVEL: foundation
 ... (repeat for all URLs)
 ```
 
-## Neo4j Data Model
+### Hierarchical Mode (Recommended)
+The pipeline generates a hierarchical directory structure:
 
-The pipeline creates the following node types in Neo4j:
-
-### Document Nodes
-- **Type**: `Document`
-- **Properties**:
-  - `id`: Unique document identifier
-  - `url`: Source URL
-  - `textContent`: Extracted text content
-  - `program`: Program (DS/ES)
-  - `type`: Document type (academics/course)
-  - `course_id`: Course ID (for course documents)
-  - `label`: Course label (for course documents)
-  - `level`: Academic level
-  - `word_count`: Number of words
-  - `char_count`: Number of characters
-  - `uploaded_at`: Upload timestamp
-
-### Program Nodes
-- **Type**: `Program`
-- **Properties**:
-  - `name`: Program name (DS/ES)
-  - `type`: Always "Program"
-  - `uploaded_at`: Upload timestamp
-
-### Metadata Nodes
-- **Type**: `Metadata`
-- **Properties**:
-  - `type`: Always "TextUpload"
-  - `uploaded_at`: Upload timestamp
-  - `document_count`: Total number of documents
-  - `total_words`: Total word count
-  - `total_characters`: Total character count
-  - `programs`: List of programs processed
-
-### Relationships
-- `Program` -[:HAS_DOCUMENT]-> `Document`
-- `Document` -[:HAS_COURSE]-> `Document` (academics to courses)
-
-## Example Neo4j Queries
-
-### Find All Documents
-```cypher
-MATCH (d:Document) 
-RETURN d.url, d.program, d.type, d.word_count 
-LIMIT 10
+```
+outputs/
+├── generic/
+│   └── content.txt          # Main/academics content from all programs
+├── ds/
+│   ├── foundation/
+│   │   └── content.txt      # DS foundation level courses
+│   ├── diploma/
+│   │   └── content.txt      # DS diploma level courses
+│   └── degree/
+│       └── content.txt      # DS degree level courses
+└── es/
+    ├── foundation/
+    │   └── content.txt      # ES foundation level courses
+    ├── diploma/
+    │   └── content.txt      # ES diploma level courses
+    └── degree/
+        └── content.txt      # ES degree level courses
 ```
 
-### Find Documents by Program
-```cypher
-MATCH (d:Document) 
-WHERE d.program = 'DS' 
-RETURN d.url, d.label, d.level 
-ORDER BY d.level, d.label
-```
+Each content file follows the same format as the single file mode, but contains only content for that specific program and level combination.
 
-### Search Text Content
-```cypher
-MATCH (d:Document) 
-WHERE d.textContent CONTAINS 'machine learning' 
-RETURN d.url, d.label, d.program
-```
-
-### Find Program Structure
-```cypher
-MATCH (p:Program)-[:HAS_DOCUMENT]->(d:Document) 
-RETURN p.name, d.type, count(d) as doc_count 
-ORDER BY p.name, d.type
-```
-
-### Find Course Prerequisites
-```cypher
-MATCH (d:Document) 
-WHERE d.type = 'course' AND d.textContent CONTAINS 'prerequisite' 
-RETURN d.course_id, d.label, d.textContent
-```
-
-### Full-Text Search
-```cypher
-MATCH (d:Document) 
-WHERE d.textContent =~ '.*data science.*' 
-RETURN d.url, d.label, d.program
-```
+**Benefits of Hierarchical Mode:**
+- Better organization by program and academic level
+- Easier to navigate and find specific content
+- More scalable for large datasets
+- Maintains all metadata and relationships
 
 ## Module Structure
 
 - `main.py` - Main orchestration script with CLI
+- `hierarchical_aggregator.py` - Hierarchical text organization and storage
+- `text_aggregator.py` - Single file text combination (legacy mode)
 - `text_extractor.py` - HTML to text extraction
 - `url_fetcher.py` - URL fetching and course link extraction
-- `text_aggregator.py` - Text combination and file generation
-- `text_to_neo4j.py` - Neo4j upload functionality
+- `setup.py` - Package setup and installation
+- `requirements.txt` - Python dependencies
 
 ## Error Handling
 
@@ -211,7 +140,6 @@ The pipeline includes comprehensive error handling:
 
 - **Network errors**: Retries and graceful failure for URL fetching
 - **Parsing errors**: Continues processing other URLs if one fails
-- **Neo4j errors**: Detailed error messages and connection validation
 - **File errors**: Proper file handling and encoding support
 
 ## Performance
@@ -220,20 +148,14 @@ Typical performance metrics:
 - **DS program**: ~50-80 course URLs, ~500KB-1MB text
 - **ES program**: ~40-60 course URLs, ~400KB-800KB text
 - **Processing time**: 2-5 minutes for both programs
-- **Neo4j upload**: 30-60 seconds for full dataset
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Import errors**: Make sure you're running from the `direct/` directory
-2. **Neo4j connection**: Verify Neo4j is running and credentials are correct
-3. **URL fetching**: Check internet connection and URL accessibility
-4. **Memory issues**: Large text files may require sufficient RAM
-
-### Debug Mode
-
-Use `--verbose` for detailed error messages and processing information.
+2. **URL fetching**: Check internet connection and URL accessibility
+3. **Memory issues**: Large text files may require sufficient RAM
 
 ### Dry Run
 
@@ -244,7 +166,6 @@ Use `--dry-run` to see what would be processed without actually doing it.
 This pipeline is designed to work alongside the main IITM BS Xplore application:
 
 - Uses the same URL processing logic
-- Compatible with existing Neo4j setup
 - Can be run independently or as part of a larger workflow
 
 ## Future Enhancements
@@ -252,6 +173,5 @@ This pipeline is designed to work alongside the main IITM BS Xplore application:
 Potential improvements:
 - Parallel processing for faster URL fetching
 - Text chunking for very large documents
-- Advanced NLP processing before Neo4j upload
-- Integration with Neo4j's AI/ML features
+- Advanced NLP processing
 - Real-time processing and updates

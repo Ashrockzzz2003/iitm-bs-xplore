@@ -7,8 +7,9 @@ scripts, and styles while preserving semantic structure.
 """
 
 import re
-from typing import Optional, Dict, Any
-from bs4 import BeautifulSoup, Tag, NavigableString
+from typing import Any, Dict, Optional
+
+from bs4 import BeautifulSoup, NavigableString, Tag, Comment
 
 
 class TextExtractor:
@@ -68,8 +69,6 @@ class TextExtractor:
         for element in self.soup(["script", "style", "meta", "link", "noscript"]):
             element.decompose()
         
-        # Remove comments
-        from bs4 import Comment
         comments = self.soup.find_all(string=lambda text: isinstance(text, Comment))
         for comment in comments:
             comment.extract()

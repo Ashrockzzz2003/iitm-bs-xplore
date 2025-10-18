@@ -8,15 +8,11 @@ Main entry point for the knowledge graph extraction and visualization tool.
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 
-from src.processors.url_processor import process_url_input
-from src.processors.file_processor import process_file_inputs
 from src.processors.dual_kg_processor import (
-    process_url_for_dual_kg,
     process_multiple_urls_for_dual_kg,
 )
 from src.utils.argument_parser import parse_arguments
 from src.utils.output_handler import write_output
-from src.xplore import merge_graphs
 from src.neo4j_integration import create_neo4j_uploader
 
 

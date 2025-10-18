@@ -7,8 +7,9 @@ with clear separators and metadata.
 """
 
 import os
-from typing import List, Dict, Any
 from datetime import datetime
+from typing import Any, Dict, List
+
 from text_extractor import TextExtractor
 from url_fetcher import URLFetcher
 

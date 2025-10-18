@@ -6,18 +6,19 @@ Fetches HTML content from URLs and extracts course URLs from academics pages.
 Reuses logic from the main application's URL processor.
 """
 
+import os
 import re
+import sys
+from typing import Any, Dict, List, Optional
+from urllib.parse import urljoin, urlparse
+
 import requests
-from typing import List, Dict, Any, Optional
-from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup, Tag
 
 # Import utilities from the main application
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'data', 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from xplore.academics import guess_course_id_from_text, guess_course_id_from_href, classify_heading
+from xplore.academics import classify_heading, guess_course_id_from_href, guess_course_id_from_text
 from xplore.utils import text_of
 
 
