@@ -1,11 +1,8 @@
 #!/bin/bash
-"""
-Installation script for IITM BS Xplore Direct Text Extraction Pipeline
-"""
 
 set -e
 
-echo "Installing IITM BS Xplore Direct Text Extraction Pipeline..."
+echo "Installing IITM BS Xplorer..."
 
 # Check if Python 3.+ is available
 python_version=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')")

@@ -1,0 +1,13 @@
+beautifulsoup4
+requests
+lxml
+rapidfuzz
+networkx
+matplotlib
+seaborn
+pandas
+numpy
+urllib3
+google-genai
+chromadb
+dotenv
