@@ -115,62 +115,92 @@ Natural language query interface, e.g.:
 
 ### ✅ Completed Features
 
--   **Knowledge Graph Parser**: Extracts program sections, rules, and course information from HTML pages into structured JSON
--   **Multi-Agent AI System**: Implemented with ChromaDB integration for RAG capabilities
--   **Neo4j Integration**: Full knowledge graph database with advanced querying capabilities
--   **Text Aggregation Pipeline**: Hierarchical text extraction and organization from multiple sources
--   **Dual Database Architecture**: Separate course-specific and generic knowledge graphs
--   **ChromaDB RAG Pipeline**: Vector embeddings using Google Gemini for semantic search
+-   **Daily Data Pipeline**: Automated scraping of 127+ IITM DS/ES pages with 7+ lakh characters of content
+-   **Hierarchical Text Organization**: Content organized by program and level (ds/{level}/content.txt, es/{level}/content.txt)
+-   **ChromaDB RAG Pipeline**: Vector embeddings using Google Gemini for semantic search across 50k-2L character collections
+-   **Multi-Agent AI System**: Google ADK-based agents with ChromaDB integration for RAG capabilities
+-   **Foundation Level Agent**: Working sub-agent for DS foundation level with web UI
+-   **Agent Orchestration Framework**: Architecture for sub-agents and orchestrator agent routing
 
 ### 🏗️ Architecture
 
 ```
-├── kg/                     # Knowledge Graph & Neo4j Integration
-│   ├── src/
-│   │   ├── processors/     # URL & file processing
-│   │   ├── visualizers/    # Graph visualization
-│   │   ├── neo4j_integration/ # Neo4j upload & query system
-│   │   └── xplore/         # Core parsing modules
-│   └── app.py             # Main KG processing app
-├── xplorer/               # Text Aggregation & ChromaDB
+┌─────────────────────────────────────────────────────────────────┐
+│                    IITM BS Xplore Pipeline                      │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Data Sources  │    │  Text Aggregation │    │  ChromaDB RAG   │
+│                 │    │                  │    │                 │
+│ • DS Academics  │───▶│ • 127+ pages     │───▶│ • Collections   │
+│ • ES Academics  │    │ • 7L+ chars      │    │ • 50k-2L chars  │
+│ • Course Pages  │    │ • Hierarchical   │    │ • Gemini Embed  │
+│ • Daily Updates │    │   Organization   │    │ • Vector Search │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                │                        │
+                                ▼                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    AI Agent System                              │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
+│  │ Orchestrator    │    │  Sub-Agents     │    │  Context     │ │
+│  │ Agent           │───▶│                 │    │  Agent       │ │
+│  │                 │    │ • DS Foundation │    │              │ │
+│  │ • Route Queries │    │ • DS Diploma    │    │ • Ask for    │ │
+│  │ • Manage Flow   │    │ • ES Foundation │    │   Program    │ │
+│  │ • Handle Errors │    │ • ES Diploma    │    │ • Clarify    │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    User Interface                               │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
+│  │  Web UI         │    │  Natural        │    │  Student     │ │
+│  │  (Google ADK)   │    │  Language       │    │  Interface   │ │
+│  │                 │    │  Queries        │    │              │ │
+│  │ • Chat Interface│    │                 │    │ • Course     │ │
+│  │ • Real-time     │    │ • "What courses │    │   Planning   │ │
+│  │   Responses     │    │   should I take │    │ • Prereq     │ │
+│  │ • Context Aware │    │   next term?"   │    │   Validation │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 📁 Project Structure
+
+```
+├── xplorer/               # Data Pipeline & ChromaDB
 │   ├── util/
 │   │   ├── chromadb/      # ChromaDB upload & query tools
 │   │   └── hierarchical_aggregator.py
-│   └── app.py             # Text aggregation pipeline
-└── ai/                    # Multi-Agent AI System
-    ├── agents/
-    │   ├── ds/foundation/ # Data Science Foundation Level Agent
-    │   └── tools/         # ChromaDB query tools
-    └── requirements.txt
+│   ├── outputs/           # Hierarchical content storage
+│   │   ├── ds/            # Data Science program
+│   │   │   ├── foundation/content.txt
+│   │   │   ├── diploma/content.txt
+│   │   │   └── degree/content.txt
+│   │   └── es/            # Electronics Systems program
+│   │       ├── foundation/content.txt
+│   │       ├── diploma/content.txt
+│   │       └── degree/content.txt
+│   └── app.py             # Main data pipeline
+├── ai/                    # Multi-Agent AI System
+│   ├── agents/
+│   │   ├── ds/foundation/ # DS Foundation Level Agent
+│   │   ├── ds/diploma/    # DS Diploma Level Agent (planned)
+│   │   ├── es/foundation/ # ES Foundation Level Agent (planned)
+│   │   └── tools/         # ChromaDB query tools
+│   └── requirements.txt
+└── kg/                    # Legacy Knowledge Graph (paused)
+    └── ...                # Neo4j integration (not actively used)
 ```
 
-**Key Features**: Modular design, automatic parser detection, dual database architecture, AI agent orchestration
+**Key Features**: Daily data pipeline, hierarchical organization, ChromaDB RAG, Google ADK agents, orchestrated sub-agents
 
 ## 🚀 Quick Start
 
-### 1. Knowledge Graph Processing (WIP to integrate it with ai as a tool)
-
-```bash
-cd kg/
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# Parse single URLs (auto-generates filename in outputs/kg/)
-python app.py --url https://study.iitm.ac.in/ds/academics.html
-python app.py --url https://study.iitm.ac.in/es/academics.html
-python app.py --url https://study.iitm.ac.in/ds/course_pages/BSDA1001.html --output kg_course.json
-
-# Parse multiple data sources with unified hierarchy
-python app.py --data-sources https://study.iitm.ac.in/ds/academics.html https://study.iitm.ac.in/es/academics.html --neo4j
-
-# Parse local files
-python app.py --academics test/data/academics.html --output kg_academics.json
-
-# Generate outline
-python app.py --url https://study.iitm.ac.in/ds/academics.html --outline-summary
-```
-
-### 2. Text Aggregation & ChromaDB Setup
+### 1. Data Pipeline & ChromaDB Setup
 
 ```bash
 cd xplorer/
@@ -180,50 +210,168 @@ pip install -r requirements.txt
 # Start ChromaDB server (in separate terminal)
 chroma run --host localhost --port 8000
 
-# Run text aggregation and upload to ChromaDB
+# Run daily data pipeline - scrapes 127+ pages and organizes hierarchically
 python app.py
 ```
 
-### 3. AI Agents Setup
+This will:
+
+-   Scrape IITM DS/ES academics pages and all course pages
+-   Parse and organize content into `outputs/ds/{level}/content.txt` and `outputs/es/{level}/content.txt`
+-   Generate ChromaDB collections with Gemini embeddings for each content file
+-   Process 7+ lakh characters across 127+ pages
+
+### 2. AI Agents Setup
 
 ```bash
 cd ai/
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Set environment variables
-export CHROMA_HOST=localhost
-export CHROMA_PORT=8000
-export GOOGLE_API_KEY=your_gemini_api_key
+# Set environment variables in a .env file
+echo "CHROMA_HOST=localhost" >> .env
+echo "CHROMA_PORT=8000" >> .env
+echo "GOOGLE_API_KEY=your_gemini_api_key" >> .env
 
-# Run foundation level agent and interact with web UI
-cd ai/agents/ds/
+# Run foundation level agent with web UI
+cd agents/ds/
 adk web
+```
+
+This will:
+
+-   Start the DS Foundation Level Agent
+-   Launch Google ADK web interface for testing
+-   Enable natural language queries about foundation courses
+-   Provide context-aware responses using ChromaDB RAG
+
+### 3. Legacy Knowledge Graph (Optional)
+
+```bash
+cd kg/
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# Parse single URLs (legacy approach - paused)
+python app.py --url https://study.iitm.ac.in/ds/academics.html
 ```
 
 ## 🔧 How It Works
 
-### Knowledge Graph Pipeline
+### Daily Data Pipeline
 
-1. **Outline Detection**: Extracts headings (`h1`-`h6`) and builds hierarchical structure
-2. **Knowledge Graph**: Creates `Section` nodes with `HAS_SECTION` relationships
-3. **Level Detection**: Classifies content into levels (Foundation, Diploma, BSc, BS)
-4. **Content Extraction**: Captures bullets, paragraphs, and labeled fields
-5. **Course Parsing**: Groups courses into collections with prerequisite relationships
-6. **Neo4j Upload**: Automatically uploads structured data to Neo4j database
+1. **Web Scraping**: Automated scraping of IITM DS/ES academics pages and all course pages
+2. **Content Parsing**: Extracts and cleans text content from 127+ pages
+3. **Hierarchical Organization**: Organizes content by program and level:
+    - `outputs/ds/foundation/content.txt` (Data Science Foundation)
+    - `outputs/ds/diploma/content.txt` (Data Science Diploma)
+    - `outputs/ds/degree/content.txt` (Data Science Degree)
+    - `outputs/es/foundation/content.txt` (Electronics Systems Foundation)
+    - `outputs/es/diploma/content.txt` (Electronics Systems Diploma)
+    - `outputs/es/degree/content.txt` (Electronics Systems Degree)
+4. **Content Processing**: Processes 7+ lakh characters across all levels
 
-### Text Aggregation Pipeline
+### ChromaDB RAG Pipeline
 
-1. **Hierarchical Extraction**: Organizes content by program (DS/ES) and level
-2. **Content Processing**: Extracts and cleans text from multiple sources
-3. **ChromaDB Upload**: Creates vector embeddings using Google Gemini
-4. **Collection Management**: Organizes content into searchable collections
+1. **Collection Creation**: Each content.txt file becomes a unique ChromaDB collection
+2. **Vector Embeddings**: Uses Google Gemini `gemini-embedding-001` model for embeddings
+3. **Collection Management**: Collections range from 50k to 2 lakh characters each
+4. **Semantic Search**: Enables natural language queries across all content
 
 ### AI Agent System
 
-1. **Agent Initialization**: Specialized agents for different program levels
-2. **ChromaDB Integration**: Agents query vector database for context
-3. **RAG Pipeline**: Retrieval-Augmented Generation for accurate responses
-4. **Tool Integration**: ChromaDB query tools for information retrieval
+1. **Sub-Agent Architecture**: Specialized agents for each program-level combination
+2. **ChromaDB Integration**: Agents query relevant collections for context
+3. **RAG Pipeline**: Retrieval-Augmented Generation for accurate, context-aware responses
+4. **Orchestrator Agent**: Routes queries to appropriate sub-agents
+5. **Context Agent**: Asks for clarification when program/level is ambiguous
+6. **Web UI**: Google ADK provides built-in web interface for testing
 
-**Auto-detection**: IITM pages (both /ds/ and /es/) → specialized parsers, other URLs → generic parser
+### Agent Orchestration Flow
+
+1. **Query Reception**: User asks natural language question
+2. **Orchestrator Routing**: Determines which sub-agent can best answer
+3. **Context Clarification**: If needed, asks user for program/level specification
+4. **Sub-Agent Processing**: Relevant agent queries ChromaDB for context
+5. **Response Generation**: Agent provides context-aware answer using RAG
+6. **User Interaction**: Response delivered through web UI
+
+## 📊 Data Pipeline Output
+
+### Content Organization
+
+```
+outputs/
+├── ds/                     # Data Science Program
+│   ├── foundation/         # Foundation Level
+│   │   └── content.txt     # ~50k-100k characters
+│   ├── diploma/            # Diploma Level
+│   │   └── content.txt     # ~100k-150k characters
+│   └── degree/             # Degree Level
+│       └── content.txt     # ~150k-200k characters
+└── es/                     # Electronics Systems Program
+    ├── foundation/         # Foundation Level
+    │   └── content.txt     # ~50k-100k characters
+    ├── diploma/            # Diploma Level
+    │   └── content.txt     # ~100k-150k characters
+    └── degree/             # Degree Level
+        └── content.txt     # ~150k-200k characters
+```
+
+### ChromaDB Collections
+
+-   **Collection Names**: `{program}_{level}` (e.g., `ds_foundation`, `es_diploma`)
+-   **Embeddings**: Google Gemini `gemini-embedding-001` (768 dimensions)
+-   **Content Range**: 50k to 2 lakh characters per collection
+-   **Total Content**: 7+ lakh characters across all collections
+
+## 🎯 Use Cases
+
+### Current Capabilities
+
+-   **Daily Data Updates**: Automated scraping and processing of 127+ IITM pages
+-   **Hierarchical Content Organization**: Structured storage by program and level
+-   **Semantic Search**: Natural language queries via ChromaDB RAG pipeline
+-   **AI Agent Interaction**: Specialized sub-agents for different program levels
+-   **Web Interface**: Google ADK built-in web UI for testing and interaction
+-   **Context-Aware Responses**: RAG-powered answers with relevant course information
+
+### AI Agent Capabilities
+
+-   **DS Foundation Agent**: Answers questions about Data Science foundation courses
+-   **ChromaDB Integration**: Semantic search across 50k-2L character collections
+-   **RAG Pipeline**: Context-aware responses using retrieved information
+-   **Natural Language Processing**: Understands complex academic queries
+-   **Program-Specific Knowledge**: Specialized knowledge for each program level
+
+### Example Queries
+
+-   "What courses should I take in my next term for DS foundation level?"
+-   "What are the prerequisites for BSDA1001?"
+-   "Which foundation courses are most important for data science?"
+-   "What's the difference between DS and ES foundation courses?"
+
+## 🚀 Next Steps
+
+### Immediate Development
+
+-   **Additional Sub-Agents**: DS Diploma, DS Degree, ES Foundation, ES Diploma, ES Degree agents
+-   **Orchestrator Agent**: Central agent to route queries to appropriate sub-agents
+-   **Context Agent**: Agent to ask for clarification when program/level is ambiguous
+-   **Enhanced Web UI**: Improved user interface for better interaction
+
+### Future Enhancements
+
+-   **Cross-Program Queries**: Agents that can answer questions spanning multiple programs
+-   **Advanced Analytics**: Course difficulty analysis and success prediction
+-   **Integration APIs**: REST APIs for external system integration
+-   **Mobile Interface**: Mobile-optimized student interface
+-   **Real-time Updates**: Dynamic data source updates and synchronization
+
+This system enables building:
+
+-   Intelligent course recommendation systems with AI agents
+-   Academic planning assistants with context-aware responses
+-   Prerequisite validation tools with semantic search
+-   Curriculum analysis dashboards with hierarchical data
+-   Multi-agent educational platforms with orchestrated sub-agents
