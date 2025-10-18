@@ -9,53 +9,33 @@ from typing import List, Optional
 
 
 def parse_arguments() -> argparse.Namespace:
-    """Parse command line arguments."""
+    """Parse command line arguments for dual hierarchical knowledge graph system."""
     parser = argparse.ArgumentParser(
-        description="Parse HTML into a knowledge graph JSON with automatic parser detection"
+        description="Dual Hierarchical Knowledge Graph Generator - Creates separate course and generic knowledge graphs"
     )
     parser.add_argument(
-        "--url",
+        "--data-sources",
         type=str,
-        help="URL to fetch and parse (automatically detects parser)",
-        required=False,
+        nargs="+",
+        help="URLs to process for dual KG generation (required)",
+        required=True,
     )
     parser.add_argument(
-        "--academics", type=str, help="Path to academics.html file", required=False
-    )
-    parser.add_argument(
-        "--course-files",
-        type=str,
-        nargs="*",
-        help="Paths to course HTML pages",
-        default=None,
-    )
-    parser.add_argument(
-        "--generic",
-        type=str,
-        nargs="*",
-        help="Paths to generic HTML pages",
-        default=None,
-    )
-    parser.add_argument(
-        "--output", type=str, help="Path to write KG JSON (default: auto-generated filename in out-dir)"
+        "--output", 
+        type=str, 
+        default="dual_hierarchical_kg",
+        help="Base name for output files (default: dual_hierarchical_kg)"
     )
     parser.add_argument(
         "--out-dir",
         type=str,
         default="outputs/kg",
-        help="Directory for generated JSON files when a bare filename is given",
+        help="Directory for generated JSON files (default: outputs/kg)",
     )
     parser.add_argument(
         "--outline-summary",
         action="store_true",
         help="Print logical summary: each parent section and its immediate children",
-    )
-    parser.add_argument(
-        "--data-sources",
-        type=str,
-        nargs="*",
-        help="Multiple data sources (URLs) to process and create unified hierarchy",
-        default=None,
     )
     
     # Neo4j integration options
@@ -86,8 +66,8 @@ def parse_arguments() -> argparse.Namespace:
     neo4j_group.add_argument(
         "--neo4j-database",
         type=str,
-        default="neo4j",
-        help="Neo4j database name (default: neo4j)"
+        default="iitm2",
+        help="Neo4j database name (default: iitm2)"
     )
     neo4j_group.add_argument(
         "--neo4j-clear",
