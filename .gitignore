@@ -3,3 +3,4 @@ __pycache__/
 outputs/
 chroma_data/
 .env
+.DS_Store
