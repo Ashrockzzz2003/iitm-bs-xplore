@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Any, Dict
 
 from util.hierarchical_aggregator import HierarchicalTextAggregator
-from util.chromadb.chroma_uploader import upload_all_files
+from util.chromadb.xml_chroma_uploader import upload_all_xml_files
 
 from dotenv import load_dotenv
 
@@ -29,8 +29,13 @@ def cleanup_directories() -> None:
     if os.path.exists("outputs"):
         for item in os.listdir("outputs"):
             if item != "chroma_data":
-                shutil.rmtree(os.path.join("outputs", item))
-                print(f"  ✓ Cleared {item}/ directory")
+                item_path = os.path.join("outputs", item)
+                if os.path.isdir(item_path):
+                    shutil.rmtree(item_path)
+                    print(f"  ✓ Cleared {item}/ directory")
+                elif os.path.isfile(item_path):
+                    os.remove(item_path)
+                    print(f"  ✓ Removed {item} file")
 
     print()
 
@@ -60,11 +65,12 @@ def print_summary(stats: Dict[str, Any]) -> None:
     print(f"Success rate: {(stats['successful']/stats['total_urls']*100):.1f}%")
     print(f"Total words: {stats['total_words']:,}")
     print(f"Total characters: {stats['total_characters']:,}")
+    print(f"Total chunks: {stats.get('total_chunks', 0):,}")
     print(f"Processing time: {stats['duration']}")
 
     print(f"Files created: {len(stats.get('files_created', []))}")
     if stats.get("files_created"):
-        print("Hierarchical files:")
+        print("Hierarchical XML files:")
         for file_path in stats["files_created"]:
             print(f"  - {file_path}")
 
@@ -88,9 +94,9 @@ def main() -> None:
     try:
         # Step 1: Aggregate text from DS and ES programs
         print("Step 1: Aggregating text from DS and ES programs...")
-        print("Using hierarchical storage structure...")
+        print("Using hierarchical XML chunking strategy...")
 
-        aggregator = HierarchicalTextAggregator("outputs")
+        aggregator = HierarchicalTextAggregator("outputs", chunk_size=1000, chunk_overlap=200)
         try:
             stats = aggregator.aggregate_programs(["ds", "es"])
         finally:
@@ -105,7 +111,7 @@ def main() -> None:
         # Step 3: Upload to ChromaDB
         print("\nStep 3: Uploading to ChromaDB...")
         try:
-            upload_all_files("outputs")
+            upload_all_xml_files("outputs")
             print("✓ ChromaDB upload completed successfully!")
         except Exception as e:
             print(f"⚠ ChromaDB upload failed: {e}")

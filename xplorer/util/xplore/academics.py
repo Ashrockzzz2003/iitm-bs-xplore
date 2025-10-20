@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from bs4 import BeautifulSoup, Tag
 from rapidfuzz import fuzz, process
 from .types import Node, Edge

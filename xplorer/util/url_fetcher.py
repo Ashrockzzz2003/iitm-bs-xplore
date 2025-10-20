@@ -6,11 +6,10 @@ Fetches HTML content from URLs and extracts course URLs from academics pages.
 Reuses logic from the main application's URL processor.
 """
 
-import os
 import re
 import sys
-from typing import Any, Dict, List, Optional
-from urllib.parse import urljoin, urlparse
+from typing import Any, Dict, List
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup, Tag

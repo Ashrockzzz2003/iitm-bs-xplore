@@ -1,32 +1,46 @@
 #!/usr/bin/env python3
 """
-Hierarchical Text Aggregation Module
+Hierarchical Text Aggregation Module (XML with Chunking)
 
-Stores extracted text content in a hierarchical directory structure:
-- outputs/generic/content.txt (for generic content)
-- outputs/ds/{level}/content.txt (for DS program content by level)
-- outputs/es/{level}/content.txt (for ES program content by level)
+Stores extracted text content in a hierarchical directory structure with XML output:
+- outputs/generic/content.xml (for generic content)
+- outputs/ds/{level}/content.xml (for DS program content by level)
+- outputs/es/{level}/content.xml (for ES program content by level)
+
+Each level file is an XML document containing multiple <document> elements,
+and each document is chunked for improved retrieval (e.g., for ChromaDB).
 """
 
 import os
 from datetime import datetime
 from typing import Any, Dict, List
+from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.dom import minidom
 
 from .text_extractor import TextExtractor
 from .url_fetcher import URLFetcher
 
 
 class HierarchicalTextAggregator:
-    """Aggregates text content from multiple URLs into hierarchical directory structure."""
+    """Aggregates text content into hierarchical directories as XML with chunking."""
 
-    def __init__(self, output_dir: str = "outputs"):
+    def __init__(
+        self,
+        output_dir: str = "outputs",
+        chunk_size: int = 1000,
+        chunk_overlap: int = 200,
+    ):
         """
         Initialize the hierarchical text aggregator.
 
         Args:
             output_dir: Base directory to save output files
+            chunk_size: Maximum number of characters per chunk
+            chunk_overlap: Number of characters to overlap between chunks
         """
         self.output_dir = output_dir
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
         self.text_extractor = TextExtractor()
         self.url_fetcher = URLFetcher()
 
@@ -41,6 +55,107 @@ class HierarchicalTextAggregator:
         os.makedirs(self.generic_dir, exist_ok=True)
         os.makedirs(self.ds_dir, exist_ok=True)
         os.makedirs(self.es_dir, exist_ok=True)
+
+    def _chunk_text(self, text: str, metadata: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Split text into overlapping chunks for better retrieval.
+
+        Args:
+            text: Text content to chunk
+            metadata: Metadata for the text
+
+        Returns:
+            List of chunk dictionaries with text and metadata
+        """
+        if len(text) <= self.chunk_size:
+            return [
+                {
+                    "text": text.strip(),
+                    "metadata": {
+                        **metadata,
+                        "chunk_index": 0,
+                        "total_chunks": 1,
+                        "chunk_start": 0,
+                        "chunk_end": len(text),
+                        "chunk_length": len(text.strip()),
+                    },
+                }
+            ]
+
+        chunks: List[Dict[str, Any]] = []
+        start = 0
+        chunk_index = 0
+
+        while start < len(text):
+            end = min(start + self.chunk_size, len(text))
+            if end < len(text):
+                sentence_end = text.rfind(".", start, end)
+                if sentence_end > start + self.chunk_size * 0.7:
+                    end = sentence_end + 1
+                else:
+                    word_end = text.rfind(" ", start, end)
+                    if word_end > start + self.chunk_size * 0.8:
+                        end = word_end
+
+            chunk_text = text[start:end].strip()
+            if chunk_text:
+                chunk_meta = {
+                    **metadata,
+                    "chunk_index": chunk_index,
+                    "total_chunks": -1,
+                    "chunk_start": start,
+                    "chunk_end": end,
+                    "chunk_length": len(chunk_text),
+                }
+                chunks.append({"text": chunk_text, "metadata": chunk_meta})
+                chunk_index += 1
+
+            start = max(start + self.chunk_size - self.chunk_overlap, end)
+
+        total = len(chunks)
+        for ch in chunks:
+            ch["metadata"]["total_chunks"] = total
+
+        return chunks
+
+    def _create_xml_document(
+        self, chunks: List[Dict[str, Any]], url_info: Dict[str, Any]
+    ) -> Element:
+        """Create an XML <document> element for a URL with its chunks."""
+        doc = Element("document")
+        doc.set(
+            "id",
+            url_info.get(
+                "course_id", url_info["url"].split("/")[-1].replace(".html", "")
+            ),
+        )
+        doc.set("url", url_info["url"])
+        if url_info.get("program"):
+            doc.set("program", url_info.get("program"))
+        if url_info.get("type"):
+            doc.set("type", url_info.get("type"))
+        if url_info.get("level"):
+            doc.set("level", url_info.get("level"))
+        if url_info.get("label"):
+            doc.set("label", url_info.get("label"))
+
+        metadata_elem = SubElement(doc, "metadata")
+        for key, value in url_info.items():
+            if value is not None:
+                me = SubElement(metadata_elem, key)
+                me.text = str(value)
+
+        content = SubElement(doc, "content")
+        content.set("total_chunks", str(len(chunks)))
+        for i, ch in enumerate(chunks):
+            ce = SubElement(content, "chunk")
+            ce.set("index", str(i))
+            ce.set("start", str(ch["metadata"]["chunk_start"]))
+            ce.set("end", str(ch["metadata"]["chunk_end"]))
+            ce.set("length", str(ch["metadata"]["chunk_length"]))
+            ce.text = ch["text"]
+
+        return doc
 
     def _get_level_directory(self, program: str, level: str) -> str:
         """
@@ -102,6 +217,7 @@ class HierarchicalTextAggregator:
             "failed": 0,
             "total_words": 0,
             "total_characters": 0,
+            "total_chunks": 0,
             "programs": set(),
             "types": set(),
             "levels": set(),
@@ -110,8 +226,8 @@ class HierarchicalTextAggregator:
             "files_created": [],
         }
 
-        # Track content by program/level for appending
-        content_buffers = {}
+        # Track entries by program/level; each value holds list of documents (url_info + text)
+        content_buffers: Dict[str, Dict[str, Any]] = {}
 
         # Process each URL
         for i, url_info in enumerate(urls, 1):
@@ -132,8 +248,13 @@ class HierarchicalTextAggregator:
                     level = self._normalize_level(url_info.get("level", "main"))
                     content_type = url_info.get("type", "unknown")
 
-                    # Create content entry
-                    content_entry = self._create_content_entry(url_info, result)
+                    # Prepare document entry (to be chunked later)
+                    doc_entry = {
+                        "url_info": url_info,
+                        "text": result["text"],
+                        "word_count": result["word_count"],
+                        "char_count": result["char_count"],
+                    }
 
                     # Get directory for this program/level
                     level_dir = self._get_level_directory(program, level)
@@ -146,23 +267,15 @@ class HierarchicalTextAggregator:
                         key = f"{program}_{level}"
 
                     if key not in content_buffers:
-                        if level == "main":
-                            content_buffers[key] = {
-                                "program": "GENERIC",
-                                "level": "main",
-                                "directory": level_dir,
-                                "content": [],
-                            }
-                        else:
-                            content_buffers[key] = {
-                                "program": program,
-                                "level": level,
-                                "directory": level_dir,
-                                "content": [],
-                            }
+                        content_buffers[key] = {
+                            "program": "GENERIC" if level == "main" else program,
+                            "level": "main" if level == "main" else level,
+                            "directory": level_dir,
+                            "documents": [],
+                        }
 
-                    # Add content to buffer
-                    content_buffers[key]["content"].append(content_entry)
+                    # Add document to buffer
+                    content_buffers[key]["documents"].append(doc_entry)
 
                     # Update statistics
                     stats["successful"] += 1
@@ -185,30 +298,50 @@ class HierarchicalTextAggregator:
                 stats["failed"] += 1
                 stats["errors"].append(f"Error processing {url_info['url']}: {str(e)}")
 
-        # Write content to files
-        print("\nWriting content to hierarchical files...")
+        # Write content to XML files
+        print("\nWriting XML content to hierarchical files...")
         for key, buffer_data in content_buffers.items():
-            file_path = os.path.join(buffer_data["directory"], "content.txt")
+            file_path = os.path.join(buffer_data["directory"], "content.xml")
 
+            # Build XML root for this level
+            root = Element("iitm_bs_xplore_level")
+            root.set("generated", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            root.set("program", buffer_data["program"])
+            root.set("level", buffer_data["level"])
+            root.set("chunk_size", str(self.chunk_size))
+            root.set("chunk_overlap", str(self.chunk_overlap))
+
+            # Add each document as child
+            for doc in buffer_data["documents"]:
+                url_info = dict(doc["url_info"])  # copy
+                # Ensure program/level in url_info reflect buffer
+                url_info["program"] = buffer_data["program"]
+                url_info["level"] = buffer_data["level"]
+
+                metadata = {
+                    "url": url_info["url"],
+                    "program": url_info.get("program"),
+                    "type": url_info.get("type"),
+                    "level": url_info.get("level"),
+                    "label": url_info.get("label"),
+                    "word_count": doc["word_count"],
+                    "char_count": doc["char_count"],
+                }
+
+                chunks = self._chunk_text(doc["text"], metadata)
+                stats["total_chunks"] += len(chunks)
+                root.append(self._create_xml_document(chunks, url_info))
+
+            # Add simple statistics element
+            stats_elem = SubElement(root, "statistics")
+            stats_elem.set("documents", str(len(buffer_data["documents"])))
+
+            # Pretty print and write
+            rough = tostring(root, encoding="unicode")
+            xml_doc = minidom.parseString(rough).toprettyxml(indent="  ")
+            lines = [ln for ln in xml_doc.split("\n") if ln.strip()]
             with open(file_path, "w", encoding="utf-8") as f:
-                # Write header
-                f.write("=" * 80 + "\n")
-                f.write(
-                    f"IITM BS Xplore - {buffer_data['program']} Program - {buffer_data['level'].title()} Level\n"
-                )
-                f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                f.write(f"Total entries: {len(buffer_data['content'])}\n")
-                f.write("=" * 80 + "\n\n")
-
-                # Write all content entries
-                for entry in buffer_data["content"]:
-                    f.write(entry)
-                    f.write("\n\n")
-
-                # Write footer
-                f.write("\n" + "=" * 80 + "\n")
-                f.write("END OF CONTENT\n")
-                f.write("=" * 80 + "\n")
+                f.write("\n".join(lines))
 
             stats["files_created"].append(file_path)
             print(f"  ✓ Created: {file_path}")
@@ -220,11 +353,12 @@ class HierarchicalTextAggregator:
         stats["types"] = list(stats["types"])
         stats["levels"] = list(stats["levels"])
 
-        print(f"\nHierarchical aggregation complete!")
+        print(f"\nHierarchical XML aggregation complete!")
         print(f"Files created: {len(stats['files_created'])}")
         print(f"Successful: {stats['successful']}/{stats['total_urls']}")
         print(f"Total words: {stats['total_words']:,}")
         print(f"Total characters: {stats['total_characters']:,}")
+        print(f"Total chunks: {stats['total_chunks']:,}")
 
         return stats
 
@@ -283,7 +417,10 @@ class HierarchicalTextAggregator:
 
 
 def aggregate_text_hierarchically(
-    programs: List[str], output_dir: str = "outputs"
+    programs: List[str],
+    output_dir: str = "outputs",
+    chunk_size: int = 1000,
+    chunk_overlap: int = 200,
 ) -> Dict[str, Any]:
     """
     Convenience function to aggregate text from multiple programs hierarchically.
@@ -295,7 +432,7 @@ def aggregate_text_hierarchically(
     Returns:
         Dictionary with aggregation statistics
     """
-    aggregator = HierarchicalTextAggregator(output_dir)
+    aggregator = HierarchicalTextAggregator(output_dir, chunk_size, chunk_overlap)
     try:
         return aggregator.aggregate_programs(programs)
     finally:
