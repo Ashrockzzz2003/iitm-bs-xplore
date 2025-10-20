@@ -25,19 +25,12 @@ def cleanup_directories() -> None:
     """Clean up outputs and chroma_data directories before running."""
     print("Cleaning up previous run data...")
 
-    # Clean up outputs directory
+    # Clean up outputs directory except the chroma_data directory if it exists inside the outputs directory
     if os.path.exists("outputs"):
-        shutil.rmtree("outputs")
-        print("  ✓ Cleared outputs/ directory")
-    else:
-        print("  ✓ outputs/ directory already clean")
-
-    # Clean up chroma_data directory
-    if os.path.exists("chroma_data"):
-        shutil.rmtree("chroma_data")
-        print("  ✓ Cleared chroma_data/ directory")
-    else:
-        print("  ✓ chroma_data/ directory already clean")
+        for item in os.listdir("outputs"):
+            if item != "chroma_data":
+                shutil.rmtree(os.path.join("outputs", item))
+                print(f"  ✓ Cleared {item}/ directory")
 
     print()
 
