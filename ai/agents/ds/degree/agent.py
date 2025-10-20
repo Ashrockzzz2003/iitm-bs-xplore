@@ -46,9 +46,12 @@ Query strategy:
 - Extract key concepts from the user's question and use them as search terms
 - You can make multiple queries with different keyword combinations if needed (which you will need honestly to be sure you cover it all) maybe extract keywords and from current response of query and try to exclude it in other queries to avoid duplication. All with making sure that you're searching for the original question.
 - The tool will automatically search across all relevant DS degree level collections
+- The n_results value, when asked about multiple courses make it 40, else 10 works.
+- Do not consider the queries and their responses, instead an try and make reason of the user's question and then the data that is retrieved from the tools and then provide the answer.
 
 After gathering information, provide a comprehensive and accurate answer based on the retrieved data.
 Include relevant details like course names, descriptions, and any specific requirements mentioned in the source material.
+The Course Type parameter will tell if a course is elective or core.
 """
 
 root_agent = Agent(
