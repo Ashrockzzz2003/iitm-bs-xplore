@@ -119,7 +119,9 @@ Natural language query interface, e.g.:
 -   **Hierarchical Text Organization**: Content organized by program and level (ds/{level}/content.txt, es/{level}/content.txt)
 -   **ChromaDB RAG Pipeline**: Vector embeddings using Google Gemini for semantic search across 50k-2L character collections
 -   **Multi-Agent AI System**: Google ADK-based agents with ChromaDB integration for RAG capabilities
--   **Foundation Level Agent**: Working sub-agent for DS foundation level with web UI
+-   **Complete DS Agent Suite**: All three DS agents implemented (Foundation, Diploma, Degree levels)
+-   **Enhanced ChromaDB Tools**: Advanced querying capabilities with smart_query, program/level filtering, and metadata support
+-   **Chunked Data Processing**: Improved retrieval precision with chunked content and similarity scoring
 -   **Agent Orchestration Framework**: Architecture for sub-agents and orchestrator agent routing
 
 ### 🏗️ Architecture
@@ -135,7 +137,7 @@ Natural language query interface, e.g.:
 │ • DS Academics  │───▶│ • 127+ pages     │───▶│ • Collections   │
 │ • ES Academics  │    │ • 7L+ chars      │    │ • 50k-2L chars  │
 │ • Course Pages  │    │ • Hierarchical   │    │ • Gemini Embed  │
-│ • Daily Updates │    │   Organization   │    │ • Vector Search │
+│ • Daily Updates │    │ • Chunked Data   │    │ • Vector Search │
 └─────────────────┘    └──────────────────┘    └─────────────────┘
                                 │                        │
                                 ▼                        ▼
@@ -143,12 +145,13 @@ Natural language query interface, e.g.:
 │                    AI Agent System                              │
 │                                                                 │
 │  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │ Orchestrator    │    │  Sub-Agents     │    │  Context     │ │
-│  │ Agent           │───▶│                 │    │  Agent       │ │
-│  │                 │    │ • DS Foundation │    │              │ │
-│  │ • Route Queries │    │ • DS Diploma    │    │ • Ask for    │ │
-│  │ • Manage Flow   │    │ • ES Foundation │    │   Program    │ │
-│  │ • Handle Errors │    │ • ES Diploma    │    │ • Clarify    │ │
+│  │ Enhanced        │    │  DS Agent Suite │    │  Context     │ │
+│  │ ChromaDB Tools  │───▶│                 │    │  Agent       │ │
+│  │                 │    │ • Foundation    │    │              │ │
+│  │ • smart_query   │    │ • Diploma       │    │ • Ask for    │ │
+│  │ • Program/Level │    │ • Degree        │    │   Program    │ │
+│  │ • Metadata      │    │ • Specialized   │    │ • Clarify    │ │
+│  │ • Chunked Data  │    │   Knowledge     │    │   Level      │ │
 │  └─────────────────┘    └─────────────────┘    └──────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
                                 │
@@ -164,6 +167,59 @@ Natural language query interface, e.g.:
 │  │ • Real-time     │    │ • "What courses │    │   Planning   │ │
 │  │   Responses     │    │   should I take │    │ • Prereq     │ │
 │  │ • Context Aware │    │   next term?"   │    │   Validation │ │
+│  │ • Multi-Agent   │    │ • Level-specific│    │ • Academic   │ │
+│  │   Routing       │    │   Queries       │    │   Guidance   │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 📁 Chunking Pipeline
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    IITM BS Xplore Chunking Pipeline             │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Raw Content   │    │  Text Processing │    │  Chunking Logic │
+│                 │    │                  │    │                 │
+│ • HTML Pages    │───▶│ • Clean HTML     │───▶│ • Split by Size │
+│ • PDF Documents │    │ • Extract Text   │    │ • Split by Topic│
+│ • Course Pages  │    │ • Remove Noise   │    │ • Overlap Chunks│
+│ • 127+ Sources  │    │ • Normalize Text │    │ • Metadata Tags │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+                                │                        │
+                                ▼                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Chunked Content Storage                      │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
+│  │  Chunk Metadata │    │  Content Chunks │    │  Embeddings  │ │
+│  │                 │    │                 │    │              │ │
+│  │ • Program (DS/ES)│   │ • 1000-2000     │    │ • Gemini     │ │
+│  │ • Level         │    │   characters    │    │   Embeddings │ │
+│  │ • Course ID     │    │ • Semantic      │    │ • 768 dims   │ │
+│  │ • URL Source    │    │   boundaries    │    │ • Vector DB  │ │
+│  │ • Chunk Index   │    │ • Overlap for   │    │ • Similarity │ │
+│  │ • Timestamp     │    │   context       │    │   Search     │ │
+│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    ChromaDB Collections                         │
+│                                                                 │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
+│  │  DS Collections │    │  ES Collections │    │  Generic     │ │
+│  │                 │    │                 │    │  Collections │ │
+│  │ • ds_foundation │    │ • es_foundation │    │ • generic    │ │
+│  │ • ds_diploma    │    │ • es_diploma    │    │ • main       │ │
+│  │ • ds_degree     │    │ • es_degree     │    │ • shared     │ │
+│  │                 │    │                 │    │              │ │
+│  │ Each collection:│    │ Each collection:│    │ Cross-program│ │
+│  │ • 50k-200k chars│    │ • 50k-200k chars│    │   content    │ │
+│  │ • 100-500 chunks│    │ • 100-500 chunks│    │ • Common     │ │
+│  │ • Program-specific│  │ • Program-specific│  │   policies   │ │
 │  └─────────────────┘    └─────────────────┘    └──────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -187,10 +243,16 @@ Natural language query interface, e.g.:
 │   └── app.py             # Main data pipeline
 ├── ai/                    # Multi-Agent AI System
 │   ├── agents/
-│   │   ├── ds/foundation/ # DS Foundation Level Agent
-│   │   ├── ds/diploma/    # DS Diploma Level Agent (planned)
-│   │   ├── es/foundation/ # ES Foundation Level Agent (planned)
-│   │   └── tools/         # ChromaDB query tools
+│   │   ├── ds/            # Data Science Agents (Complete)
+│   │   │   ├── foundation/ # DS Foundation Level Agent ✅
+│   │   │   ├── diploma/   # DS Diploma Level Agent ✅
+│   │   │   └── degree/    # DS Degree Level Agent ✅
+│   │   ├── es/            # Electronics Systems Agents (Planned)
+│   │   │   ├── foundation/ # ES Foundation Level Agent (planned)
+│   │   │   ├── diploma/   # ES Diploma Level Agent (planned)
+│   │   │   └── degree/    # ES Degree Level Agent (planned)
+│   │   └── tools/         # Enhanced ChromaDB query tools
+│   │       └── chromadb_tools.py # Advanced querying capabilities
 │   └── requirements.txt
 └── kg/                    # Legacy Knowledge Graph (paused)
     └── ...                # Neo4j integration (not actively used)
@@ -233,17 +295,23 @@ echo "CHROMA_HOST=localhost" >> .env
 echo "CHROMA_PORT=8000" >> .env
 echo "GOOGLE_API_KEY=your_gemini_api_key" >> .env
 
-# Run foundation level agent with web UI
-cd agents/ds/
+# Run any of the available DS agents with web UI
+cd agents/ds/foundation/  # For Foundation Level Agent
+# OR
+cd agents/ds/diploma/     # For Diploma Level Agent
+# OR
+cd agents/ds/degree/      # For Degree Level Agent
+
 adk web
 ```
 
 This will:
 
--   Start the DS Foundation Level Agent
+-   Start the selected DS agent (Foundation, Diploma, or Degree level)
 -   Launch Google ADK web interface for testing
--   Enable natural language queries about foundation courses
--   Provide context-aware responses using ChromaDB RAG
+-   Enable natural language queries about the specific level
+-   Provide context-aware responses using enhanced ChromaDB RAG
+-   Access specialized knowledge for each academic level
 
 ### 3. Legacy Knowledge Graph (Optional)
 
@@ -331,42 +399,60 @@ outputs/
 
 -   **Daily Data Updates**: Automated scraping and processing of 127+ IITM pages
 -   **Hierarchical Content Organization**: Structured storage by program and level
--   **Semantic Search**: Natural language queries via ChromaDB RAG pipeline
--   **AI Agent Interaction**: Specialized sub-agents for different program levels
+-   **Enhanced Semantic Search**: Advanced ChromaDB querying with smart_query, program/level filtering
+-   **Complete DS Agent Suite**: All three DS agents (Foundation, Diploma, Degree) fully implemented
+-   **Chunked Data Processing**: Improved retrieval precision with similarity scoring
 -   **Web Interface**: Google ADK built-in web UI for testing and interaction
 -   **Context-Aware Responses**: RAG-powered answers with relevant course information
+-   **Metadata-Rich Queries**: Access to course IDs, URLs, and chunk information
 
 ### AI Agent Capabilities
 
--   **DS Foundation Agent**: Answers questions about Data Science foundation courses
--   **ChromaDB Integration**: Semantic search across 50k-2L character collections
--   **RAG Pipeline**: Context-aware responses using retrieved information
--   **Natural Language Processing**: Understands complex academic queries
--   **Program-Specific Knowledge**: Specialized knowledge for each program level
+-   **DS Foundation Agent**: Specialized knowledge for foundational Data Science concepts and courses
+-   **DS Diploma Agent**: Expertise in both Diploma in Programming and Diploma in Data Science tracks
+-   **DS Degree Agent**: Advanced knowledge for degree-level Data Science courses and requirements
+-   **Enhanced ChromaDB Integration**: Smart querying across multiple collections with automatic routing
+-   **Advanced RAG Pipeline**: Context-aware responses using chunked data and similarity scoring
+-   **Natural Language Processing**: Understands complex academic queries with level-specific context
+-   **Program-Specific Knowledge**: Specialized knowledge for each academic level and program track
 
 ### Example Queries
 
+**Foundation Level:**
+
 -   "What courses should I take in my next term for DS foundation level?"
--   "What are the prerequisites for BSDA1001?"
 -   "Which foundation courses are most important for data science?"
+-   "What are the prerequisites for foundation level courses?"
+
+**Diploma Level:**
+
+-   "What's the difference between Diploma in Programming and Diploma in Data Science?"
+-   "Which diploma courses should I take after completing foundation?"
+-   "What are the requirements for diploma level courses?"
+
+**Degree Level:**
+
+-   "What are the prerequisites for BSDA1001?"
+-   "Which degree level courses are most challenging?"
 -   "What's the difference between DS and ES foundation courses?"
 
 ## 🚀 Next Steps
 
 ### Immediate Development
 
--   **Additional Sub-Agents**: DS Diploma, DS Degree, ES Foundation, ES Diploma, ES Degree agents
+-   **ES Agent Suite**: Complete Electronics Systems agents (Foundation, Diploma, Degree levels)
 -   **Orchestrator Agent**: Central agent to route queries to appropriate sub-agents
 -   **Context Agent**: Agent to ask for clarification when program/level is ambiguous
 -   **Enhanced Web UI**: Improved user interface for better interaction
+-   **Cross-Program Queries**: Agents that can answer questions spanning multiple programs
 
 ### Future Enhancements
 
--   **Cross-Program Queries**: Agents that can answer questions spanning multiple programs
 -   **Advanced Analytics**: Course difficulty analysis and success prediction
 -   **Integration APIs**: REST APIs for external system integration
 -   **Mobile Interface**: Mobile-optimized student interface
 -   **Real-time Updates**: Dynamic data source updates and synchronization
+-   **Multi-Program Orchestration**: Unified interface for DS and ES program queries
 
 This system enables building:
 
