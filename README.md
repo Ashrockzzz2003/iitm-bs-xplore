@@ -268,7 +268,7 @@ Natural language query interface, e.g.:
 cd xplorer/
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
+echo "GOOGLE_API_KEY=your_gemini_api_key" >> .env
 # Start ChromaDB server (in separate terminal)
 chroma run --host localhost --port 8000
 
@@ -301,6 +301,10 @@ cd agents/ds/foundation/  # For Foundation Level Agent
 cd agents/ds/diploma/     # For Diploma Level Agent
 # OR
 cd agents/ds/degree/      # For Degree Level Agent
+# OR 
+cd ai
+adk web agents/ds --port 8080
+adk web agents/es --port 8080
 
 adk web
 ```

@@ -2,5 +2,8 @@
 __pycache__/
 outputs/
 chroma_data/
+chroma/
 .env
 .DS_Store
+chroma.log
+AGENTS.md
