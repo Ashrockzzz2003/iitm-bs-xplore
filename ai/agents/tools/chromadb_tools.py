@@ -239,22 +239,28 @@ def format_query_results(results: Dict[str, Any], include_metadata: bool = True)
     Returns:
         Formatted string with results
     """
-    if not results["documents"]:
+    if not isinstance(results, dict):
         return "No results found."
-    
+
+    documents = results.get("documents") or []
+    metadatas = results.get("metadatas") or []
+    distances = results.get("distances") or []
+    total_results = results.get("total_results", len(documents))
+
+    if not documents:
+        return "No results found."
+
     output = []
-    output.append(f"Found {results['total_results']} results")
+    output.append(f"Found {total_results} results")
     
     if "collections_searched" in results:
         output.append(f"Searched collections: {', '.join(results['collections_searched'])}")
     
     output.append("")
     
-    for i, (doc, metadata, distance) in enumerate(zip(
-        results["documents"], 
-        results["metadatas"], 
-        results["distances"]
-    )):
+    for i, doc in enumerate(documents):
+        metadata = metadatas[i] if i < len(metadatas) else {}
+        distance = distances[i] if i < len(distances) else 0.0
         output.append(f"--- Result {i+1} (Distance: {distance:.3f}) ---")
         output.append(f"Text: {doc[:200]}{'...' if len(doc) > 200 else ''}")
         

@@ -250,6 +250,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "foundation",
         "module_path": PROJECT_ROOT / "agents" / "ds" / "foundation" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
     "ds_diploma": {
         "label": "Data Science - Diploma",
@@ -257,6 +258,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "diploma",
         "module_path": PROJECT_ROOT / "agents" / "ds" / "diploma" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
     "ds_degree": {
         "label": "Data Science - Degree",
@@ -264,6 +266,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "degree",
         "module_path": PROJECT_ROOT / "agents" / "ds" / "degree" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
     "es_foundation": {
         "label": "Electronic Systems - Foundation",
@@ -271,6 +274,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "foundation",
         "module_path": PROJECT_ROOT / "agents" / "es" / "foundation" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
     "es_diploma": {
         "label": "Electronic Systems - Diploma",
@@ -278,6 +282,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "diploma",
         "module_path": PROJECT_ROOT / "agents" / "es" / "diploma" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
     "es_degree": {
         "label": "Electronic Systems - Degree",
@@ -285,6 +290,7 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "level": "degree",
         "module_path": PROJECT_ROOT / "agents" / "es" / "degree" / "agent.py",
         "agent_attr": "root_agent",
+        "runner_app_name": "agents",
     },
 }
 

@@ -20,7 +20,7 @@ smart_query = chromadb_tools.smart_query
 query_by_program_and_level = chromadb_tools.query_by_program_and_level
 format_query_results = chromadb_tools.format_query_results
 
-GEMINI_MODEL = "gemini-2.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash-lite"
 CHROMA_COLLECTION = "ds_degree"
 
 SYSTEM_INSTRUCTION = f"""

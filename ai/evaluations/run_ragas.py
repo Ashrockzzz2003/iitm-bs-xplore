@@ -3,14 +3,18 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import importlib.util
 import json
+import logging
 import re
 import sys
+import uuid
+import warnings
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Mapping, Sequence
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
 CURRENT_DIR = Path(__file__).resolve().parent
 
@@ -24,6 +28,56 @@ if __package__ is None or __package__ == "":
     )
 else:  # pragma: no cover
     from .datasets import AGENT_REGISTRY, EVALUATION_DATA, EvaluationCase, PROJECT_ROOT
+
+for _logger_name in (
+    "google",
+    "google.genai",
+    "google_adk",
+    "google_adk.google.adk.tools._function_parameter_parse_util",
+):
+    logger = logging.getLogger(_logger_name)
+    logger.setLevel(logging.ERROR)
+    logger.propagate = False
+
+warnings.filterwarnings(
+    "ignore", message="Default value is not supported in function declaration schema for Google AI."
+)
+warnings.filterwarnings("ignore", message="Warning: there are non-text parts in the response.*")
+warnings.filterwarnings("ignore", message="App name mismatch detected.*")
+warnings.filterwarnings("ignore", category=ResourceWarning, message="unclosed client session")
+
+_original_showwarning = warnings.showwarning
+
+
+def _squelch_specific_warnings(message, category, filename, lineno, file=None, line=None):
+    text = str(message)
+    if text.startswith("Warning: there are non-text parts in the response"):
+        return
+    if "Default value is not supported in function declaration schema for Google AI." in text:
+        return
+    _original_showwarning(message, category, filename, lineno, file=file, line=line)
+
+
+warnings.showwarning = _squelch_specific_warnings
+
+
+class _SuppressGoogleLogs(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        if msg.startswith("Warning: there are non-text parts in the response"):
+            return False
+        if "Default value is not supported in function declaration schema for Google AI." in msg:
+            return False
+        return True
+
+
+for _logger_name in (
+    "google",
+    "google.genai",
+    "google_adk",
+    "google_adk.tools",
+):
+    logging.getLogger(_logger_name).addFilter(_SuppressGoogleLogs())
 
 try:
     from datasets import Dataset as HFDataset  # type: ignore
@@ -145,8 +199,12 @@ def _load_agent(agent_key: str):
     return agent
 
 
-def _invoke_agent(agent_obj: Any, question: str) -> str:
+def _invoke_agent(agent_key: str, agent_obj: Any, question: str) -> str:
     """Attempt to run the agent and return its answer."""
+
+    adk_answer = _invoke_google_adk_agent(agent_key, agent_obj, question)
+    if adk_answer is not None:
+        return adk_answer
 
     for candidate_method in ("run", "invoke", "chat", "__call__"):
         if hasattr(agent_obj, candidate_method):
@@ -166,6 +224,115 @@ def _invoke_agent(agent_obj: Any, question: str) -> str:
     raise RuntimeError("Agent does not expose a callable interface returning text.")
 
 
+def _run_coroutine(coro):
+    try:
+        return asyncio.run(coro)
+    except RuntimeError as exc:
+        if "asyncio.run()" in str(exc):
+            loop = asyncio.new_event_loop()
+            try:
+                asyncio.set_event_loop(loop)
+                return loop.run_until_complete(coro)
+            finally:
+                asyncio.set_event_loop(None)
+                loop.close()
+        raise
+
+
+def _invoke_google_adk_agent(agent_key: str, agent_obj: Any, question: str) -> Optional[str]:
+    """Run Google ADK agents via an in-memory runner if available."""
+
+    try:
+        from google.adk.agents.base_agent import BaseAgent  # type: ignore
+        from google.adk.runners import InMemoryRunner  # type: ignore
+        from google.genai import types as genai_types  # type: ignore
+    except Exception:
+        return None
+
+    if not isinstance(agent_obj, BaseAgent):
+        return None
+
+    runner_app_name = AGENT_REGISTRY.get(agent_key, {}).get("runner_app_name") or "agents"
+
+    runner = InMemoryRunner(agent=agent_obj, app_name=runner_app_name)
+    user_id = "eval-user"
+    session_id = str(uuid.uuid4())
+
+    session_service = runner.session_service
+    if hasattr(session_service, "create_session_sync"):
+        session_service.create_session_sync(
+            app_name=runner.app_name,
+            user_id=user_id,
+            session_id=session_id,
+            state={},
+        )
+    else:
+        _run_coroutine(
+            session_service.create_session(
+                app_name=runner.app_name,
+                user_id=user_id,
+                session_id=session_id,
+                state={},
+            )
+        )
+
+    user_message = genai_types.Content(
+        role="user", parts=[genai_types.Part(text=question)]
+    )
+
+    latest_text: Optional[str] = None
+    final_text: Optional[str] = None
+
+    try:
+        for event in runner.run(
+            user_id=user_id,
+            session_id=session_id,
+            new_message=user_message,
+        ):
+            if event.author == "user":
+                continue
+            if not event.content or not event.content.parts:
+                continue
+            text_parts: List[str] = []
+            for part in event.content.parts:
+                if getattr(part, "thought", False):
+                    continue
+                if getattr(part, "text", None):
+                    text_parts.append(part.text)
+                    continue
+                if getattr(part, "function_response", None):
+                    response = part.function_response.response
+                    try:
+                        text_parts.append(json.dumps(response))
+                    except TypeError:
+                        text_parts.append(str(response))
+                    continue
+                if getattr(part, "function_call", None):
+                    fc = part.function_call
+                    payload = {"function_call": {"name": fc.name, "args": fc.args}}
+                    try:
+                        text_parts.append(json.dumps(payload))
+                    except TypeError:
+                        text_parts.append(str(payload))
+                    continue
+            if not text_parts:
+                continue
+            candidate_text = "".join(text_parts).strip()
+            if candidate_text:
+                latest_text = candidate_text
+            if event.is_final_response() and candidate_text:
+                final_text = candidate_text
+                break
+    finally:
+        _run_coroutine(runner.close())
+
+    if final_text:
+        return final_text
+    if latest_text:
+        return latest_text
+
+    raise RuntimeError("Agent produced no textual response.")
+
 def evaluate_agent(
     agent_key: str,
     *,
@@ -178,25 +345,38 @@ def evaluate_agent(
     per_case_results: List[Dict[str, Any]] = []
 
     agent_obj = None
+    load_failure_reason: Optional[str] = None
     if not use_recorded:
         try:
             agent_obj = _load_agent(agent_key)
         except Exception as exc:
-            print(f"[warn] Falling back to recorded answers for {agent_key}: {exc}", file=sys.stderr)
+            load_failure_reason = f"{type(exc).__name__}: {exc}"
+            print(
+                f"[warn] Falling back to recorded answers for {agent_key}: {load_failure_reason}",
+                file=sys.stderr,
+            )
             use_recorded = True
 
     metrics_source = "ragas" if prefer_ragas and RAGAS_AVAILABLE else "fallback_lexical"
 
     for case in cases:
+        failure_reason: Optional[str] = load_failure_reason if (use_recorded or agent_obj is None) else None
         if use_recorded or agent_obj is None:
             answer = case.reference_answer
             answer_origin = "recorded_reference"
+            print(f"[info] Using recorded reference for {agent_key}/{case.id}")
         else:
             try:
-                answer = _invoke_agent(agent_obj, case.question)
+                answer = _invoke_agent(agent_key, agent_obj, case.question)
+                print(f"[info] Live response captured for {agent_key}/{case.id}")
                 answer_origin = "live_agent"
+                failure_reason = None
             except Exception as exc:
-                print(f"[warn] Live run failed for {case.id}: {exc}", file=sys.stderr)
+                failure_reason = f"{type(exc).__name__}: {exc}"
+                print(
+                    f"[warn] Live run failed for {agent_key}/{case.id}: {failure_reason}",
+                    file=sys.stderr,
+                )
                 answer = case.reference_answer
                 answer_origin = "recorded_reference"
 
@@ -215,6 +395,7 @@ def evaluate_agent(
                 "answer": answer,
                 "answer_origin": answer_origin,
                 "metrics": metrics,
+                "failure_reason": failure_reason,
             }
         )
 
@@ -259,7 +440,7 @@ def _parse_args() -> argparse.Namespace:
         "--output",
         dest="output_path",
         type=Path,
-        default=Path("ai") / "evaluations" / "results" / "first_run_metrics.json",
+        default=PROJECT_ROOT / "evaluations" / "results" / "first_run_metrics.json",
         help="Where to write the metrics JSON file.",
     )
     parser.add_argument(
