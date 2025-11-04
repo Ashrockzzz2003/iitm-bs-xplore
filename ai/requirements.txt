@@ -1,5 +1,6 @@
-google-adk
+google-adk>=0.4.0
 chromadb
-google-genai
 ragas
 datasets
+google-generativeai>=0.8.3
+google-genai>=0.8.0
