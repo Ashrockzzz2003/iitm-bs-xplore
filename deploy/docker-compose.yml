@@ -1,0 +1,32 @@
+
+services:
+  neo4j:
+    image: neo4j:latest
+    volumes:
+        - /$HOME/neo4j/logs:/logs
+        - /$HOME/neo4j/config:/config
+        - /$HOME/neo4j/data:/data
+        - /$HOME/neo4j/plugins:/plugins
+    environment:
+        - NEO4J_AUTH=neo4j/password
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    restart: always
+
+  ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - neo4j
+    environment:
+      - GOOGLE_GENAI_USE_VERTEXAI=0
+      - GOOGLE_API_KEY=AIzaSyAgJSWf7SFCHHwSgI4Rir_JZSWb8QPhS6U
+      - PORT=8080
+      - NEO4J_URI=bolt://localhost:7687
+      - NEO4J_USERNAME=neo4j
+      - NEO4J_PASSWORD=password
