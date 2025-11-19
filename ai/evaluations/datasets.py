@@ -600,6 +600,14 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "agent_attr": "root_agent",
         "runner_app_name": "agents",
     },
+    "orchestrator": {
+        "label": "IITM Multi-Agent Orchestrator",
+        "program": "multi",
+        "level": "all",
+        "module_path": PROJECT_ROOT / "agents" / "orchestrator" / "agent.py",
+        "agent_attr": "root_agent",
+        "runner_app_name": "agents",
+    },
 }
 
 
