@@ -5,9 +5,7 @@ from __future__ import annotations
 import asyncio
 import importlib.util
 import json
-import math
 import os
-import sys
 import uuid
 from typing import Any, Dict, List, Optional
 
@@ -18,21 +16,6 @@ from google.genai import types as genai_types
 
 BASE_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
-TOOLS_PATH = os.path.join(PROJECT_ROOT, "tools")
-
-if TOOLS_PATH not in sys.path:
-    sys.path.insert(0, TOOLS_PATH)
-
-chromadb_spec = importlib.util.spec_from_file_location(
-    "chromadb_tools", os.path.join(TOOLS_PATH, "chromadb_tools.py")
-)
-if not chromadb_spec or not chromadb_spec.loader:
-    raise ImportError("Unable to import chromadb_tools for orchestrator agent")
-
-chromadb_tools = importlib.util.module_from_spec(chromadb_spec)
-chromadb_spec.loader.exec_module(chromadb_tools)  # type: ignore[attr-defined]
-
-get_embeddings = chromadb_tools.get_embeddings
 
 
 def _load_agent_module(alias: str, *relative_parts: str):
@@ -225,13 +208,72 @@ AVAILABLE_AGENT_KEYS = tuple(sorted(SUB_AGENTS.keys()))
 KG_AVAILABLE = SUB_AGENTS.get("knowledge_graph", {}).get("available", False)
 AVAILABLE_AGENT_LIST = ", ".join(AVAILABLE_AGENT_KEYS) if AVAILABLE_AGENT_KEYS else "None"
 KG_AGENT_INSTRUCTION = (
-    "- knowledge_graph for structured prerequisite / relationship / eligibility questions"
+    "- knowledge_graph for prerequisites, level progression, and other relationship questions"
     if KG_AVAILABLE
     else (
         "- knowledge_graph agent is currently unavailable (Neo4j credentials missing). "
         "When a user explicitly requests KG data, explain the limitation instead of delegating."
     )
 )
+
+PROGRAM_HINTS = {
+    "ds": [
+        "data science",
+        "ml",
+        "machine learning",
+        "statistics",
+        "ds ",
+        " ds",
+    ],
+    "es": [
+        "electronic systems",
+        "electronics",
+        "circuits",
+        "hardware",
+        "embedded",
+        "signals",
+        "vlsi",
+        "es ",
+        " es",
+    ],
+}
+
+LEVEL_HINTS = {
+    "foundation": ["foundation", "foundational"],
+    "diploma": ["diploma"],
+    "degree": ["degree", "bs degree", "bsc degree"],
+}
+
+RELATIONSHIP_TERMS = [
+    "prereq",
+    "prerequisite",
+    "corequisite",
+    "requirement",
+    "dependency",
+    "path",
+    "progression",
+    "eligibility",
+    "depends on",
+]
+
+POLICY_TERMS = [
+    "policy",
+    "grading",
+    "grade",
+    "cgpa",
+    "gpa",
+    "credits",
+    "attendance",
+    "exam",
+    "assessment",
+    "fee",
+    "refund",
+    "registration",
+    "deadline",
+    "honor code",
+]
+
+LEVEL_PRIORITY = ["foundation", "diploma", "degree"]
 
 
 async def delegate_to_agent(
@@ -279,59 +321,136 @@ async def delegate_to_agent(
     }
 
 
-def _cosine_similarity(a: List[float], b: List[float]) -> float:
-    if not a or not b or len(a) != len(b):
-        return 0.0
-    dot = sum(x * y for x, y in zip(a, b))
-    norm_a = math.sqrt(sum(x * x for x in a))
-    norm_b = math.sqrt(sum(y * y for y in b))
-    if not norm_a or not norm_b:
-        return 0.0
-    return dot / (norm_a * norm_b)
-
-
-def rerank_documents(
-    query: str,
-    candidate_documents: List[str],
-    candidate_sources: Optional[List[str]] = None,
+async def delegate_to_agents(
+    agent_keys: List[str],
+    question: str,
+    extra_context: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Rerank candidate snippets using Gemini embeddings and cosine similarity."""
+    """Fan out a query to multiple specialised agents concurrently."""
 
-    query = query.strip()
-    if not query:
-        raise ValueError("Query must be provided for reranking.")
-    if not candidate_documents:
-        raise ValueError("candidate_documents must include at least one entry.")
+    if not agent_keys:
+        raise ValueError("Provide at least one agent key to delegate to.")
 
-    query_embedding = get_embeddings(query)
-    ranked: List[Dict[str, Any]] = []
-
-    for idx, doc in enumerate(candidate_documents):
-        doc_text = (doc or "").strip()
-        if not doc_text:
+    # Deduplicate while preserving order
+    seen = set()
+    ordered_keys: List[str] = []
+    for key in agent_keys:
+        if key in seen:
             continue
-        embedding = get_embeddings(doc_text)
-        similarity = _cosine_similarity(query_embedding, embedding)
-        ranked.append(
-            {
-                "rank": idx + 1,
-                "similarity": similarity,
-                "text": doc_text,
-                "source": candidate_sources[idx]
-                if candidate_sources and idx < len(candidate_sources)
-                else None,
-            }
-        )
+        if key not in SUB_AGENTS:
+            raise ValueError(f"Unsupported agent_key '{key}'.")
+        seen.add(key)
+        ordered_keys.append(key)
 
-    ranked.sort(key=lambda item: item["similarity"], reverse=True)
-    for new_rank, item in enumerate(ranked, start=1):
-        item["rank"] = new_rank
+    tasks = [
+        delegate_to_agent(key, question, extra_context) for key in ordered_keys
+    ]
+
+    responses = await asyncio.gather(*tasks, return_exceptions=True)
+
+    bundled: List[Dict[str, Any]] = []
+    for key, result in zip(ordered_keys, responses):
+        if isinstance(result, Exception):
+            bundled.append(
+                {
+                    "agent_key": key,
+                    "error": str(result),
+                    "agent_summary": SUB_AGENTS[key].get("summary", ""),
+                }
+            )
+            continue
+        bundled.append(result)  # type: ignore[arg-type]
+
+    return {"question": question, "results": bundled}
+
+
+def route_question(question: str) -> Dict[str, Any]:
+    """Suggest relevant agent keys for a user query using lightweight heuristics."""
+
+    text = (question or "").strip().lower()
+    if not text:
+        raise ValueError("Question must be non-empty.")
+
+    programs: List[str] = []
+    for key, hints in PROGRAM_HINTS.items():
+        if any(hint in text for hint in hints):
+            programs.append(key)
+    if not programs:
+        programs = ["ds", "es"]
+
+    level_hits: List[str] = []
+    for level, hints in LEVEL_HINTS.items():
+        if any(hint in text for hint in hints):
+            level_hits.append(level)
+    if not level_hits:
+        level_hits = ["degree"]
+
+    # Preserve the canonical level order and de-duplicate
+    ordered_levels: List[str] = []
+    seen_levels = set()
+    for level in LEVEL_PRIORITY:
+        if level in level_hits and level not in seen_levels:
+            ordered_levels.append(level)
+            seen_levels.add(level)
+
+    agent_keys: List[str] = []
+    rationale: List[str] = []
+
+    for program in programs:
+        for level in ordered_levels:
+            key = f"{program}_{level}"
+            if key in SUB_AGENTS:
+                agent_keys.append(key)
+    if not agent_keys:
+        rationale.append("No programme/level detected; defaulting to degree agents.")
+        if "ds_degree" in SUB_AGENTS:
+            agent_keys.append("ds_degree")
+        if "es_degree" in SUB_AGENTS:
+            agent_keys.append("es_degree")
+
+    relationship_needed = any(term in text for term in RELATIONSHIP_TERMS)
+    if relationship_needed and KG_AVAILABLE:
+        agent_keys.append("knowledge_graph")
+        rationale.append("Added knowledge_graph for prerequisite/progression context.")
+    elif relationship_needed and not KG_AVAILABLE:
+        rationale.append("KG unavailable; cannot auto-answer prerequisites/progression.")
+
+    policy_needed = any(term in text for term in POLICY_TERMS)
+    if policy_needed and "policy_docs" in SUB_AGENTS:
+        agent_keys.append("policy_docs")
+        rationale.append("Added policy_docs for policy/handbook guidance.")
+
+    # Remove duplicates while preserving order
+    seen_keys = set()
+    deduped_keys: List[str] = []
+    for key in agent_keys:
+        if key not in seen_keys:
+            deduped_keys.append(key)
+            seen_keys.add(key)
 
     return {
-        "query": query,
-        "ranked_documents": ranked,
-        "top_document": ranked[0] if ranked else None,
+        "agent_keys": deduped_keys,
+        "programs": programs,
+        "levels": ordered_levels,
+        "relationship_needed": relationship_needed,
+        "policy_needed": policy_needed,
+        "rationale": rationale,
     }
+
+
+async def delegate_with_routing(
+    question: str, extra_context: Optional[str] = None
+) -> Dict[str, Any]:
+    """Automatically route a question to suggested agents and collect responses."""
+
+    routing = route_question(question)
+    keys = routing.get("agent_keys", [])
+    if not keys:
+        raise RuntimeError("Routing produced no agent keys.")
+
+    results = await delegate_to_agents(keys, question, extra_context)
+    results["routing"] = routing
+    return results
 
 
 GEMINI_MODEL = "gemini-2.5-flash-lite"
@@ -342,26 +461,27 @@ You are the IITM BS Programme Orchestrator Agent.
 Available sub-agents: {AVAILABLE_AGENT_LIST}
 
 Responsibilities:
-1. Interpret the user's full query and break it into sub-goals that map to the available specialist agents:
-   - ds_foundation / ds_diploma / ds_degree for Data Science level-specific guidance
-   - es_foundation / es_diploma / es_degree for Electronic Systems programme details
-   - policy_docs for handbook, grading, and programme-wide policy clarifications
+1. Call route_question to identify the relevant sub-agents based on programme/level hints and whether policy or relationship information is needed:
+   - Default to degree agents (ds_degree / es_degree) when no level is stated.
+   - Include foundation/diploma agents only when the query mentions those levels explicitly or spans the full journey.
+   - Add policy_docs for handbook, grading, eligibility, or process clarifications.
    {KG_AGENT_INSTRUCTION}
-2. Call delegate_to_agent with concise, level-aware prompts. Include the user's wording and any clarifications you derive so the delegated agent receives full context.
-3. When questions span multiple programmes or levels, consult every relevant agent so that coverage is complete. For structural or cross-linking needs, combine KG outputs with DS/ES narrative agents.
-4. Extract the most salient passages from each delegated response and send them—along with their identifiers—to rerank_documents. Always rerank before finalizing your answer so the most relevant snippets drive the summary.
-5. Use the reranking output to ground your final answer. Cite which agent supplied the supporting evidence (e.g., “DS Degree agent” or “knowledge_graph”).
-6. If information is missing or conflicting, ask for clarification instead of guessing.
+2. Delegate using delegate_with_routing (auto) or delegate_to_agents (manual) with the selected agent keys so each agent receives the full user wording plus any clarifications you add.
+3. When ambiguity exists between DS and ES or the user asks multi-programme questions, include both relevant agents.
+4. For relationship-heavy questions (prerequisites, dependencies, progression), always include the knowledge_graph agent and merge its structured output with narrative details from the level agents.
+5. Synthesize a single, concise answer that cites which agent(s) informed each point. If an agent is unavailable, note it briefly and continue with other signals.
+6. If needed information is missing or conflicting, ask for clarification instead of guessing.
 
 Workflow:
-- Plan → delegate to one or more agents → rerank the collected snippets → synthesize a consolidated answer grounded in the highest-ranked evidence.
-- Prefer structured bullet summaries that highlight level/program distinctions, prerequisites, and action items for the learner.
+- Use route_question → delegate_with_routing (preferred) or route_question → delegate_to_agents.
+- Merge the returned responses into a unified answer grounded in those results.
+- Prefer clear bullet points that highlight level/program distinctions, prerequisites, and next steps for the learner.
 """
 
 root_agent = Agent(
     model=GEMINI_MODEL,
     name="IITM_BS_Orchestrator",
-    description="Routes IITM BS queries to DS/ES/KG sub-agents, reranks evidence, and synthesizes final replies.",
+    description="Routes IITM BS queries to DS/ES/KG sub-agents and synthesizes grounded answers.",
     instruction=SYSTEM_INSTRUCTION,
-    tools=[delegate_to_agent, rerank_documents],
+    tools=[route_question, delegate_with_routing, delegate_to_agent, delegate_to_agents],
 )
