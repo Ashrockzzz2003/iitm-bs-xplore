@@ -19,6 +19,31 @@ python ai/evaluations/run_ragas.py --live
 
 By default the runner prefers ragas metrics when the library is available. Pass `--force-fallback` to stick with the deterministic lexical heuristics that produced the first-run snapshot.
 
+## Hyperparameter tuning
+
+Use `ai/evaluations/hparam_tuning.py` to search chunking + retrieval settings, log trial scores, and write back the best config.
+
+### How it works
+- Sweeps chunk sizes, overlaps, top_k, and optional score thresholds (see search space in the script).
+- Evaluates all agents using recorded answers (no live agent calls) but can pull live contexts from ChromaDB if it is reachable and credentials are set.
+- Scores each trial by the mean of ragas metrics (or lexical fallbacks when ragas/LLM is unavailable).
+- Writes a Markdown report to `ai/evaluations/results/hparam_tuning.md` and updates `rag_config.json` with the best settings (including metadata about the run).
+
+### Run it
+```bash
+# Ensure deps installed and GOOGLE_API_KEY is set if you want ragas
+python ai/evaluations/hparam_tuning.py
+```
+
+### Outputs to expect
+- Best config persisted: `rag_config.json` (drives chunking, retrieval, and eval defaults).
+- Trial report: `ai/evaluations/results/hparam_tuning.md` with trial grid, scores, and per‑agent metrics for the best trial.
+
+### Tips
+- Start your ChromaDB service and set `CHROMA_HOST`/`CHROMA_PORT` so live contexts are available; otherwise the tuner falls back to fixture contexts.
+- Install `ragas` and `langchain-google-genai` (already listed in `ai/requirements.txt`) and export `GOOGLE_API_KEY` to get non-fallback ragas metrics.
+- Re-run tuning whenever you change ingestion, embeddings, or want to refresh the best config.
+
 ## Datasets
 
 Evaluation cases live in `ai/evaluations/datasets.py`. Data Science fixtures are copied from the IITM Academics page scraped in the repository; Electronic Systems fixtures are high-level program notes and should be replaced with production data once the Electronic Systems collections land in ChromaDB.
