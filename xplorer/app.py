@@ -13,6 +13,9 @@ import sys
 from datetime import datetime
 from typing import Any, Dict, List
 
+# Add parent directory to path to import from ai module
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from util.hierarchical_aggregator import HierarchicalTextAggregator
 from util.chromadb.xml_chroma_uploader import upload_all_xml_files
 

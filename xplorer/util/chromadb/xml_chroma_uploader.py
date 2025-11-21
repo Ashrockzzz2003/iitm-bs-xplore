@@ -9,6 +9,7 @@ Uses Google Gemini embeddings for vectorization.
 import chromadb
 import os
 import re
+import hashlib
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -131,7 +132,12 @@ def upload_chunks_to_collection(
         metadata = {k: v for k, v in metadata.items() if v is not None}
 
         # Generate unique ID for this chunk
-        chunk_id = f"{program}_{chunk['metadata'].get('document_id', 'unknown')}_chunk_{chunk['metadata'].get('chunk_index', i)}"
+        # Include URL hash to ensure uniqueness when document_id is duplicated
+        doc_url = chunk['metadata'].get('url', '')
+        url_hash = hashlib.md5(doc_url.encode()).hexdigest()[:8] if doc_url else 'no_url'
+        doc_id = chunk['metadata'].get('document_id', 'unknown')
+        chunk_index = chunk['metadata'].get('chunk_index', i)
+        chunk_id = f"{program}_{doc_id}_{url_hash}_chunk_{chunk_index}"
 
         documents.append(chunk['text'])
         embeddings.append(chunk_embeddings)

@@ -8,3 +8,4 @@ langchain-core
 langchain-community
 langchain
 langchain-google-genai
+neo4j

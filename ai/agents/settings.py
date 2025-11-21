@@ -1,6 +1,5 @@
 """Shared settings for agents that pull from the central RAG config."""
 
-import os
 import sys
 from pathlib import Path
 
