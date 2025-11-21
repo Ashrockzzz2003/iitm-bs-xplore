@@ -21,7 +21,7 @@ By default the runner prefers ragas metrics when the library is available. Pass 
 
 ## Hyperparameter tuning
 
-Use `ai/evaluations/hparam_tuning.py` to search chunking + retrieval settings, log trial scores, and write back the best config.
+Use `ai/evaluations/hparam_tuning.py` to search chunking + retrieval settings, log trial scores, and write back the best config. By default it invokes live agents for every trial (falls back to recorded answers only if a live call fails).
 
 ### How it works
 - Sweeps chunk sizes, overlaps, top_k, and optional score thresholds (see search space in the script).
@@ -32,7 +32,11 @@ Use `ai/evaluations/hparam_tuning.py` to search chunking + retrieval settings, l
 ### Run it
 ```bash
 # Ensure deps installed and GOOGLE_API_KEY is set if you want ragas
+# Default: live agents + live contexts (if Chroma reachable)
 python ai/evaluations/hparam_tuning.py
+
+# If you want a fast offline sweep that skips live agent calls:
+python ai/evaluations/hparam_tuning.py --recorded
 ```
 
 ### Outputs to expect

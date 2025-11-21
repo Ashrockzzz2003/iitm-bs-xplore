@@ -1,7 +1,8 @@
 # RAG Hyperparameter Tuning Report
-- Generated: 2025-11-21T12:01:04.771402+00:00
+- Generated: 2025-11-21T13:03:04.148039+00:00
 - Agents evaluated: ds_foundation, ds_diploma, ds_degree, es_foundation, es_diploma, es_degree
 - Ragas available: False
+- Answers source: recorded references
 - Scoring rule: mean of answer_relevancy, context_precision, context_recall, faithfulness across agents (fallback metrics when ragas unavailable)
 - Context mode: live retrieval
 - Base config: {'chunk_size': 700, 'chunk_overlap': 120, 'top_k': 4, 'score_threshold': None, 'rerank_top_k': None, 'max_context_chars': 1800, 'prefer_ragas': True, 'ragas_model': 'gemini-1.5-flash', 'embedding_model': 'text-embedding-004', 'use_live_contexts': True}

@@ -1,22 +1,49 @@
 {
   "metadata": {
-    "generated_at": "2025-10-31T10:06:28.894084+00:00",
+    "generated_at": "2025-11-21T12:47:32.876365+00:00",
     "ragas_available": false,
     "use_recorded_answers": false,
+    "use_live_contexts": true,
+    "rag_config": {
+      "chunk_size": 700,
+      "chunk_overlap": 120,
+      "top_k": 4,
+      "score_threshold": null,
+      "rerank_top_k": null,
+      "max_context_chars": 1800,
+      "prefer_ragas": true,
+      "ragas_model": "gemini-1.5-flash",
+      "embedding_model": "text-embedding-004",
+      "use_live_contexts": true
+    },
     "metrics_preference": "fallback_lexical",
+    "ragas_runtime": {
+      "enabled": false,
+      "prefer_ragas": true,
+      "reason": "ragas_not_installed",
+      "llm": false,
+      "embeddings": false
+    },
     "project_root": "."
   },
   "agents": [
     {
       "agent_key": "ds_foundation",
       "agent_label": "Data Science - Foundation",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.0394,
-        "context_precision": 0.0438,
-        "context_recall": 0.6522,
-        "faithfulness": 0.0438
+        "answer_relevancy": 0.5673,
+        "context_precision": 0.5384,
+        "context_recall": 0.607,
+        "faithfulness": 0.5384
       },
       "cases": [
         {
@@ -35,28 +62,131 @@
               "level": "foundation"
             }
           },
-          "answer": "{\"documents\": [\"less Visit website View all Foundational Level courses support@study.iitm.ac.in 7850999966 IITM BS Degree Office, 3rd Floor, ICSR Building, IIT Madras, Chennai - 600036 Please use only the above methods for program queries. Response time: 3 working days. During peak periods, Google Meet links will be shared. Call wait times may be longer. Terms of Service | Privacy Policy\", \"aims at achieving fluency and confidence in spoken and written English. This course will use insights from theories of learning and dominant methods of teaching language. by Rajesh Kumar , Karthika Sathyanathan Course ID: BSHS1001 Course Credits: 4 Course Type: Foundational Pre-requisites: None What you\\u00e2\\u0080\\u0099ll learn VIEW COURSE VIDEOS Acquiring wide range of vocabulary and linguistic competence that is required for functional performance; Identifying patterns of basic sentence types and structural accuracy; Building elementary foundations for the knowledge related to conventions and use of language in society, particularly in speaking and listening skills; Developing the basic skills for creative reading and writing with precision. Course structure & Assessments 12 weeks of coursework, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page.\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSHS1001 Foundational Level Course English I This course\", \"Course structure & Assessments 11 weeks of coursework, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Vector and matrices - Vectors; Matrices; Systems of Linear Equations; Determinants (part 1); Determinants (part 2) WEEK 2 Solving linear equations - Determinants (part 3); Cramer's Rule; \\\"Solutions to a system of linear equations with an invertible coefficient matrix\\\"; The echelon form; Row reduction; The Gaussian elimination method WEEK 3 Introduction to vector spaces - Introduction to vector spaces; Some properties of vector spaces; Linear dependence; Linear independence - Part ; Linear independence - Part 2 WEEK 4 Basis and dimension - What is a basis for a vector space?; Finding bases for vector spaces; What is the rank/dimension for a vector space; Rank and dimension using Gaussian elimination WEEK 5 Rank and Nullity of a matrix; Introduction\", \"Course structure & Assessments 12 weeks of coursework, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Introduction and type of data, Types of data, Descriptive and Inferential statistics, Scales of measurement WEEK 2 Describing categorical data Frequency distribution of categorical data, Best practices for graphing categorical data, Mode and median for categorical variable WEEK 3 Describing numerical data Frequency tables for numerical data, Measures of central tendency - Mean, median and mode, Quartiles and percentiles, Measures of dispersion - Range, variance, standard deviation and IQR, Five number summary WEEK 4 Association between two variables - Association between two categorical variables - Using relative frequencies in contingency tables, Association between two numerical variables - Scatterplot, covariance, Pearson correlation\", \"WEEK 1 Sounds and Words (Vowel and Consonant sounds) WEEK 2 Parts of Speech WEEK 3 Sentences (Phrases and Idioms) WEEK 4 Speaking Skills (Spoken English Preliminaries) WEEK 5 Tenses and Agreement in English Sentences WEEK 6 Reading Skills (Skimming, Scanning and Comprehension) WEEK 7 Listening Skills WEEK 8 Aspiration, Word Stress and Syllabification WEEK 9 Speaking Skills (Presentation and Group Discussion) WEEK 10 Grammar (Common Errors in English) and Writing Skills WEEK 11 Writing Skills (Basics of Writing) WEEK 12 Writing Skills (Professional Writing) + Show all weeks Reference Documents / Books Addition Learning Support for English - 1 (Basic English) DOWNLOAD Prescribed Books The following are the suggested books for the course: Aarts, Bas (2011). Oxford Modern English Grammar, New York: Oxford University Press Murphy, Raymond (2012). English Grammar in Use, New York: Cambridge University Press. 4th Edition Krishnaswamy, Subashree and K. Srilata eds. (2007).\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSHS1002 Foundational Level Course English II Focus on\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMA1001 Foundational Level Course Mathematics for Data\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMA1002 Foundational Level Course Statistics for Data\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMA1003 Foundational Level Course Mathematics for Data\"], \"metadatas\": [{\"chunk_end\": 5999, \"document_id\": \"BSMA1004\", \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"label\": \"Statistics for Data Science II 4 BSMA1004 BSMA1002, BSMA1001 BSMA1003\", \"program\": \"ds\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1004.html\", \"chunk_start\": 5624, \"level\": \"foundation\", \"collection\": \"ds_foundation_course\", \"chunk_length\": 374, \"chunk_index\": 6}, {\"chunk_end\": 2773, \"chunk_start\": 1799, \"program\": \"ds\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_length\": 973, \"level\": \"foundation\", \"collection\": \"ds_foundation_course\", \"type\": \"course\", \"chunk_index\": 2, \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSHS1001.html\", \"document_id\": \"BSHS1001\", \"label\": \"English I 4 BSHS1001 None None\"}, {\"type\": \"course\", \"collection\": \"ds_foundation_course\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSHS1001.html\", \"level\": \"foundation\", \"chunk_index\": 1, \"document_id\": \"BSHS1001\", \"label\": \"English I 4 BSHS1001 None None\", \"chunk_end\": 1799, \"chunk_start\": 800, \"embedding_model\": \"gemini-embedding-001\", \"program\": \"ds\", \"chunk_length\": 999}, {\"level\": \"foundation\", \"chunk_start\": 2771, \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"chunk_index\": 3, \"program\": \"ds\", \"chunk_end\": 3770, \"chunk_length\": 998, \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1003.html\", \"document_id\": \"BSMA1003\", \"collection\": \"ds_foundation_course\", \"label\": \"BSMA1003\"}, {\"type\": \"course\", \"label\": \"Statistics for Data Science I 4 BSMA1002 None None\", \"document_id\": \"BSMA1002\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1002.html\", \"collection\": \"ds_foundation_course\", \"chunk_index\": 3, \"chunk_length\": 987, \"chunk_end\": 3651, \"chunk_start\": 2663, \"level\": \"foundation\", \"embedding_model\": \"gemini-embedding-001\", \"program\": \"ds\"}, {\"program\": \"ds\", \"collection\": \"ds_foundation_course\", \"chunk_end\": 3753, \"chunk_length\": 979, \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"BSHS1001\", \"level\": \"foundation\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSHS1001.html\", \"chunk_start\": 2773, \"label\": \"English I 4 BSHS1001 None None\", \"type\": \"course\", \"chunk_index\": 3}, {\"embedding_model\": \"gemini-embedding-001\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSHS1002.html\", \"chunk_index\": 1, \"level\": \"foundation\", \"chunk_end\": 1797, \"type\": \"course\", \"chunk_length\": 997, \"collection\": \"ds_foundation_course\", \"chunk_start\": 800, \"label\": \"English II 4 BSHS1002 BSHS1001 None\", \"program\": \"ds\", \"document_id\": \"BSHS1002\"}, {\"type\": \"course\", \"program\": \"ds\", \"embedding_model\": \"gemini-embedding-001\", \"label\": \"Mathematics for Data Science I 4 BSMA1001 None None\", \"chunk_index\": 1, \"chunk_start\": 800, \"collection\": \"ds_foundation_course\", \"chunk_end\": 1798, \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1001.html\", \"document_id\": \"BSMA1001\", \"chunk_length\": 998, \"level\": \"foundation\"}, {\"level\": \"foundation\", \"chunk_length\": 997, \"chunk_start\": 800, \"chunk_index\": 1, \"program\": \"ds\", \"collection\": \"ds_foundation_course\", \"chunk_end\": 1797, \"document_id\": \"BSMA1002\", \"label\": \"Statistics for Data Science I 4 BSMA1002 None None\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1002.html\", \"type\": \"course\", \"embedding_model\": \"gemini-embedding-001\"}, {\"label\": \"BSMA1003\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_index\": 1, \"collection\": \"ds_foundation_course\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMA1003.html\", \"chunk_start\": 800, \"level\": \"foundation\", \"type\": \"course\", \"program\": \"ds\", \"document_id\": \"BSMA1003\", \"chunk_length\": 998, \"chunk_end\": 1798}], \"distances\": [0.7199353, 0.7734041, 0.7803347, 0.7929657, 0.7973552, 0.7989743, 0.7999544, 0.8031994, 0.80349207, 0.8085079], \"ids\": [\"ds_BSMA1004_chunk_6\", \"ds_BSHS1001_chunk_2\", \"ds_BSHS1001_chunk_1\", \"ds_BSMA1003_chunk_3\", \"ds_BSMA1002_chunk_3\", \"ds_BSHS1001_chunk_3\", \"ds_BSHS1002_chunk_1\", \"ds_BSMA1001_chunk_1\", \"ds_BSMA1002_chunk_1\", \"ds_BSMA1003_chunk_1\"], \"collection\": \"ds_foundation_course\", \"query\": \"foundation level course duration and weekly hours\", \"total_results\": 10}",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.0394,
-            "context_precision": 0.0438,
-            "context_recall": 0.6522,
-            "faithfulness": 0.0438
+          "answer": "It is an eight-course block totalling 32 credits. Learners typically commit about 10 hours per course each week and finish the foundation stage in roughly one to three years.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Foundation Level: 32 credits | 8 courses. The curriculum covers computational thinking, Python programming, English, mathematics, and statistics fundamentals.",
+            "Expected engagement is roughly 10 hours per course each week, and the institute notes that learners usually take between one and three years to complete the foundation stage before moving on."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "foundation"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.5,
+            "context_precision": 0.6552,
+            "context_recall": 0.6522,
+            "faithfulness": 0.6552
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "foundation_level_3_terms_plan",
+            "question": "I aim to complete the Foundation Level of the IITM BS Data Science programme within three terms. How many courses should I take each term to achieve this?",
+            "ground_truth": "The Foundation Level comprises 8 courses (32 credits) and must be completed before moving to the Diploma Level. Since each term allows registration of up to 4 courses, a three-term plan would typically involve taking 3 courses in Term 1, 3 in Term 2, and 2 in Term 3 (or 3-3-2) to finish all 8 within three terms.",
+            "contexts": [
+              "Foundation Level: 32 credits | 8 courses.",
+              "Every year is divided into three terms of four months each \u2013 January, May and September.",
+              "In each term, a learner may register for up to 4 courses depending on their CCC (Credit Clearing Capability).",
+              "Level Progression Requirements: Foundation Level: All 8 courses must be successfully completed before enrolling in any Diploma Level course."
+            ],
+            "reference_answer": "To finish the 8-course foundation level in three terms, you could schedule it as follows: Term 1 \u2013 take 3 courses, Term 2 \u2013 take 3 courses, Term 3 \u2013 take the remaining 2 courses. This is within the maximum of 4 per term and ensures you complete all 8 by the end of the third term, enabling you to proceed to the Diploma Level.",
+            "metadata": {
+              "source": "IITM DS Academics page",
+              "program": "data_science",
+              "level": "foundation",
+              "planning_horizon": "3 terms"
+            }
+          },
+          "answer": "To finish the 8-course foundation level in three terms, you could schedule it as follows: Term 1 \u2013 take 3 courses, Term 2 \u2013 take 3 courses, Term 3 \u2013 take the remaining 2 courses. This is within the maximum of 4 per term and ensures you complete all 8 by the end of the third term, enabling you to proceed to the Diploma Level.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Foundation Level: 32 credits | 8 courses.",
+            "Every year is divided into three terms of four months each \u2013 January, May and September.",
+            "In each term, a learner may register for up to 4 courses depending on their CCC (Credit Clearing Capability).",
+            "Level Progression Requirements: Foundation Level: All 8 courses must be successfully completed before enrolling in any Diploma Level course."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "foundation"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5,
+            "context_precision": 0.4,
+            "context_recall": 0.575,
+            "faithfulness": 0.4
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "ds_foundation_to_diploma_promotion_criteria",
+            "question": "What is the minimum CGPA required to move from the Foundation Level to the Diploma Level in the IITM BS Data Science and Applications program?",
+            "ground_truth": "There is no minimum CGPA requirement to move from the Foundation to the Diploma level. Learners simply need to pass all eight Foundation courses individually, with at least 40 marks in each course, before registering for Diploma Level courses.",
+            "contexts": [
+              "Promotion criteria: Learners must complete and pass all Foundation Level courses to progress to the Diploma Level.",
+              "Each Foundation course requires a minimum score of 40 marks to be considered passed.",
+              "No cumulative grade or CGPA threshold is specified for level progression in the IITM BS Data Science program."
+            ],
+            "reference_answer": "You don\u2019t need any minimum CGPA to move to the Diploma Level. You just need to pass all Foundation courses individually with at least 40 marks in each.",
+            "metadata": {
+              "source": "IITM BS Academics page",
+              "program": "data_science",
+              "level": "foundation",
+              "policy_type": "progression_criteria"
+            }
+          },
+          "answer": "You don\u2019t need any minimum CGPA to move to the Diploma Level. You just need to pass all Foundation courses individually with at least 40 marks in each.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Promotion criteria: Learners must complete and pass all Foundation Level courses to progress to the Diploma Level.",
+            "Each Foundation course requires a minimum score of 40 marks to be considered passed.",
+            "No cumulative grade or CGPA threshold is specified for level progression in the IITM BS Data Science program."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "foundation"
+          },
+          "metrics": {
+            "answer_relevancy": 0.7018,
+            "context_precision": 0.56,
+            "context_recall": 0.5938,
+            "faithfulness": 0.56
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     },
     {
       "agent_key": "ds_diploma",
       "agent_label": "Data Science - Diploma",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.2593,
-        "context_precision": 0.2333,
-        "context_recall": 0.5833,
-        "faithfulness": 0.2333
+        "answer_relevancy": 0.5929,
+        "context_precision": 0.4258,
+        "context_recall": 0.5561,
+        "faithfulness": 0.4258
       },
       "cases": [
         {
@@ -75,28 +205,129 @@
               "level": "diploma"
             }
           },
-          "answer": "The provided search results do not contain specific information about the credit structure for the diploma level in the IITM BS Data Science program. The results mainly include course titles, instructor information, and general program navigation links.",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.2593,
-            "context_precision": 0.2333,
-            "context_recall": 0.5833,
-            "faithfulness": 0.2333
+          "answer": "Both diploma pathways run 27 credits. Each includes six courses and a pair of project modules, whether you choose the Programming or the Data Science track.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Diploma Level: Programming track totals 27 credits split across six courses and two project components.",
+            "Diploma Level: Data Science track mirrors the Programming track with 27 credits that include six advanced courses and two projects to deepen applied analytics."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "diploma"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.5714,
+            "context_precision": 0.48,
+            "context_recall": 0.5833,
+            "faithfulness": 0.48
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "diploma_dual_enrollment_policy",
+            "question": "Can I start pursuing a second diploma while I am still completing the first one in the IITM BS Data Science program?",
+            "ground_truth": "Yes. Learners who have completed the Foundation Level can register for courses from both the Diploma in Programming and Diploma in Data Science simultaneously. They may complete the two diplomas in parallel or sequentially. After completing both, they become eligible to proceed to the BSc Degree Level.",
+            "contexts": [
+              "Diploma Level: There are two sections \u2013 Diploma in Programming and Diploma in Data Science. Each comprises 5 core courses, 2 projects, and 1 skill enhancement course.",
+              "Learners who complete all courses and projects in both diplomas can proceed to the BSc Degree Level.",
+              "It is possible for learners to exit with one or both diplomas after completing the required credits."
+            ],
+            "reference_answer": "Yes, you can pursue both diplomas together after finishing the Foundation Level. You may choose to take courses from the second diploma while finishing the first, and once both are complete, you\u2019ll be eligible to move to the BSc Degree Level.",
+            "metadata": {
+              "source": "IITM BS Academics page",
+              "program": "data_science",
+              "level": "diploma",
+              "policy_type": "dual_diploma_enrollment"
+            }
+          },
+          "answer": "Yes, you can pursue both diplomas together after finishing the Foundation Level. You may choose to take courses from the second diploma while finishing the first, and once both are complete, you\u2019ll be eligible to move to the BSc Degree Level.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Diploma Level: There are two sections \u2013 Diploma in Programming and Diploma in Data Science. Each comprises 5 core courses, 2 projects, and 1 skill enhancement course.",
+            "Learners who complete all courses and projects in both diplomas can proceed to the BSc Degree Level.",
+            "It is possible for learners to exit with one or both diplomas after completing the required credits."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "diploma"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5217,
+            "context_precision": 0.4375,
+            "context_recall": 0.6486,
+            "faithfulness": 0.4375
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "ds_diploma_coding_project_courses",
+            "question": "Which Data Science Diploma-level courses include substantial coding assignments or project work in the IITM BS Data Science & Applications programme?",
+            "ground_truth": "On the Diploma in Data Science pathway (27 credits: 6 courses + 2 projects) the following courses include substantial coding-assignments or project work: \u201a\u201cMachine Learning Practice\u201d (4 credits) includes a dedicated project course \u201cMachine Learning Practice \u2013 Project\u201d (2 credits). Also, in the optional track you can choose \u201cIntroduction to Deep Learning and Generative AI\u201d (4 credits) followed by its project \u201cDeep Learning and Generative AI \u2013 Project\u201d (2 credits). \u201e\u201cTools in Data Science\u201d (3 credits) includes take-home project style work (2 take-home projects) alongside online assignments. Thus, these courses incorporate hands-on coding and project work.",
+            "contexts": [
+              "Diploma in Data Science: 6 courses + 2 project courses for 27 credits (1-2 years) in IITM BS Data Science & Applications programme. :contentReference[oaicite:1]{index=1}",
+              "Course page for \u201cTools in Data Science\u201d (BSSE2002) states: \u2018\u2026 online assignments for each module, \u2026 2 take home projects\u2019 in addition to in-person end-term exam. :contentReference[oaicite:2]{index=2}",
+              "Programme page shows for Diploma in Data Science: \u201cMachine Learning Practice \u2013 Project\u201d (2 credits) listed as part of the track. :contentReference[oaicite:3]{index=3}"
+            ],
+            "reference_answer": "The Diploma in Data Science has built-in hands-on courses and project work. Specifically: \u2022 \u201cTools in Data Science\u201d (BSSE2002) includes two take-home projects and coding assignments. \u2022 \u201cMachine Learning Practice\u201d has a dedicated project component \u201cMachine Learning Practice \u2013 Project\u201d. \u2022 In the optional track you may pick \u201cIntroduction to Deep Learning & Generative AI\u201d followed by its project. So yes \u2014 several courses in the diploma level actively include substantial coding and project-based assignments.",
+            "metadata": {
+              "source": "IITM BS Data Science Academics page",
+              "program": "data_science",
+              "level": "diploma",
+              "policy_type": "coding_project_courses"
+            }
+          },
+          "answer": "The Diploma in Data Science has built-in hands-on courses and project work. Specifically: \u2022 \u201cTools in Data Science\u201d (BSSE2002) includes two take-home projects and coding assignments. \u2022 \u201cMachine Learning Practice\u201d has a dedicated project component \u201cMachine Learning Practice \u2013 Project\u201d. \u2022 In the optional track you may pick \u201cIntroduction to Deep Learning & Generative AI\u201d followed by its project. So yes \u2014 several courses in the diploma level actively include substantial coding and project-based assignments.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Diploma in Data Science: 6 courses + 2 project courses for 27 credits (1-2 years) in IITM BS Data Science & Applications programme. :contentReference[oaicite:1]{index=1}",
+            "Course page for \u201cTools in Data Science\u201d (BSSE2002) states: \u2018\u2026 online assignments for each module, \u2026 2 take home projects\u2019 in addition to in-person end-term exam. :contentReference[oaicite:2]{index=2}",
+            "Programme page shows for Diploma in Data Science: \u201cMachine Learning Practice \u2013 Project\u201d (2 credits) listed as part of the track. :contentReference[oaicite:3]{index=3}"
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "diploma"
+          },
+          "metrics": {
+            "answer_relevancy": 0.6857,
+            "context_precision": 0.36,
+            "context_recall": 0.4364,
+            "faithfulness": 0.36
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     },
     {
       "agent_key": "ds_degree",
       "agent_label": "Data Science - Degree",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.3,
-        "context_precision": 0.2195,
-        "context_recall": 0.5789,
-        "faithfulness": 0.2195
+        "answer_relevancy": 0.5819,
+        "context_precision": 0.492,
+        "context_recall": 0.5459,
+        "faithfulness": 0.492
       },
       "cases": [
         {
@@ -115,28 +346,130 @@
               "level": "degree"
             }
           },
-          "answer": "I am sorry, but the information regarding the total number of credits required to complete the BSc and BS degree levels, as well as the foundational and diploma levels, is not available in the current documentation. I can provide details about specific courses within these levels if you'd like.",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.3,
-            "context_precision": 0.2195,
-            "context_recall": 0.5789,
-            "faithfulness": 0.2195
+          "answer": "The institute keeps both degree stages at 28 credits. Crossing the BSc milestone brings you to 114 credits overall, and completing the BS capstone lifts the total to 142 credits.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "BSc Degree Level: 28 credits. BS Degree Level: 28 credits. Learners build advanced electives and capstone work at this stage.",
+            "Total credits to be earned: BSc Degree 114 credits. BS Degree 142 credits. Completing the BS track adds advanced specialisations on top of the BSc milestone."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "degree"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.5581,
+            "context_precision": 0.625,
+            "context_recall": 0.5789,
+            "faithfulness": 0.625
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "degree_elective_with_core_parallel",
+            "question": "Can I register for elective courses before completing all the core courses at the Degree Level of the IITM BS Data Science program?",
+            "ground_truth": "Yes. Once a learner becomes eligible for the Degree Level after completing both diplomas, they can register for core and elective courses in any order, depending on term offerings and prerequisites. It is not mandatory to finish all core courses before taking electives.",
+            "contexts": [
+              "Degree Level: Learners who have completed both diplomas become eligible for the BSc Degree Level.",
+              "At the Degree Level, students can take a mix of core and elective courses as long as prerequisites are met.",
+              "The Degree Level curriculum includes core courses, elective courses, and a project, which may be taken in flexible order based on course availability."
+            ],
+            "reference_answer": "No, it\u2019s not required to complete all core courses before starting electives. Once you reach the Degree Level, you may take core and elective courses in parallel, depending on what is offered that term and any prerequisite requirements.",
+            "metadata": {
+              "source": "IITM BS Academics page",
+              "program": "data_science",
+              "level": "degree",
+              "policy_type": "core_and_elective_registration"
+            }
+          },
+          "answer": "No, it\u2019s not required to complete all core courses before starting electives. Once you reach the Degree Level, you may take core and elective courses in parallel, depending on what is offered that term and any prerequisite requirements.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Degree Level: Learners who have completed both diplomas become eligible for the BSc Degree Level.",
+            "At the Degree Level, students can take a mix of core and elective courses as long as prerequisites are met.",
+            "The Degree Level curriculum includes core courses, elective courses, and a project, which may be taken in flexible order based on course availability."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "degree"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5405,
+            "context_precision": 0.3143,
+            "context_recall": 0.4359,
+            "faithfulness": 0.3143
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "ds_degree_industry4_eligibility_missing_first_assignment",
+            "question": "I have taken the Industry 4.0 course in the current term but failed to submit the first assignment. Is it still possible to continue the course and pass it?",
+            "ground_truth": "Yes, it is still possible to continue and pass the course. To be eligible for the final exam in Industry 4.0, a learner must submit at least one of the first three assignments (Assignments 1\u20133), attend at least one of the two quizzes, and also participate in the game or submit the project. Failing to submit only the first assignment does not make you ineligible, as long as you submit either Assignment 2 or 3 and meet the other requirements. Additionally, you must attend the end-term exam to receive a final course grade.",
+            "contexts": [
+              "Industry 4.0 \u2013 Grading Policy: Eligibility for final exam requires submission of at least one of the first three assignments (Asgn 1, Asgn 2, Asgn 3), attendance in at least one of the two quizzes, and participation in either the game or project submission.",
+              "Eligibility for final course grade: attending the end-term exam.",
+              "Therefore, missing Assignment 1 alone does not disqualify a learner, as long as Assignment 2 or 3 is submitted and other conditions are fulfilled."
+            ],
+            "reference_answer": "Yes. Missing the first assignment alone doesn\u2019t make you ineligible. You can still continue and pass the course if you submit either Assignment 2 or 3, attend at least one quiz, and complete either the game or project. You must also attend the end-term exam to receive a final grade.",
+            "metadata": {
+              "source": "Industry 4.0 course grading policy, IITM BS Data Science degree level",
+              "program": "data_science",
+              "level": "degree",
+              "course": "Industry 4.0",
+              "policy_type": "eligibility_and_passing_criteria"
+            }
+          },
+          "answer": "Yes. Missing the first assignment alone doesn\u2019t make you ineligible. You can still continue and pass the course if you submit either Assignment 2 or 3, attend at least one quiz, and complete either the game or project. You must also attend the end-term exam to receive a final grade.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Industry 4.0 \u2013 Grading Policy: Eligibility for final exam requires submission of at least one of the first three assignments (Asgn 1, Asgn 2, Asgn 3), attendance in at least one of the two quizzes, and participation in either the game or project submission.",
+            "Eligibility for final course grade: attending the end-term exam.",
+            "Therefore, missing Assignment 1 alone does not disqualify a learner, as long as Assignment 2 or 3 is submitted and other conditions are fulfilled."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "ds",
+            "level": "degree"
+          },
+          "metrics": {
+            "answer_relevancy": 0.6471,
+            "context_precision": 0.5366,
+            "context_recall": 0.623,
+            "faithfulness": 0.5366
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     },
     {
       "agent_key": "es_foundation",
       "agent_label": "Electronic Systems - Foundation",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.0261,
-        "context_precision": 0.0209,
-        "context_recall": 0.6316,
-        "faithfulness": 0.0209
+        "answer_relevancy": 0.489,
+        "context_precision": 0.323,
+        "context_recall": 0.4889,
+        "faithfulness": 0.323
       },
       "cases": [
         {
@@ -155,28 +488,125 @@
               "level": "foundation"
             }
           },
-          "answer": "{\"documents\": [\"WEEK 3 Words and Phrases (Vocabulary, Phrasal & Modal Verbs and Idioms) WEEK 4 Speaking Skill (Spoken English Preliminaries and Telephone English) WEEK 5 Functional Grammar (Tenses) WEEK 6 Reading Skills (Skimming, Scanning and Comprehension) WEEK 7 Listening Skill (Active, Passive and Effective Listening) WEEK 8 Nuances of Words (Stress, Aspiration and Syllabification) WEEK 9 Speaking Skill 2 (Presentation and Group Discussion) WEEK 10 Writing Skill 1 (Basics of Writing) WEEK 11 Writing Skill 2 (Note, Business Writing and Essays) WEEK 12 Writing Skill 3 (Professional Writing) + Show all weeks Prescribed Books The following are the suggested books for the course: Aarts, Bas (2011). Oxford Modern English Grammar, New York: Oxford University Press Murphy, Raymond (2012). English Grammar in Use, New York: Cambridge University Press. 4th Edition Krishnaswamy, Subashree and K. Srilata eds. (2007). Short Fiction from South India. Delhi: OUP. Dhanavel, S.P. (2010).\", \"sense-compute-communicate. The course will begin with a tear down of a laptop and/ or a mobile phone and looking at the various components. The standout component on the board is the battery which naturally leads to an introduction to voltage and finite energy sources. The course will then go on to identify a couple of ICs on the board like the processor, the RF components all connected to the same power source, each drawing its own current which can be used to motivate the idea of KCL. Basic network analysis will be covered as part of the theory to go hand in hand with these topics. Simple experiments will be conducted on a breadboard to demonstrate the theory where applicable. The idea of a microprocessor and memory will be explained with the help of analogies in an abstract manner. by Prof. Sankaran Aniruddhan , Prof. Boby George , Prof.\", \"sense-compute-communicate. The course will begin with a tear down of a laptop and/ or a mobile phone and looking at the various components. The standout component on the board is the battery which naturally leads to an introduction to voltage and finite energy sources. The course will then go on to identify a couple of ICs on the board like the processor, the RF components all connected to the same power source, each drawing its own current which can be used to motivate the idea of KCL. Basic network analysis will be covered as part of the theory to go hand in hand with these topics. Simple experiments will be conducted on a breadboard to demonstrate the theory where applicable. The idea of a microprocessor and memory will be explained with the help of analogies in an abstract manner. by Prof. Sankaran Aniruddhan , Prof. Boby George , Prof.\", \"WEEK 1 Patterns in Sentences WEEK 2 Patterns in Sentences (Continued) WEEK 3 Patterns in Sentences (Continued) WEEK 4 Listening Skills WEEK 5 Listening Skills (Continued) WEEK 6 Speaking Skills WEEK 7 Speaking Skills (Continued) WEEK 8 Reading Skills WEEK 9 Writing Skills WEEK 10 Writing Skills (Continued) WEEK 11 Social Skills WEEK 12 Social Skills (Continued) + Show all weeks About the Instructors Prof. Rajesh Kumar Professor, Department of Humanities and Social Sciences, IIT Madras Rajesh Kumar is professor of linguistics in the Department of Humanities and Social Sciences at the Indian Institute of Technology Madras, Chennai. He obtained his PhD in linguistics from the University of Illinois at Urbana-Champaign. Prior to joining IIT Madras, he taught at IIT Kanpur, and IIT Patna in India and at the University of Texas at Austin in the USA. He has been a visiting faculty at the Tata Institute of Social Sciences in Mumbai in India.\", \"This course will use insights from theories of learning and dominant methods of teaching language. by Prof. Rajesh Kumar , Prof Karthika Sathyanathan Course ID: HS1101 Course Credits: 4 Course Type: Foundation Pre-requisites: None What you\\u00e2\\u0080\\u0099ll learn Acquiring wide range of vocabulary and linguistic competence that is required for functional performance; Identifying patterns of basic sentence types and structural accuracy; Building elementary foundations for the knowledge related to conventions and use of language in society, particularly in speaking and listening skills; Developing the basic skills for creative reading and writing with precision. Course structure & Assessments 4 credit course, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Sounds and Words (Vowel and Consonant sounds) WEEK 2 Parts of Speech and Articles.\"], \"metadatas\": [{\"chunk_start\": 1879, \"level\": \"foundation\", \"chunk_index\": 2, \"chunk_length\": 972, \"chunk_end\": 2852, \"document_id\": \"HS1101\", \"collection\": \"es_foundation_course\", \"type\": \"course\", \"embedding_model\": \"gemini-embedding-001\", \"label\": \"English I 4 HS1101 None None\", \"program\": \"es\", \"url\": \"https://study.iitm.ac.in/es/course_pages/HS1101.html\"}, {\"label\": \"Electronic Systems Thinking and Circuits 4 EE1101 None None\", \"chunk_length\": 852, \"program\": \"es\", \"level\": \"foundation\", \"chunk_start\": 983, \"url\": \"https://study.iitm.ac.in/es/course_pages/EE1101.html\", \"document_id\": \"EE1101\", \"chunk_end\": 1836, \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"collection\": \"es_foundation_course\", \"chunk_index\": 1}, {\"chunk_start\": 994, \"level\": \"foundation\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE1901.html\", \"collection\": \"es_foundation_course\", \"program\": \"es\", \"embedding_model\": \"gemini-embedding-001\", \"label\": \"Electronic Systems Thinking and Circuits Lab 1 EE1901 None EE1101\", \"type\": \"course\", \"document_id\": \"EE1901\", \"chunk_index\": 1, \"chunk_end\": 1847, \"chunk_length\": 852}, {\"level\": \"foundation\", \"chunk_index\": 2, \"chunk_start\": 1962, \"chunk_length\": 947, \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"HS1102\", \"url\": \"https://study.iitm.ac.in/es/course_pages/HS1102.html\", \"collection\": \"es_foundation_course\", \"type\": \"course\", \"chunk_end\": 2910, \"program\": \"es\", \"label\": \"English II 4 HS1102 HS1101 None\"}, {\"url\": \"https://study.iitm.ac.in/es/course_pages/HS1101.html\", \"chunk_start\": 906, \"document_id\": \"HS1101\", \"chunk_index\": 1, \"chunk_length\": 972, \"label\": \"English I 4 HS1101 None None\", \"collection\": \"es_foundation_course\", \"program\": \"es\", \"type\": \"course\", \"chunk_end\": 1879, \"level\": \"foundation\", \"embedding_model\": \"gemini-embedding-001\"}], \"distances\": [0.836633, 0.84360564, 0.84360564, 0.8533927, 0.86828077], \"ids\": [\"es_HS1101_chunk_2\", \"es_EE1101_chunk_1\", \"es_EE1901_chunk_1\", \"es_HS1102_chunk_2\", \"es_HS1101_chunk_1\"], \"collection\": \"es_foundation_course\", \"query\": \"skill areas emphasised\", \"total_results\": 5}{\"documents\": [\"WEEK 1 Types of microcontrollers; programmability, memory, compute capacity, functionality, interfacing WEEK 2 Memory maps; peripheral interfacing; register mapping WEEK 3 Typical data structures and programming styles for embedded systems WEEK 4 General purpose IO, low speed interfaces WEEK 5 Bus interfaces: UART, SPI, I2C; introduction Modbus, CANbus WEEK 6 Human-Computer Interaction; keyboard, mouse, touchscreen WEEK 7 High performance IO; buffering, DMA; USB, ethernet, networking WEEK 8 Real-time operating systems; latency constraints; scheduling; FreeRTOS, Linux concepts WEEK 9 Video interfaces WEEK 10 System-level design, integration; SoC concepts + Show all weeks Prescribed Books The following are the suggested books for the course: Class Notes The C Programming Language, Kernighan and Ritchie Curated online reference material About the Instructors Prof.\", \"sense-compute-communicate. The course will begin with a tear down of a laptop and/ or a mobile phone and looking at the various components. The standout component on the board is the battery which naturally leads to an introduction to voltage and finite energy sources. The course will then go on to identify a couple of ICs on the board like the processor, the RF components all connected to the same power source, each drawing its own current which can be used to motivate the idea of KCL. Basic network analysis will be covered as part of the theory to go hand in hand with these topics. Simple experiments will be conducted on a breadboard to demonstrate the theory where applicable. The idea of a microprocessor and memory will be explained with the help of analogies in an abstract manner. by Prof. Sankaran Aniruddhan , Prof. Boby George , Prof.\", \"sense-compute-communicate. The course will begin with a tear down of a laptop and/ or a mobile phone and looking at the various components. The standout component on the board is the battery which naturally leads to an introduction to voltage and finite energy sources. The course will then go on to identify a couple of ICs on the board like the processor, the RF components all connected to the same power source, each drawing its own current which can be used to motivate the idea of KCL. Basic network analysis will be covered as part of the theory to go hand in hand with these topics. Simple experiments will be conducted on a breadboard to demonstrate the theory where applicable. The idea of a microprocessor and memory will be explained with the help of analogies in an abstract manner. by Prof. Sankaran Aniruddhan , Prof. Boby George , Prof.\", \"all Foundation Level courses Contact Us IITM BS Degree Office, 3rd Floor, ICSR Building, IIT Madras, Chennai - 600036 +91-9711397993 (Mon-Fri 9am-6pm) support-es@study.iitm.ac.in \\u00c2\\u00a9 IIT Madras. All rights reserved. \\u00c2\\u00a9 IIT Madras. All rights reserved. honour code\", \"WEEK 1 How a Computer works, Generalized Memory and Computations, Split Memory Architecture, Loops, Conditions & Branches, Communication between Computer Memory and Outside World, What is Programming, Introduction to C Language WEEK 2 Data Representation: Number Representation in a Computer, Negative Number and Hexadecimal Representation, Floating Point Representation, Character Representation and Encoding, Instructions Encoding, Compilation: Program Compilation, Role of Operating System in a Computer WEEK 3 Introduction to C Programming: Structure of a C program, Variables in C, Operators in C, Expression WEEK 4 Control Statement: Structured Programming, Introduction to Control Flow in C, Conditional statement: if-else-if, switch, Loops: for and while WEEK 5 Function and Scope: Why Functions, Functions in C, What is a Runtime, Recursion, Scopes WEEK 6 Pointer: Introduction to Pointers, Endianness, Alignment, Pointers & Variables, Compiler Optimizations WEEK 7 Array: Introduction to\"], \"metadatas\": [{\"level\": \"foundation\", \"chunk_end\": 2518, \"chunk_start\": 1644, \"url\": \"https://study.iitm.ac.in/es/course_pages/CS2101.html\", \"chunk_length\": 873, \"document_id\": \"CS2101\", \"collection\": \"es_foundation_course\", \"chunk_index\": 2, \"label\": \"Embedded C Programming 4 CS2101 CS1101 None\", \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"program\": \"es\"}, {\"type\": \"course\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE1101.html\", \"chunk_start\": 983, \"label\": \"Electronic Systems Thinking and Circuits 4 EE1101 None None\", \"chunk_index\": 1, \"level\": \"foundation\", \"embedding_model\": \"gemini-embedding-001\", \"collection\": \"es_foundation_course\", \"chunk_length\": 852, \"chunk_end\": 1836, \"program\": \"es\", \"document_id\": \"EE1101\"}, {\"chunk_end\": 1847, \"level\": \"foundation\", \"type\": \"course\", \"label\": \"Electronic Systems Thinking and Circuits Lab 1 EE1901 None EE1101\", \"chunk_index\": 1, \"url\": \"https://study.iitm.ac.in/es/course_pages/EE1901.html\", \"collection\": \"es_foundation_course\", \"program\": \"es\", \"chunk_start\": 994, \"document_id\": \"EE1901\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_length\": 852}, {\"url\": \"https://study.iitm.ac.in/es/course_pages/CS1902.html\", \"collection\": \"es_foundation_course\", \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"CS1902\", \"chunk_end\": 1260, \"chunk_start\": 997, \"level\": \"foundation\", \"chunk_index\": 1, \"chunk_length\": 262, \"program\": \"es\", \"label\": \"Linux Systems Laboratory 1 CS1902 None CS1102\", \"type\": \"course\"}, {\"program\": \"es\", \"chunk_end\": 2726, \"chunk_start\": 1728, \"embedding_model\": \"gemini-embedding-001\", \"collection\": \"es_foundation_course\", \"document_id\": \"CS1101\", \"label\": \"Introduction to C Programming 4 CS1101 None None\", \"type\": \"course\", \"chunk_index\": 2, \"chunk_length\": 997, \"url\": \"https://study.iitm.ac.in/es/course_pages/CS1101.html\", \"level\": \"foundation\"}], \"distances\": [0.931167, 0.9447983, 0.9447983, 0.95106375, 0.95522827], \"ids\": [\"es_CS2101_chunk_2\", \"es_EE1101_chunk_1\", \"es_EE1901_chunk_1\", \"es_CS1902_chunk_1\", \"es_CS1101_chunk_2\"], \"collection\": \"es_foundation_course\", \"query\": \"core concepts\", \"total_results\": 5}{\"documents\": [\"This course will use insights from theories of learning and dominant methods of teaching language. by Prof. Rajesh Kumar , Prof Karthika Sathyanathan Course ID: HS1101 Course Credits: 4 Course Type: Foundation Pre-requisites: None What you\\u00e2\\u0080\\u0099ll learn Acquiring wide range of vocabulary and linguistic competence that is required for functional performance; Identifying patterns of basic sentence types and structural accuracy; Building elementary foundations for the knowledge related to conventions and use of language in society, particularly in speaking and listening skills; Developing the basic skills for creative reading and writing with precision. Course structure & Assessments 4 credit course, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Sounds and Words (Vowel and Consonant sounds) WEEK 2 Parts of Speech and Articles.\", \"Janakiraman Viraraghavan Course ID: EE1102 Course Credits: 4 Course Type: Foundation Pre-requisites: EE1101 - Electronic Systems Thinking and Circuits What you\\u00e2\\u0080\\u0099ll learn VIEW COURSE VIDEOS The course is intended as an introduction to digital logic and systems. At the end of the course, students should be able to: understand and explain digital systems composed of basic combinational and sequential elements understand issues with timing and the performance analysis of circuits understand the use of finite state machine based controllers and their use in design of complex circuits understand the basic operation of a microprocessor in terms of a datapath and programmable control, along with memory interfacing Course structure & Assessments 4 credit course, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page.\", \"solids Logarithm function Applications of Logarithm function WEEK 10 Arithmetic with complex number Complex plane, unit circle, angles in radians Sinusoidal Function Polar Coordinates Derivative of sin and cos Complex exponential and Euler's Formula Trigonometric Identities and Roots of Unity WEEK 11 Rational Functions Trigonometric Functions Inverse Trigonometric Functions Derivatives/integrals of Inverse trigonometric functions Hyperbolic functions Inverse of hyperbolic function, derivatives, integrals WEEK 12 Ordinary Differential Equations Solution to first order linear ODE Examples of first order linear ODE Second order differential equation Non-homogeneous second order differential equation Examples of second order linear ODE + Show all weeks Prescribed Books The following are the suggested books for the course: \\u00e2\\u0080\\u009cThomas\\u00e2\\u0080\\u0099 Calculus (14th edition),\\u00e2\\u0080\\u009d J. R. Hass, C. E. Heil and M. D. Weir, Pearson. \\u00e2\\u0080\\u009cCalculus (8th edition),\\u00e2\\u0080\\u009d J. Stewart, CENGAGE Learning.\", \"Gandham Phanikumar Course ID: CS1102 Course Credits: 4 Course Type: Foundation Pre-requisites: None What you\\u00e2\\u0080\\u0099ll learn The course is intended to introduce concepts of Linux-based operating environments. Students should develop familiarity with software tools and concepts required for managing software projects of different types. Course structure & Assessments 5 credit course, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Need for Shell Scripting Skills for Electronic Systems, Launching a Linux Virtual Machine, Command line environment, Simple Commands in Linux WEEK 2 Command line editors, Networking Commands and SSH WEEK 3 Combining commands and files, Redirections, Software Management, Linux process management WEEK 4 Pattern Matching WEEK 5 Shell variables WEEK 6 Some Command line Utilities, Overview of Shell Scripts, Bash Scripts Introduction\", \"Janakiraman Viraraghavan Course ID: EE1901 Course Credits: 1 Course Type: Laboratory Pre-requisites: None Co-requisites: EE1101 - Electronic Systems Thinking and Circuits What you\\u00e2\\u0080\\u0099ll learn Perform basic network analysis and analyse circuits using KCL, KVL, Thevinin\\u00e2\\u0080\\u0099s theorem, Norton\\u00e2\\u0080\\u0099s theorem, Simplifying resistor and capacitor networks Perform time domain analysis of first order RC networks Explain the idea of microprocessor and a memory Explain the idea of a program stored in a memory Course structure & Assessments 4 credit course, weekly online assignments, 2 in-person invigilated quizzes, 1 in-person invigilated end term exam. For details of standard course structure and assessments, visit Academics page. WEEK 1 Introduction,Miniaturization of electronic packaging,Mobile teardown,How small can a mobile phone get?,The battery,The charger,Back of the envelope calculations,The resistor,The Theory.\"], \"metadatas\": [{\"chunk_index\": 1, \"level\": \"foundation\", \"chunk_length\": 972, \"type\": \"course\", \"url\": \"https://study.iitm.ac.in/es/course_pages/HS1101.html\", \"chunk_end\": 1879, \"document_id\": \"HS1101\", \"label\": \"English I 4 HS1101 None None\", \"collection\": \"es_foundation_course\", \"chunk_start\": 906, \"program\": \"es\", \"embedding_model\": \"gemini-embedding-001\"}, {\"chunk_end\": 1781, \"program\": \"es\", \"chunk_index\": 1, \"embedding_model\": \"gemini-embedding-001\", \"chunk_start\": 837, \"label\": \"Digital Systems 4 EE1102 CS1101 None\", \"collection\": \"es_foundation_course\", \"chunk_length\": 943, \"document_id\": \"EE1102\", \"type\": \"course\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE1102.html\", \"level\": \"foundation\"}, {\"chunk_end\": 3839, \"chunk_start\": 2860, \"level\": \"foundation\", \"label\": \"Math for Electronics I 4 MA1101 None None\", \"document_id\": \"MA1101\", \"url\": \"https://study.iitm.ac.in/es/course_pages/MA1101.html\", \"chunk_length\": 978, \"type\": \"course\", \"collection\": \"es_foundation_course\", \"chunk_index\": 3, \"program\": \"es\", \"embedding_model\": \"gemini-embedding-001\"}, {\"label\": \"Introduction to Linux and Programming 4 CS1102 None None\", \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"collection\": \"es_foundation_course\", \"chunk_start\": 853, \"chunk_index\": 1, \"level\": \"foundation\", \"program\": \"es\", \"chunk_length\": 998, \"chunk_end\": 1852, \"document_id\": \"CS1102\", \"url\": \"https://study.iitm.ac.in/es/course_pages/CS1102.html\"}, {\"url\": \"https://study.iitm.ac.in/es/course_pages/EE1901.html\", \"level\": \"foundation\", \"document_id\": \"EE1901\", \"chunk_start\": 1847, \"program\": \"es\", \"chunk_end\": 2765, \"type\": \"course\", \"chunk_length\": 917, \"collection\": \"es_foundation_course\", \"chunk_index\": 2, \"embedding_model\": \"gemini-embedding-001\", \"label\": \"Electronic Systems Thinking and Circuits Lab 1 EE1901 None EE1101\"}], \"distances\": [0.84599745, 0.85233986, 0.86102474, 0.8613536, 0.8692348], \"ids\": [\"es_HS1101_chunk_1\", \"es_EE1102_chunk_1\", \"es_MA1101_chunk_3\", \"es_CS1102_chunk_1\", \"es_EE1901_chunk_2\"], \"collection\": \"es_foundation_course\", \"query\": \"learning outcomes\", \"total_results\": 5}",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.0261,
-            "context_precision": 0.0209,
-            "context_recall": 0.6316,
-            "faithfulness": 0.0209
+          "answer": "It is all about electronic fundamentals-analog circuits, digital design, signals, and embedded coding-anchored by weekly labs that build hardware confidence.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "The Electronic Systems foundation level revisits physics and mathematics essentials while introducing circuit theory, digital systems, and embedded programming.",
+            "Hands-on hardware labs run alongside lectures so learners practice prototyping, measurement, and debugging early in the program."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "foundation"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.3415,
+            "context_precision": 0.2727,
+            "context_recall": 0.6316,
+            "faithfulness": 0.2727
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_foundation_EE1101_topics",
+            "question": "What are the main topics covered in the EE1101 in the IITM BS Electronic Systems programme?",
+            "ground_truth": "The course EE1101 covers fundamental ideas of electronic systems thinking and basic circuits. Key topics include: circuit elements (resistors, capacitors, inductors), Kirchhoff\u2019s laws, simple circuit analysis; understanding how electronic systems are built, thinking about signals and systems, basic analog behaviour, introduction to digital vs analog circuits; how circuits implement system functionalities; and how these fit into larger electronic systems context.",
+            "contexts": [
+              "Foundation level of BS in Electronic Systems: course list includes \u201cElectronic Systems Thinking and Circuits\u201d (code EE1101) among theory courses.",
+              "The programme emphasises electronics, embedded programming, digital systems, and control engineering."
+            ],
+            "reference_answer": "In EE1101 you learn how to think of electronic systems as a whole and how basic circuits build up those systems. You\u2019ll study the behaviour of passive and active circuit components (resistors, capacitors, inductors), apply circuit laws like KCL and KVL, analyse simple analog circuits, understand differences between analog/digital signals, and see how circuits form the building blocks of electronics systems. This gives you a systems-level view as well as solid grounding in circuit fundamentals.",
+            "metadata": {
+              "source": "IITM BS Electronic Systems Academics page",
+              "program": "electronic_systems",
+              "level": "foundation",
+              "course_code": "EE1101"
+            }
+          },
+          "answer": "In EE1101 you learn how to think of electronic systems as a whole and how basic circuits build up those systems. You\u2019ll study the behaviour of passive and active circuit components (resistors, capacitors, inductors), apply circuit laws like KCL and KVL, analyse simple analog circuits, understand differences between analog/digital signals, and see how circuits form the building blocks of electronics systems. This gives you a systems-level view as well as solid grounding in circuit fundamentals.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Foundation level of BS in Electronic Systems: course list includes \u201cElectronic Systems Thinking and Circuits\u201d (code EE1101) among theory courses.",
+            "The programme emphasises electronics, embedded programming, digital systems, and control engineering."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "foundation"
+          },
+          "metrics": {
+            "answer_relevancy": 0.3922,
+            "context_precision": 0.1964,
+            "context_recall": 0.2174,
+            "faithfulness": 0.1964
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_foundation_coreq_electronic_systems_thinking_lab",
+            "question": "Do I need to complete the Electronic Systems Thinking and Circuits theory course before registering for the Electronic Systems Thinking and Circuits Lab in the IITM BS Electronic Systems program?",
+            "ground_truth": "No, you don\u2019t need to complete the theory course beforehand. The Electronic Systems Thinking and Circuits Lab is a corequisite to the theory course, which means it can be taken in the same term or in a later term, but not before the theory course.",
+            "contexts": [
+              "According to the IITM BS Electronic Systems Foundation Level curriculum, \u2018Electronic Systems Thinking and Circuits (EE1101)\u2019 and \u2018Electronic Systems Thinking and Circuits Lab (EE1102)\u2019 are listed as corequisites.",
+              "Corequisite means that both courses can be taken together in the same term or the lab can be taken after the theory course, but the lab cannot be taken before completing or registering for the theory course."
+            ],
+            "reference_answer": "You don\u2019t need to finish the theory course first. The lab is a corequisite, so you can take it in the same term or later, but not before the theory course.",
+            "metadata": {
+              "source": "IITM BS Electronic Systems Academics page",
+              "program": "electronic_systems",
+              "level": "foundation",
+              "policy_type": "course_corequisite"
+            }
+          },
+          "answer": "You don\u2019t need to finish the theory course first. The lab is a corequisite, so you can take it in the same term or later, but not before the theory course.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "According to the IITM BS Electronic Systems Foundation Level curriculum, \u2018Electronic Systems Thinking and Circuits (EE1101)\u2019 and \u2018Electronic Systems Thinking and Circuits Lab (EE1102)\u2019 are listed as corequisites.",
+            "Corequisite means that both courses can be taken together in the same term or the lab can be taken after the theory course, but the lab cannot be taken before completing or registering for the theory course."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "foundation"
+          },
+          "metrics": {
+            "answer_relevancy": 0.7333,
+            "context_precision": 0.5,
+            "context_recall": 0.6176,
+            "faithfulness": 0.5
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     },
     {
       "agent_key": "es_diploma",
       "agent_label": "Electronic Systems - Diploma",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.068,
-        "context_precision": 0.044,
-        "context_recall": 0.7917,
-        "faithfulness": 0.044
+        "answer_relevancy": 0.5925,
+        "context_precision": 0.4238,
+        "context_recall": 0.5041,
+        "faithfulness": 0.4238
       },
       "cases": [
         {
@@ -195,28 +625,127 @@
               "level": "diploma"
             }
           },
-          "answer": "{\"documents\": [\"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics EE3101 Diploma Level Digital Signal Processing The objective of this course is to introduce the student to the fundamental principles and applications of Digital Signal Processing.\", \"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics EE2102 Diploma Level Analog Electronic Systems Basics of operational amplifier, op-amp based building blocks, linear and non-linear system, feedback theory, negative/positive feedback, stability criterion, bode\", \"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics EE2902 Diploma Level Digital System Design Laboratory by Prof.\", \"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics EE2103 Diploma Level Digital System Design by Prof.\", \"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics CS1002 Diploma Level Python Programming by Prof.\"], \"metadatas\": [{\"type\": \"course\", \"chunk_start\": 0, \"embedding_model\": \"gemini-embedding-001\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE3101.html\", \"document_id\": \"EE3101\", \"chunk_end\": 969, \"collection\": \"es_diploma_course\", \"label\": \"Digital Signal Processing 4 EE3101 EE2101 None\", \"program\": \"es\", \"level\": \"diploma\", \"chunk_index\": 0, \"chunk_length\": 969}, {\"label\": \"Analog Electronic Systems 4 EE2102 EE2101 None\", \"chunk_end\": 999, \"chunk_length\": 999, \"collection\": \"es_diploma_course\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE2102.html\", \"type\": \"course\", \"level\": \"diploma\", \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"EE2102\", \"chunk_index\": 0, \"chunk_start\": 0, \"program\": \"es\"}, {\"chunk_index\": 0, \"type\": \"course\", \"label\": \"Digital System Design Laboratory 1 EE2902 EE1902 EE2103\", \"collection\": \"es_diploma_course\", \"document_id\": \"EE2902\", \"chunk_end\": 851, \"program\": \"es\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE2902.html\", \"level\": \"diploma\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_start\": 0, \"chunk_length\": 851}, {\"type\": \"course\", \"chunk_length\": 840, \"collection\": \"es_diploma_course\", \"chunk_index\": 0, \"url\": \"https://study.iitm.ac.in/es/course_pages/EE2103.html\", \"embedding_model\": \"gemini-embedding-001\", \"program\": \"es\", \"chunk_end\": 840, \"label\": \"Digital System Design 4 EE2103 EE1102 None\", \"chunk_start\": 0, \"document_id\": \"EE2103\", \"level\": \"diploma\"}, {\"chunk_index\": 0, \"chunk_start\": 0, \"program\": \"es\", \"type\": \"course\", \"url\": \"https://study.iitm.ac.in/es/course_pages/CS1002.html\", \"label\": \"Python Programming 4 CS1002 None None\", \"collection\": \"es_diploma_course\", \"chunk_length\": 837, \"chunk_end\": 837, \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"CS1002\", \"level\": \"diploma\"}], \"distances\": [0.7919048, 0.8052738, 0.81716824, 0.81786776, 0.81867284], \"ids\": [\"es_EE3101_chunk_0\", \"es_EE2102_chunk_0\", \"es_EE2902_chunk_0\", \"es_EE2103_chunk_0\", \"es_CS1002_chunk_0\"], \"collection\": \"es_diploma_course\", \"query\": \"structure of the diploma level\", \"total_results\": 5}",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.068,
-            "context_precision": 0.044,
-            "context_recall": 0.7917,
-            "faithfulness": 0.044
+          "answer": "It deepens hardware work: six advanced build courses lead into two design projects, and the focus areas span embedded, signal processing, and control oriented topics.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "During the diploma stage learners pick focus areas like embedded systems, signal processing, or control while reinforcing hardware design skills.",
+            "The curriculum blends six core build courses with two design projects that stress board-level implementation and firmware integration."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "diploma"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.6667,
+            "context_precision": 0.625,
+            "context_recall": 0.7917,
+            "faithfulness": 0.625
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_diploma_project_courses",
+            "question": "Are there project-based courses in the Diploma level of the IITM BS Electronic Systems programme?",
+            "ground_truth": "Yes. At the Diploma level of the BS in Electronic Systems, there are two dedicated project courses (each of 2 credits) alongside theory and laboratory courses.",
+            "contexts": [
+              "Diploma Level: 43 credits | 8 Theory + 3 Labs + 2 Project courses.",
+              "Courses listed for Diploma level include: \u201cElectronics System Project (2 credits, EE3999)\u201d and \u201cSignals and Systems Project (2 credits, EE4999)\u201d."
+            ],
+            "reference_answer": "Yes \u2014 the Diploma level includes 2 project-based courses (2 credits each) in addition to theory and lab courses, giving you hands-on experience before you progress to the Degree level.",
+            "metadata": {
+              "source": "IIT Madras BS Electronic Systems Academics page",
+              "program": "electronic_systems",
+              "level": "diploma",
+              "policy_type": "project_course_availability"
+            }
+          },
+          "answer": "Yes \u2014 the Diploma level includes 2 project-based courses (2 credits each) in addition to theory and lab courses, giving you hands-on experience before you progress to the Degree level.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Diploma Level: 43 credits | 8 Theory + 3 Labs + 2 Project courses.",
+            "Courses listed for Diploma level include: \u201cElectronics System Project (2 credits, EE3999)\u201d and \u201cSignals and Systems Project (2 credits, EE4999)\u201d."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "diploma"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5,
+            "context_precision": 0.32,
+            "context_recall": 0.3913,
+            "faithfulness": 0.32
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_diploma_best_order_courses",
+            "question": "What is the best order to take the Diploma-Level courses in the BS in Electronic Systems programme for a smooth progression?",
+            "ground_truth": "For the Diploma level (8 theory + 3 labs + 2 projects, 43 credits) in the ES programme, a smooth order is to start with courses that have minimal prerequisites (e.g., \u201cElectronic Testing and Measurement\u201d EE4108, \u201cComputer Organisation\u201d EE4104), then take foundational signal/analog courses (\u201cSignals and Systems\u201d EE2101, \u201cAnalog Electronic Systems\u201d EE2102) along with their labs, then move to design/lab integration courses (\u201cDigital System Design\u201d EE2103 and lab EE2902), then take advanced courses (\u201cDigital Signal Processing\u201d EE3101, \u201cSensors and Applications\u201d EE3103 and its lab EE3901), and only after those, undertake the two project courses (\u201cElectronics System Project\u201d EE3999, \u201cSignals and Systems Project\u201d EE4999). This leverages the prerequisites listed (e.g., EE2102 requires EE2101; DSP requires EE2101) and helps build skills gradually.",
+            "contexts": [
+              "Diploma Level: 8 Theory + 3 Laboratories + 2 Project courses, 43 credits.",
+              "Course list with prerequisites in ES Diploma: e.g., \u201cSignals and Systems\u201d EE2101 has prerequisite EE1103 (Elect. & Electronic Circuits) from Foundation; \u201cAnalog Electronic Systems\u201d EE2102 has prereq EE2101.",
+              "\u201cDigital System Design\u201d EE2103 has prerequisite EE1102 (Digital Systems) from Foundation."
+            ],
+            "reference_answer": "A suggested smooth order is: 1) EE4108 (Electronic Testing & Measurement) and EE4104 (Computer Organisation) first, 2) EE2101 (Signals & Systems) \u2192 EE2102 (Analog Electronic Systems) + analog lab, 3) EE2103 (Digital System Design) + digital lab, 4) EE3101 (Digital Signal Processing) & EE3103 (Sensors & Applications) + sensors lab, and finally tackling the two project courses EE3999 & EE4999. This order respects prerequisites and builds up to the projects.",
+            "metadata": {
+              "source": "IITM BS Electronic Systems Academics page",
+              "program": "electronic_systems",
+              "level": "diploma",
+              "policy_type": "course_ordering_guidance"
+            }
+          },
+          "answer": "A suggested smooth order is: 1) EE4108 (Electronic Testing & Measurement) and EE4104 (Computer Organisation) first, 2) EE2101 (Signals & Systems) \u2192 EE2102 (Analog Electronic Systems) + analog lab, 3) EE2103 (Digital System Design) + digital lab, 4) EE3101 (Digital Signal Processing) & EE3103 (Sensors & Applications) + sensors lab, and finally tackling the two project courses EE3999 & EE4999. This order respects prerequisites and builds up to the projects.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Diploma Level: 8 Theory + 3 Laboratories + 2 Project courses, 43 credits.",
+            "Course list with prerequisites in ES Diploma: e.g., \u201cSignals and Systems\u201d EE2101 has prerequisite EE1103 (Elect. & Electronic Circuits) from Foundation; \u201cAnalog Electronic Systems\u201d EE2102 has prereq EE2101.",
+            "\u201cDigital System Design\u201d EE2103 has prerequisite EE1102 (Digital Systems) from Foundation."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "diploma"
+          },
+          "metrics": {
+            "answer_relevancy": 0.6107,
+            "context_precision": 0.3265,
+            "context_recall": 0.3293,
+            "faithfulness": 0.3265
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     },
     {
       "agent_key": "es_degree",
       "agent_label": "Electronic Systems - Degree",
-      "cases_evaluated": 1,
+      "cases_evaluated": 3,
       "metrics_source": "fallback_lexical",
+      "ragas_runtime": {
+        "enabled": false,
+        "prefer_ragas": true,
+        "reason": "ragas_not_installed",
+        "llm": false,
+        "embeddings": false
+      },
       "aggregated_metrics": {
-        "answer_relevancy": 0.04,
-        "context_precision": 0.028,
-        "context_recall": 0.6818,
-        "faithfulness": 0.028
+        "answer_relevancy": 0.5551,
+        "context_precision": 0.5149,
+        "context_recall": 0.6105,
+        "faithfulness": 0.5149
       },
       "cases": [
         {
@@ -235,15 +764,109 @@
               "level": "degree"
             }
           },
-          "answer": "{\"documents\": [\"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMS4001 Degree Level Course Industry 4.\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSGN3001 Degree Level Course Strategies for Professional\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMS3002 Degree Level Course Market Research To provide\", \"electroplating, Solar stand alone inverter, Solar pumping, Electronic ballast, Solar lantern, Unity power factor front end converter, Electric scooter, Series hybrid electric vehicle for three wheeled vehicle, Parallel hybrid electric vehicle for three wheeled vehicle, Single phase induction generation, Multi-power port for energy management in hybrid electric vehicle. less View all Degree Level courses Contact Us IITM BS Degree Office, 3rd Floor, ICSR Building, IIT Madras, Chennai - 600036 +91-9711397993 (Mon-Fri 9am-6pm) support-es@study.iitm.ac.in \\u00c2\\u00a9 IIT Madras. All rights reserved. \\u00c2\\u00a9 IIT Madras. All rights reserved. honour code\", \"English | \\u00e0\\u00a4\\u00b9\\u00e0\\u00a4\\u00bf\\u00e0\\u00a4\\u0082\\u00e0\\u00a4\\u00a6\\u00e0\\u00a5\\u0080 | \\u00e0\\u00ae\\u00a4\\u00e0\\u00ae\\u00ae\\u00e0\\u00ae\\u00bf\\u00e0\\u00ae\\u00b4\\u00e0\\u00af\\u008d | \\u00e0\\u00b0\\u00a4\\u00e0\\u00b1\\u0086\\u00e0\\u00b0\\u00b2\\u00e0\\u00b1\\u0081\\u00e0\\u00b0\\u0097\\u00e0\\u00b1\\u0081 | \\u00e0\\u00b4\\u00ae\\u00e0\\u00b4\\u00b2\\u00e0\\u00b4\\u00af\\u00e0\\u00b4\\u00be\\u00e0\\u00b4\\u00b3\\u00e0\\u00b4\\u0082 | \\u00e0\\u00b2\\u0095\\u00e0\\u00b2\\u00a8\\u00e0\\u00b3\\u008d\\u00e0\\u00b2\\u00a8\\u00e0\\u00b2\\u00a1 | \\u00e0\\u00a4\\u00ae\\u00e0\\u00a4\\u00b0\\u00e0\\u00a4\\u00be\\u00e0\\u00a4 \\u00e0\\u00a5\\u0080 | \\u00e0\\u00aa\\u0097\\u00e0\\u00ab\\u0081\\u00e0\\u00aa\\u009c\\u00e0\\u00aa\\u00b0\\u00e0\\u00aa\\u00be\\u00e0\\u00aa\\u00a4\\u00e0\\u00ab\\u0080 | \\u00e0\\u00a6\\u00ac\\u00e0\\u00a6\\u00be\\u00e0\\u00a6\\u0082\\u00e0\\u00a6\\u00b2\\u00e0\\u00a6\\u00be Academics Overall Structure Course Registrations Assessments Exam Cities Fee Structure Foundational Level Diploma Level BS Degree Level Sample Certificates Academic Calender Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to the Foundation Level 1. Regular Entry 2. JEE-based Entry International Students Student Life Student Life PARADOX / Student Festivals Testimonials FAQ About IITM About IIT Madras Faculty Co-ordinators Contact Us SIGN IN Interested in joining our January 2026 batch? NOTIFY ME Interested in joining our January 2026 batch? NOTIFY ME Home Academics MA3101 Degree Level Probability and Statistics To introduce the foundations of probability and statistics in the context of electronic systems. by Prof.\", \"Growth To enable the student to use the creative process to identify and solve problems in an effective way, to use structured creative thinking tools to investigate a particular matter from a variety of perspectives with clarity, to communicate and share thoughts/information accurately and effectively to understand each other, to become a team player, to value other cultures, to overcome obstacles she/he may face when performing a task, to work with hands to become better at engaging and enhancing their thought process, to get pertinent information crucial for learning about something or for communicating, to understand how decisions at the individual level or at the business level affect optimal utilisation of resources, to use conflict resolution tools to effectively resolve conflicts, to perceive emotions of themselves and of others and manage for a better outcome under various circumstances. by Prof.\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSCS4022 Degree Level Course Operating System by Chester\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSMS4002 Degree Level Course Design Thinking for\", \"ieties Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Sign In Academics Overall Structure Term Structure Course Registration Assessments Exam Cities Fee Structure Foundation Level Diploma Level BSc Level BS Level Sample Certificates Academic Calendar Admissions Important Dates Mandatory Requirements Eligibility to Apply Application Process Admission to Foundation Level 1. Regular Entry 2. JEE Entry International Students Resources Important Docs Program report - April 2025 Career choices - April 2025 Batch 2024 - Summary Student Life Paradox - Student Festivals Student Houses & Societies Teaching Assistants Blog Testimonials Merchandise Achievements Program Toppers Student's Best Projects Placements Overview Partnerships Placement Portal About About IIT Madras Faculty Co-ordinators Contact Us FAQ Sign In Interested in joining our January 2026 batch? NOTIFY ME Home Academics BSDA5013 Degree Level Course Deep Learning Practice\", \"Here, he worked on framework for analysis of Computational Imaging (CI) systems. Prior to that, he earned his Ph.D in Electrical and Computer Engineering from the University of Maryland, College Park, where his research focus was on the development of statistical models and optimization algorithms for computer vision problems. Currently, his research interests are in computational imaging, computer vision and machine learning. less View all Degree Level courses support@study.iitm.ac.in 7850999966 IITM BS Degree Office, 3rd Floor, ICSR Building, IIT Madras, Chennai - 600036 Please use only the above methods for program queries. Response time: 3 working days. During peak periods, Google Meet links will be shared. Call wait times may be longer. Terms of Service | Privacy Policy\"], \"metadatas\": [{\"chunk_length\": 983, \"type\": \"course\", \"program\": \"es\", \"embedding_model\": \"gemini-embedding-001\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMS4001.html\", \"document_id\": \"BSMS4001\", \"label\": \"MS4001 Industry 4.0 4\", \"chunk_index\": 1, \"collection\": \"es_degree_course\", \"chunk_start\": 800, \"level\": \"degree\", \"chunk_end\": 1783}, {\"url\": \"https://study.iitm.ac.in/ds/course_pages/BSGN3001.html\", \"chunk_end\": 1799, \"document_id\": \"BSGN3001\", \"type\": \"course\", \"program\": \"es\", \"collection\": \"es_degree_course\", \"level\": \"degree\", \"embedding_model\": \"gemini-embedding-001\", \"label\": \"Strategies for Professional Growth 4 GN3001 None None\", \"chunk_index\": 1, \"chunk_length\": 999, \"chunk_start\": 800}, {\"label\": \"MS3002 Market Research 4\", \"chunk_end\": 1798, \"chunk_length\": 998, \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"BSMS3002\", \"chunk_start\": 800, \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMS3002.html\", \"level\": \"degree\", \"program\": \"es\", \"chunk_index\": 1, \"collection\": \"es_degree_course\", \"type\": \"course\"}, {\"label\": \"Electronic Product Design 4 EE4102 None None\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_end\": 6003, \"chunk_length\": 640, \"level\": \"degree\", \"collection\": \"es_degree_course\", \"document_id\": \"EE4102\", \"chunk_start\": 5362, \"chunk_index\": 6, \"program\": \"es\", \"url\": \"https://study.iitm.ac.in/es/course_pages/EE4102.html\", \"type\": \"course\"}, {\"label\": \"Probability and Statistics 4 MA3101 None None\", \"chunk_end\": 941, \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"level\": \"degree\", \"chunk_index\": 0, \"program\": \"es\", \"document_id\": \"MA3101\", \"collection\": \"es_degree_course\", \"chunk_start\": 0, \"chunk_length\": 941, \"url\": \"https://study.iitm.ac.in/es/course_pages/MA3101.html\"}, {\"level\": \"degree\", \"chunk_start\": 1799, \"label\": \"Strategies for Professional Growth 4 GN3001 None None\", \"program\": \"es\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSGN3001.html\", \"embedding_model\": \"gemini-embedding-001\", \"type\": \"course\", \"collection\": \"es_degree_course\", \"chunk_end\": 2718, \"chunk_length\": 918, \"chunk_index\": 2, \"document_id\": \"BSGN3001\"}, {\"program\": \"es\", \"type\": \"course\", \"collection\": \"es_degree_course\", \"chunk_start\": 800, \"label\": \"CS4022 Operating Systems 4\", \"chunk_index\": 1, \"level\": \"degree\", \"chunk_length\": 999, \"chunk_end\": 1799, \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSCS4022.html\", \"document_id\": \"BSCS4022\", \"embedding_model\": \"gemini-embedding-001\"}, {\"chunk_index\": 1, \"document_id\": \"BSMS4002\", \"type\": \"course\", \"chunk_length\": 991, \"level\": \"degree\", \"program\": \"es\", \"collection\": \"es_degree_course\", \"chunk_end\": 1791, \"embedding_model\": \"gemini-embedding-001\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSMS4002.html\", \"chunk_start\": 800, \"label\": \"MS4002 Design Thinking for Data-Driven App Development 4\"}, {\"chunk_length\": 994, \"chunk_end\": 1794, \"type\": \"course\", \"level\": \"degree\", \"embedding_model\": \"gemini-embedding-001\", \"chunk_index\": 1, \"program\": \"es\", \"collection\": \"es_degree_course\", \"label\": \"DA5013 Deep Learning Practice 4\", \"url\": \"https://study.iitm.ac.in/ds/course_pages/BSDA5013.html\", \"document_id\": \"BSDA5013\", \"chunk_start\": 800}, {\"url\": \"https://study.iitm.ac.in/ds/course_pages/BSDA5013.html\", \"collection\": \"es_degree_course\", \"chunk_end\": 7124, \"chunk_length\": 785, \"chunk_start\": 6338, \"type\": \"course\", \"chunk_index\": 7, \"label\": \"DA5013 Deep Learning Practice 4\", \"level\": \"degree\", \"program\": \"es\", \"embedding_model\": \"gemini-embedding-001\", \"document_id\": \"BSDA5013\"}], \"distances\": [0.80012107, 0.82096577, 0.8229927, 0.8344732, 0.8349197, 0.836203, 0.83657575, 0.8430921, 0.8461189, 0.84667194], \"ids\": [\"es_BSMS4001_chunk_1\", \"es_BSGN3001_chunk_1\", \"es_BSMS3002_chunk_1\", \"es_EE4102_chunk_6\", \"es_MA3101_chunk_0\", \"es_BSGN3001_chunk_2\", \"es_BSCS4022_chunk_1\", \"es_BSMS4002_chunk_1\", \"es_BSDA5013_chunk_1\", \"es_BSDA5013_chunk_7\"], \"collection\": \"es_degree_course\", \"query\": \"themes defining degree level\", \"total_results\": 10}",
-          "answer_origin": "live_agent",
-          "metrics": {
-            "answer_relevancy": 0.04,
-            "context_precision": 0.028,
-            "context_recall": 0.6818,
-            "faithfulness": 0.028
+          "answer": "System integration dominates the final stage-think advanced manufacturing plus capstone collaborations in robotics, IoT, VLSI, and power electronics.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "The Electronic Systems degree level emphasises system integration and advanced electronics manufacturing topics.",
+            "Learners tackle industry-partnered capstone projects in domains such as robotics, IoT, VLSI, and power electronics to deliver production-grade platforms."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "degree"
           },
-          "failure_reason": null
+          "metrics": {
+            "answer_relevancy": 0.5854,
+            "context_precision": 0.6842,
+            "context_recall": 0.6818,
+            "faithfulness": 0.6842
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_degree_remaining_courses_after_core",
+            "question": "After completing all core courses at the Degree Level of the BS in Electronic Systems programme, how many more courses do I need to take to complete the degree?",
+            "ground_truth": "At the Degree Level of the BS in Electronic Systems programme, there are 12 courses plus an optional apprenticeship. A total of 56 credits are required for this level.",
+            "contexts": [
+              "Degree Level (Electronic Systems): \u201cBS Degree Level \u2026 12 courses + Apprenticeship (Optional)\u201d",
+              "The BS in Electronic Systems has the following credit structure: Foundation Level ~44 credits; Diploma Level ~42 credits; Degree Level ~56 credits (12 courses)",
+              "Completion of 142 total credits across all levels (Foundation + Diploma + Degree) is required for the BS degree."
+            ],
+            "reference_answer": "Once you have completed the core courses at the Degree Level, you still need to complete a total of 12 courses (for the Degree Level) which together yield ~56 credits, plus any required electives or optional apprenticeship as per the programme. Thus, you\u2019re essentially completing all those 12 courses for the Degree Level to earn your BS degree.",
+            "metadata": {
+              "source": "IIT Madras BS Electronic Systems \u2013 Academics / FAQ",
+              "program": "electronic_systems",
+              "level": "degree",
+              "policy_type": "degree_course_count"
+            }
+          },
+          "answer": "Once you have completed the core courses at the Degree Level, you still need to complete a total of 12 courses (for the Degree Level) which together yield ~56 credits, plus any required electives or optional apprenticeship as per the programme. Thus, you\u2019re essentially completing all those 12 courses for the Degree Level to earn your BS degree.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Degree Level (Electronic Systems): \u201cBS Degree Level \u2026 12 courses + Apprenticeship (Optional)\u201d",
+            "The BS in Electronic Systems has the following credit structure: Foundation Level ~44 credits; Diploma Level ~42 credits; Degree Level ~56 credits (12 courses)",
+            "Completion of 142 total credits across all levels (Foundation + Diploma + Degree) is required for the BS degree."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "degree"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5294,
+            "context_precision": 0.3488,
+            "context_recall": 0.68,
+            "faithfulness": 0.3488
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
+        },
+        {
+          "case": {
+            "id": "es_degree_embedded_systems_career_courses",
+            "question": "Which degree-level courses in the BS in Electronic Systems programme at IIT M are best suited for building a career in embedded systems development?",
+            "ground_truth": "Key degree level courses well-suited for embedded systems development include: \u2022 \u201cEmbedded Linux and FPGAs\u201d (EE4101) + its lab (EE4901) \u2013 builds hands-on with embedded platforms and FPGA systems. \u201cElectronic Product Design\u201d (EE4102) \u2013 covers design of electronics systems and productisation. Department elective \u201cInternet of Things (IoT)\u201d (EE5101) \u2013 directly aligned with embedded & connected systems. Department elective \u201cDigital IC Design\u201d (EE5102) \u2013 for hardware/firmware interplay in embedded systems. Department elective \u201cPower Management for Electronic Systems\u201d (EE5103) \u2013 relevant for low-power embedded device design. These courses combined give strong foundations in hardware-software co-design, embedded platforms, system integration and product development \u2013 ideal for a career in embedded systems.",
+            "contexts": [
+              "Degree Level (Electronic Systems): Core Courses include Embedded Linux and FPGAs (EE4101) + Lab (EE4901), Electronic Product Design (EE4102), Electromagnetic Fields and Transmission Lines (EE3104), Control Engineering (EE3102).",
+              "Department Electives at degree level: Internet of Things (IoT) EE5101, Digital IC Design EE5102, Power Management for Electronic Systems EE5103, Biomedical Electronic Systems EE5104, etc.",
+              "Programme focus: \u2018The emphasis is on electronics, embedded programming, digital systems, and control engineering\u2019."
+            ],
+            "reference_answer": "For a strong path into embedded systems development, focus on the degree-level courses such as Embedded Linux and FPGAs + lab, Electronic Product Design, and electives like IoT, Digital IC Design, or Power Management. These build essential skills in hardware-software integration, device architecture, productisation and low-power embedded design.",
+            "metadata": {
+              "source": "IITM BS Electronic Systems Academics page",
+              "program": "electronic_systems",
+              "level": "degree",
+              "policy_type": "career_course_alignment"
+            }
+          },
+          "answer": "For a strong path into embedded systems development, focus on the degree-level courses such as Embedded Linux and FPGAs + lab, Electronic Product Design, and electives like IoT, Digital IC Design, or Power Management. These build essential skills in hardware-software integration, device architecture, productisation and low-power embedded design.",
+          "answer_origin": "recorded_reference",
+          "contexts_used": [
+            "Degree Level (Electronic Systems): Core Courses include Embedded Linux and FPGAs (EE4101) + Lab (EE4901), Electronic Product Design (EE4102), Electromagnetic Fields and Transmission Lines (EE3104), Control Engineering (EE3102).",
+            "Department Electives at degree level: Internet of Things (IoT) EE5101, Digital IC Design EE5102, Power Management for Electronic Systems EE5103, Biomedical Electronic Systems EE5104, etc.",
+            "Programme focus: \u2018The emphasis is on electronics, embedded programming, digital systems, and control engineering\u2019."
+          ],
+          "context_source": "retrieval_error",
+          "retrieval_info": {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
+            "program": "es",
+            "level": "degree"
+          },
+          "metrics": {
+            "answer_relevancy": 0.5505,
+            "context_precision": 0.5116,
+            "context_recall": 0.4697,
+            "faithfulness": 0.5116
+          },
+          "failure_reason": "RuntimeError: Agent produced no textual response."
         }
       ]
     }

@@ -1,13 +1,13 @@
-from __future__ import annotations
-
 import os
-from typing import Any, Dict, List, Optional
 
 import chromadb
 from google import genai
 from google.genai import types
 
-from ai.rag_config import RetrievalConfig, load_rag_config
+from ai.rag_config import load_rag_config
+
+# Keep a simple override dict to avoid ADK schema issues with dataclasses
+RETRIEVAL_OVERRIDE = None
 
 # Initialize ChromaDB client with error handling
 try:
@@ -22,12 +22,18 @@ except Exception as e:
     CHROMA_AVAILABLE = False
 
 
-def _get_retrieval_config(config: Optional[RetrievalConfig] = None) -> RetrievalConfig:
-    """Return the configured retrieval settings."""
-    return config or load_rag_config().retrieval
+def set_retrieval_override(config):
+    """Set a process-wide retrieval override (used by evaluations)."""
+    global RETRIEVAL_OVERRIDE
+    RETRIEVAL_OVERRIDE = config
 
 
-def get_embeddings(text: str) -> list:
+def _get_retrieval_config():
+    """Return the configured retrieval settings (override if present)."""
+    return RETRIEVAL_OVERRIDE or load_rag_config().retrieval
+
+
+def get_embeddings(text):
     """Get embeddings for text using Google Gemini (same as uploader)."""
     client = genai.Client()
 
@@ -40,7 +46,7 @@ def get_embeddings(text: str) -> list:
     return result.embeddings[0].values
 
 
-def get_available_collections() -> List[str]:
+def get_available_collections():
     """Get list of available collections in ChromaDB."""
     if not CHROMA_AVAILABLE:
         print("ChromaDB not available")
@@ -54,7 +60,7 @@ def get_available_collections() -> List[str]:
         return []
 
 
-def get_collection_info(collection_name: str) -> Dict[str, Any]:
+def get_collection_info(collection_name):
     """Get information about a specific collection."""
     if not CHROMA_AVAILABLE:
         raise Exception("ChromaDB not available")
@@ -68,14 +74,13 @@ def get_collection_info(collection_name: str) -> Dict[str, Any]:
 
 
 def query_chroma(
-    collection_name: str,
-    query: str,
-    n_results: Optional[int] = None,
-    where: Optional[Dict[str, Any]] = None,
-    score_threshold: Optional[float] = None,
-    rerank_top_k: Optional[int] = None,
-    config: Optional[RetrievalConfig] = None,
-) -> Dict[str, Any]:
+    collection_name,
+    query,
+    n_results=None,
+    where=None,
+    score_threshold=None,
+    rerank_top_k=None,
+):
     """
     Query ChromaDB collection with enhanced filtering and metadata.
 
@@ -94,7 +99,7 @@ def query_chroma(
     if not CHROMA_AVAILABLE:
         raise Exception("ChromaDB not available")
 
-    retrieval_cfg = _get_retrieval_config(config)
+    retrieval_cfg = _get_retrieval_config()
     if n_results is None:
         n_results = retrieval_cfg.top_k
     if score_threshold is None:
@@ -135,9 +140,9 @@ def query_chroma(
         if rerank_top_k:
             paired = paired[:rerank_top_k]
 
-        max_chars = retrieval_cfg.max_context_chars or 0
+        max_chars = getattr(retrieval_cfg, "max_context_chars", 0) or 0
         if max_chars > 0:
-            trimmed: List[tuple[str, Dict[str, Any], Any, str]] = []
+            trimmed = []
             for doc, meta, dist, doc_id in paired:
                 doc_text = doc if len(doc) <= max_chars else doc[:max_chars]
                 trimmed.append((doc_text, meta, dist, doc_id))
@@ -163,14 +168,13 @@ def query_chroma(
 
 
 def query_by_program_and_level(
-    program: str,
-    level: str,
-    query: str,
-    n_results: Optional[int] = None,
-    score_threshold: Optional[float] = None,
-    rerank_top_k: Optional[int] = None,
-    config: Optional[RetrievalConfig] = None,
-) -> Dict[str, Any]:
+    program,
+    level,
+    query,
+    n_results=None,
+    score_threshold=None,
+    rerank_top_k=None,
+):
     """
     Query specific program and level collections.
 
@@ -215,7 +219,6 @@ def query_by_program_and_level(
                 n_results,
                 score_threshold=score_threshold,
                 rerank_top_k=rerank_top_k,
-                config=config,
             )
         except Exception as e:
             errors.append(f"{collection_name}: {e}")
@@ -233,7 +236,6 @@ def query_by_program_and_level(
                     n_results,
                     score_threshold=score_threshold,
                     rerank_top_k=rerank_top_k,
-                    config=config,
                 )
             except Exception as e:
                 errors.append(f"{collection_name}: {e}")
@@ -246,14 +248,13 @@ def query_by_program_and_level(
 
 
 def smart_query(
-    query: str,
-    program: Optional[str] = None,
-    level: Optional[str] = None,
-    n_results: Optional[int] = None,
-    score_threshold: Optional[float] = None,
-    rerank_top_k: Optional[int] = None,
-    config: Optional[RetrievalConfig] = None,
-) -> Dict[str, Any]:
+    query,
+    program=None,
+    level=None,
+    n_results=None,
+    score_threshold=None,
+    rerank_top_k=None,
+):
     """
     Smart query that searches across relevant collections.
 
@@ -269,7 +270,7 @@ def smart_query(
     Returns:
         Combined results from relevant collections
     """
-    retrieval_cfg = _get_retrieval_config(config)
+    retrieval_cfg = _get_retrieval_config()
     if n_results is None:
         n_results = retrieval_cfg.top_k
     if score_threshold is None:
@@ -291,7 +292,6 @@ def smart_query(
             n_results=n_results,
             score_threshold=score_threshold,
             rerank_top_k=rerank_top_k,
-            config=retrieval_cfg,
         )
 
     # Otherwise, search across all relevant collections
@@ -323,7 +323,6 @@ def smart_query(
                 n_results,
                 score_threshold=score_threshold,
                 rerank_top_k=rerank_top_k,
-                config=retrieval_cfg,
             )
             all_results["collections_searched"].append(collection_name)
 
@@ -358,7 +357,7 @@ def smart_query(
     return all_results
 
 
-def format_query_results(results: Dict[str, Any], include_metadata: bool = True) -> str:
+def format_query_results(results, include_metadata: bool = True) -> str:
     """
     Format query results into a readable string.
 

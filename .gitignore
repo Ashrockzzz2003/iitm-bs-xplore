@@ -7,3 +7,4 @@ chroma/
 .DS_Store
 chroma.log
 AGENTS.md
+env/

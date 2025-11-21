@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import copy
 import itertools
 import sys
@@ -89,6 +90,7 @@ def _write_markdown_report(
     best: Dict[str, Any],
     agent_keys: Iterable[str],
     base_config: RagConfig,
+    use_recorded: bool,
 ) -> Path:
     RESULTS_MD.parent.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).isoformat()
@@ -98,6 +100,7 @@ def _write_markdown_report(
     lines.append(f"- Generated: {timestamp}")
     lines.append(f"- Agents evaluated: {', '.join(agent_keys)}")
     lines.append(f"- Ragas available: {RAGAS_AVAILABLE}")
+    lines.append(f"- Answers source: {'recorded references' if use_recorded else 'live agents (with fallback on failure)'}")
     lines.append(f"- Scoring rule: mean of {', '.join(METRIC_NAMES)} across agents (fallback metrics when ragas unavailable)")
     lines.append(f"- Context mode: {'live retrieval' if best['config'].evaluation.use_live_contexts else 'fixtures'}")
     lines.append(f"- Base config: {summarize_config(base_config)}")
@@ -133,9 +136,32 @@ def _write_markdown_report(
     return RESULTS_MD
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run hyperparameter sweeps on live/recorded agents.")
+    parser.add_argument(
+        "--agent",
+        dest="agent_keys",
+        action="append",
+        help="Limit evaluation to the given agent key (can be passed multiple times). Defaults to all.",
+    )
+    parser.add_argument(
+        "--recorded",
+        dest="use_recorded",
+        action="store_true",
+        help="Use recorded reference answers instead of invoking live agents.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = _parse_args()
     base_config = load_rag_config()
-    agent_keys = tuple(EVALUATION_DATA.keys())
+    if str(base_config.__class__.__module__).startswith("ai."):
+        # Ensure project root is importable for agent loads
+        root = CURRENT_DIR.parents[1]
+        sys.path.append(str(root)) if str(root) not in sys.path else None
+    agent_keys = tuple(args.agent_keys) if args.agent_keys else tuple(EVALUATION_DATA.keys())
+    use_recorded = bool(args.use_recorded)
 
     trials: List[Dict[str, Any]] = []
     for chunk_size, chunk_overlap, top_k, threshold in itertools.product(
@@ -148,7 +174,7 @@ def main() -> None:
             trial_results.append(
                 evaluate_agent(
                     agent_key,
-                    use_recorded=True,
+                    use_recorded=use_recorded,
                     prefer_ragas=trial_config.evaluation.prefer_ragas,
                     use_live_contexts=trial_config.evaluation.use_live_contexts,
                     rag_config=trial_config,
@@ -180,7 +206,7 @@ def main() -> None:
     )
 
     save_path = save_rag_config(best_config)
-    report_path = _write_markdown_report(trials, best, agent_keys, base_config)
+    report_path = _write_markdown_report(trials, best, agent_keys, base_config, use_recorded)
 
     print(f"Saved best configuration to {save_path}")
     print(f"Wrote tuning report to {report_path}")

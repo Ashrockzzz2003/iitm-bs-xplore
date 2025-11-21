@@ -2,6 +2,12 @@ from google.adk.agents.llm_agent import Agent
 import sys
 import os
 import importlib.util
+from pathlib import Path
+
+# Ensure project root is importable when ADK launches from subdirectories
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from ai.agents.settings import DEFAULT_SCORE_THRESHOLD, DEFAULT_TOP_K
 

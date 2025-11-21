@@ -495,6 +495,13 @@ def _retrieve_contexts_for_case(
     if not level_hint:
         level_hint = _normalize_level(str(case.metadata.get("level", "")))
 
+    # Override retrieval settings for this scoped call
+    try:
+        if hasattr(chromadb_tools, "set_retrieval_override"):
+            chromadb_tools.set_retrieval_override(retrieval_cfg)
+    except Exception:
+        pass
+
     try:
         results = chromadb_tools.smart_query(
             query=case.question,
@@ -503,7 +510,6 @@ def _retrieve_contexts_for_case(
             n_results=retrieval_cfg.top_k,
             score_threshold=retrieval_cfg.score_threshold,
             rerank_top_k=retrieval_cfg.rerank_top_k,
-            config=retrieval_cfg,
         )
         contexts = _prepare_contexts(results.get("documents") or [], chunking_cfg)
         summary = {
@@ -529,6 +535,12 @@ def _retrieve_contexts_for_case(
             "program": program_hint,
             "level": level_hint,
         }
+    finally:
+        try:
+            if hasattr(chromadb_tools, "set_retrieval_override"):
+                chromadb_tools.set_retrieval_override(None)
+        except Exception:
+            pass
 
 def evaluate_agent(
     agent_key: str,
