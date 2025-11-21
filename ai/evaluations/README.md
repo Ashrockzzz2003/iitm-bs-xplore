@@ -25,7 +25,7 @@ Use `ai/evaluations/hparam_tuning.py` to search chunking + retrieval settings, l
 
 ### How it works
 - Sweeps chunk sizes, overlaps, top_k, and optional score thresholds (see search space in the script).
-- Evaluates all agents using recorded answers (no live agent calls) but can pull live contexts from ChromaDB if it is reachable and credentials are set.
+- Evaluates live agents by default (recorded references are used only if a live call errors) and can pull live contexts from ChromaDB if it is reachable and credentials are set.
 - Scores each trial by the mean of ragas metrics (or lexical fallbacks when ragas/LLM is unavailable).
 - Writes a Markdown report to `ai/evaluations/results/hparam_tuning.md` and updates `rag_config.json` with the best settings (including metadata about the run).
 
@@ -44,6 +44,7 @@ python ai/evaluations/hparam_tuning.py --recorded
 - Trial report: `ai/evaluations/results/hparam_tuning.md` with trial grid, scores, and per‑agent metrics for the best trial.
 
 ### Tips
+- The evaluation scripts auto-load environment variables from `ai/.env` if present, so you can place `GOOGLE_API_KEY`, `CHROMA_HOST`, and other settings there instead of exporting them every run.
 - Start your ChromaDB service and set `CHROMA_HOST`/`CHROMA_PORT` so live contexts are available; otherwise the tuner falls back to fixture contexts.
 - Install `ragas` and `langchain-google-genai` (already listed in `ai/requirements.txt`) and export `GOOGLE_API_KEY` to get non-fallback ragas metrics.
 - Re-run tuning whenever you change ingestion, embeddings, or want to refresh the best config.

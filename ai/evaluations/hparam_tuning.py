@@ -15,10 +15,10 @@ CURRENT_DIR = Path(__file__).resolve().parent
 if __package__ is None or __package__ == "":
     sys.path.insert(0, str(CURRENT_DIR.parents[1]))
     from ai.evaluations.datasets import EVALUATION_DATA  # type: ignore
-    from ai.evaluations.run_ragas import METRIC_NAMES, RAGAS_AVAILABLE, evaluate_agent  # type: ignore
+    from ai.evaluations.run_ragas import METRIC_NAMES, evaluate_agent  # type: ignore
 else:  # pragma: no cover
     from .datasets import EVALUATION_DATA
-    from .run_ragas import METRIC_NAMES, RAGAS_AVAILABLE, evaluate_agent
+    from .run_ragas import METRIC_NAMES, evaluate_agent
 
 from ai.rag_config import (
     ChunkingConfig,
@@ -91,6 +91,7 @@ def _write_markdown_report(
     agent_keys: Iterable[str],
     base_config: RagConfig,
     use_recorded: bool,
+    ragas_available: bool,
 ) -> Path:
     RESULTS_MD.parent.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).isoformat()
@@ -99,7 +100,7 @@ def _write_markdown_report(
     lines.append("# RAG Hyperparameter Tuning Report")
     lines.append(f"- Generated: {timestamp}")
     lines.append(f"- Agents evaluated: {', '.join(agent_keys)}")
-    lines.append(f"- Ragas available: {RAGAS_AVAILABLE}")
+    lines.append(f"- Ragas available: {ragas_available}")
     lines.append(f"- Answers source: {'recorded references' if use_recorded else 'live agents (with fallback on failure)'}")
     lines.append(f"- Scoring rule: mean of {', '.join(METRIC_NAMES)} across agents (fallback metrics when ragas unavailable)")
     lines.append(f"- Context mode: {'live retrieval' if best['config'].evaluation.use_live_contexts else 'fixtures'}")
@@ -195,6 +196,9 @@ def main() -> None:
     if not trials:
         raise RuntimeError("No trials executed during hyperparameter tuning.")
 
+    ragas_available = any(
+        result.get("ragas_runtime", {}).get("enabled") for trial in trials for result in trial.get("results", [])
+    )
     best = max(trials, key=lambda trial: trial["score"])
     best_config = copy.deepcopy(best["config"])
     best_config.metadata.update(
@@ -206,7 +210,9 @@ def main() -> None:
     )
 
     save_path = save_rag_config(best_config)
-    report_path = _write_markdown_report(trials, best, agent_keys, base_config, use_recorded)
+    report_path = _write_markdown_report(
+        trials, best, agent_keys, base_config, use_recorded, bool(ragas_available)
+    )
 
     print(f"Saved best configuration to {save_path}")
     print(f"Wrote tuning report to {report_path}")

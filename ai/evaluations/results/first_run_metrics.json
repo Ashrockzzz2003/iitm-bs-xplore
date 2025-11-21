@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "generated_at": "2025-11-21T12:47:32.876365+00:00",
-    "ragas_available": false,
-    "use_recorded_answers": false,
+    "generated_at": "2025-11-21T15:11:56.743848+00:00",
+    "ragas_available": true,
+    "use_recorded_answers": true,
     "use_live_contexts": true,
     "rag_config": {
       "chunk_size": 700,
       "chunk_overlap": 120,
       "top_k": 4,
-      "score_threshold": null,
+      "score_threshold": 0.35,
       "rerank_top_k": null,
       "max_context_chars": 1800,
       "prefer_ragas": true,
@@ -16,28 +16,30 @@
       "embedding_model": "text-embedding-004",
       "use_live_contexts": true
     },
-    "metrics_preference": "fallback_lexical",
+    "metrics_preference": "ragas",
     "ragas_runtime": {
-      "enabled": false,
+      "enabled": true,
       "prefer_ragas": true,
-      "reason": "ragas_not_installed",
-      "llm": false,
-      "embeddings": false
+      "reason": "ragas_skipped_fast_mode",
+      "llm": true,
+      "embeddings": true
     },
-    "project_root": "."
+    "ragas_import_error": null,
+    "google_api_key_present": true,
+    "project_root": "ai"
   },
   "agents": [
     {
       "agent_key": "ds_foundation",
       "agent_label": "Data Science - Foundation",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.5673,
@@ -68,13 +70,11 @@
             "Foundation Level: 32 credits | 8 courses. The curriculum covers computational thinking, Python programming, English, mathematics, and statistics fundamentals.",
             "Expected engagement is roughly 10 hours per course each week, and the institute notes that learners usually take between one and three years to complete the foundation stage before moving on."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5,
@@ -82,7 +82,7 @@
             "context_recall": 0.6522,
             "faithfulness": 0.6552
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -111,13 +111,11 @@
             "In each term, a learner may register for up to 4 courses depending on their CCC (Credit Clearing Capability).",
             "Level Progression Requirements: Foundation Level: All 8 courses must be successfully completed before enrolling in any Diploma Level course."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5,
@@ -125,7 +123,7 @@
             "context_recall": 0.575,
             "faithfulness": 0.4
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -152,13 +150,11 @@
             "Each Foundation course requires a minimum score of 40 marks to be considered passed.",
             "No cumulative grade or CGPA threshold is specified for level progression in the IITM BS Data Science program."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/foundation. Attempts: ds_foundation_course, ds_foundation, ds_foundation_document, ds_foundation_doc. Details: ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_foundation: Error querying chroma: Collection [ds_foundation] does not exist; ds_foundation_document: Error querying chroma: Collection [ds_foundation_document] does not exist; ds_foundation_doc: Error querying chroma: Collection [ds_foundation_doc] does not exist; ds_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.7018,
@@ -166,7 +162,7 @@
             "context_recall": 0.5938,
             "faithfulness": 0.56
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     },
@@ -174,13 +170,13 @@
       "agent_key": "ds_diploma",
       "agent_label": "Data Science - Diploma",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.5929,
@@ -211,13 +207,11 @@
             "Diploma Level: Programming track totals 27 credits split across six courses and two project components.",
             "Diploma Level: Data Science track mirrors the Programming track with 27 credits that include six advanced courses and two projects to deepen applied analytics."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5714,
@@ -225,7 +219,7 @@
             "context_recall": 0.5833,
             "faithfulness": 0.48
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -252,13 +246,11 @@
             "Learners who complete all courses and projects in both diplomas can proceed to the BSc Degree Level.",
             "It is possible for learners to exit with one or both diplomas after completing the required credits."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5217,
@@ -266,7 +258,7 @@
             "context_recall": 0.6486,
             "faithfulness": 0.4375
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -293,13 +285,11 @@
             "Course page for \u201cTools in Data Science\u201d (BSSE2002) states: \u2018\u2026 online assignments for each module, \u2026 2 take home projects\u2019 in addition to in-person end-term exam. :contentReference[oaicite:2]{index=2}",
             "Programme page shows for Diploma in Data Science: \u201cMachine Learning Practice \u2013 Project\u201d (2 credits) listed as part of the track. :contentReference[oaicite:3]{index=3}"
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/diploma. Attempts: ds_diploma_course, ds_diploma, ds_diploma_document, ds_diploma_doc. Details: ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_diploma: Error querying chroma: Collection [ds_diploma] does not exist; ds_diploma_document: Error querying chroma: Collection [ds_diploma_document] does not exist; ds_diploma_doc: Error querying chroma: Collection [ds_diploma_doc] does not exist; ds_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.6857,
@@ -307,7 +297,7 @@
             "context_recall": 0.4364,
             "faithfulness": 0.36
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     },
@@ -315,13 +305,13 @@
       "agent_key": "ds_degree",
       "agent_label": "Data Science - Degree",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.5819,
@@ -352,13 +342,11 @@
             "BSc Degree Level: 28 credits. BS Degree Level: 28 credits. Learners build advanced electives and capstone work at this stage.",
             "Total credits to be earned: BSc Degree 114 credits. BS Degree 142 credits. Completing the BS track adds advanced specialisations on top of the BSc milestone."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5581,
@@ -366,7 +354,7 @@
             "context_recall": 0.5789,
             "faithfulness": 0.625
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -393,13 +381,11 @@
             "At the Degree Level, students can take a mix of core and elective courses as long as prerequisites are met.",
             "The Degree Level curriculum includes core courses, elective courses, and a project, which may be taken in flexible order based on course availability."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5405,
@@ -407,7 +393,7 @@
             "context_recall": 0.4359,
             "faithfulness": 0.3143
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -435,13 +421,11 @@
             "Eligibility for final course grade: attending the end-term exam.",
             "Therefore, missing Assignment 1 alone does not disqualify a learner, as long as Assignment 2 or 3 is submitted and other conditions are fulfilled."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for ds/degree. Attempts: ds_degree_course, ds_degree, ds_degree_document, ds_degree_doc. Details: ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; ds_degree: Error querying chroma: Collection [ds_degree] does not exist; ds_degree_document: Error querying chroma: Collection [ds_degree_document] does not exist; ds_degree_doc: Error querying chroma: Collection [ds_degree_doc] does not exist; ds_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "ds",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.6471,
@@ -449,7 +433,7 @@
             "context_recall": 0.623,
             "faithfulness": 0.5366
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     },
@@ -457,13 +441,13 @@
       "agent_key": "es_foundation",
       "agent_label": "Electronic Systems - Foundation",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.489,
@@ -494,13 +478,11 @@
             "The Electronic Systems foundation level revisits physics and mathematics essentials while introducing circuit theory, digital systems, and embedded programming.",
             "Hands-on hardware labs run alongside lectures so learners practice prototyping, measurement, and debugging early in the program."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.3415,
@@ -508,7 +490,7 @@
             "context_recall": 0.6316,
             "faithfulness": 0.2727
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -533,13 +515,11 @@
             "Foundation level of BS in Electronic Systems: course list includes \u201cElectronic Systems Thinking and Circuits\u201d (code EE1101) among theory courses.",
             "The programme emphasises electronics, embedded programming, digital systems, and control engineering."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.3922,
@@ -547,7 +527,7 @@
             "context_recall": 0.2174,
             "faithfulness": 0.1964
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -572,13 +552,11 @@
             "According to the IITM BS Electronic Systems Foundation Level curriculum, \u2018Electronic Systems Thinking and Circuits (EE1101)\u2019 and \u2018Electronic Systems Thinking and Circuits Lab (EE1102)\u2019 are listed as corequisites.",
             "Corequisite means that both courses can be taken together in the same term or the lab can be taken after the theory course, but the lab cannot be taken before completing or registering for the theory course."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/foundation. Attempts: es_foundation_course, es_foundation, es_foundation_document, es_foundation_doc. Details: es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_foundation: Error querying chroma: Collection [es_foundation] does not exist; es_foundation_document: Error querying chroma: Collection [es_foundation_document] does not exist; es_foundation_doc: Error querying chroma: Collection [es_foundation_doc] does not exist; es_foundation_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "foundation"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.7333,
@@ -586,7 +564,7 @@
             "context_recall": 0.6176,
             "faithfulness": 0.5
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     },
@@ -594,13 +572,13 @@
       "agent_key": "es_diploma",
       "agent_label": "Electronic Systems - Diploma",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.5925,
@@ -631,13 +609,11 @@
             "During the diploma stage learners pick focus areas like embedded systems, signal processing, or control while reinforcing hardware design skills.",
             "The curriculum blends six core build courses with two design projects that stress board-level implementation and firmware integration."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.6667,
@@ -645,7 +621,7 @@
             "context_recall": 0.7917,
             "faithfulness": 0.625
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -670,13 +646,11 @@
             "Diploma Level: 43 credits | 8 Theory + 3 Labs + 2 Project courses.",
             "Courses listed for Diploma level include: \u201cElectronics System Project (2 credits, EE3999)\u201d and \u201cSignals and Systems Project (2 credits, EE4999)\u201d."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5,
@@ -684,7 +658,7 @@
             "context_recall": 0.3913,
             "faithfulness": 0.32
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -711,13 +685,11 @@
             "Course list with prerequisites in ES Diploma: e.g., \u201cSignals and Systems\u201d EE2101 has prerequisite EE1103 (Elect. & Electronic Circuits) from Foundation; \u201cAnalog Electronic Systems\u201d EE2102 has prereq EE2101.",
             "\u201cDigital System Design\u201d EE2103 has prerequisite EE1102 (Digital Systems) from Foundation."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/diploma. Attempts: es_diploma_course, es_diploma, es_diploma_document, es_diploma_doc. Details: es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_diploma: Error querying chroma: Collection [es_diploma] does not exist; es_diploma_document: Error querying chroma: Collection [es_diploma_document] does not exist; es_diploma_doc: Error querying chroma: Collection [es_diploma_doc] does not exist; es_diploma_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "diploma"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.6107,
@@ -725,7 +697,7 @@
             "context_recall": 0.3293,
             "faithfulness": 0.3265
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     },
@@ -733,13 +705,13 @@
       "agent_key": "es_degree",
       "agent_label": "Electronic Systems - Degree",
       "cases_evaluated": 3,
-      "metrics_source": "fallback_lexical",
+      "metrics_source": "ragas",
       "ragas_runtime": {
-        "enabled": false,
+        "enabled": true,
         "prefer_ragas": true,
-        "reason": "ragas_not_installed",
-        "llm": false,
-        "embeddings": false
+        "reason": "ragas_skipped_fast_mode",
+        "llm": true,
+        "embeddings": true
       },
       "aggregated_metrics": {
         "answer_relevancy": 0.5551,
@@ -770,13 +742,11 @@
             "The Electronic Systems degree level emphasises system integration and advanced electronics manufacturing topics.",
             "Learners tackle industry-partnered capstone projects in domains such as robotics, IoT, VLSI, and power electronics to deliver production-grade platforms."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5854,
@@ -784,7 +754,7 @@
             "context_recall": 0.6818,
             "faithfulness": 0.6842
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -811,13 +781,11 @@
             "The BS in Electronic Systems has the following credit structure: Foundation Level ~44 credits; Diploma Level ~42 credits; Degree Level ~56 credits (12 courses)",
             "Completion of 142 total credits across all levels (Foundation + Diploma + Degree) is required for the BS degree."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5294,
@@ -825,7 +793,7 @@
             "context_recall": 0.68,
             "faithfulness": 0.3488
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         },
         {
           "case": {
@@ -852,13 +820,11 @@
             "Department Electives at degree level: Internet of Things (IoT) EE5101, Digital IC Design EE5102, Power Management for Electronic Systems EE5103, Biomedical Electronic Systems EE5104, etc.",
             "Programme focus: \u2018The emphasis is on electronics, embedded programming, digital systems, and control engineering\u2019."
           ],
-          "context_source": "retrieval_error",
+          "context_source": "retriever_unavailable",
           "retrieval_info": {
             "contexts": [],
-            "source": "retrieval_error",
-            "error": "Exception: Could not find collection for es/degree. Attempts: es_degree_course, es_degree, es_degree_document, es_degree_doc. Details: es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.; es_degree: Error querying chroma: Collection [es_degree] does not exist; es_degree_document: Error querying chroma: Collection [es_degree_document] does not exist; es_degree_doc: Error querying chroma: Collection [es_degree_doc] does not exist; es_degree_course: Error querying chroma: Missing key inputs argument! To use the Google AI API, provide (`api_key`) arguments. To use the Google Cloud API, provide (`vertexai`, `project` & `location`) arguments.",
-            "program": "es",
-            "level": "degree"
+            "source": "retriever_unavailable",
+            "error": "ChromaDB not available"
           },
           "metrics": {
             "answer_relevancy": 0.5505,
@@ -866,7 +832,7 @@
             "context_recall": 0.4697,
             "faithfulness": 0.5116
           },
-          "failure_reason": "RuntimeError: Agent produced no textual response."
+          "failure_reason": null
         }
       ]
     }

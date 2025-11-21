@@ -18,7 +18,7 @@
   "metadata": {
     "description": "Shared RAG configuration for ingestion, retrieval, and evaluations.",
     "selected_by": "ai/evaluations/hparam_tuning.py",
-    "selected_at": "2025-11-21T13:03:04.147658+00:00",
+    "selected_at": "2025-11-21T15:12:10.574205+00:00",
     "best_score": 0.5053
   }
 }

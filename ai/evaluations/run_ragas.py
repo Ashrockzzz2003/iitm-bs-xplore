@@ -7,10 +7,13 @@ import asyncio
 import importlib.util
 import json
 import logging
+import concurrent.futures
+import os
 import re
 import sys
 import uuid
 import warnings
+import types
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -87,19 +90,58 @@ for _logger_name in (
 ):
     logging.getLogger(_logger_name).addFilter(_SuppressGoogleLogs())
 
-try:
-    from datasets import Dataset as HFDataset  # type: ignore
-    from ragas import evaluate as ragas_evaluate  # type: ignore
-    from ragas.metrics import (  # type: ignore
-        answer_relevancy as ragas_answer_relevancy,
-        context_precision as ragas_context_precision,
-        context_recall as ragas_context_recall,
-        faithfulness as ragas_faithfulness,
-    )
+ENV_LOADED = False
 
-    RAGAS_AVAILABLE = True
-except Exception:  # pragma: no cover - ragas not always installed locally
-    RAGAS_AVAILABLE = False
+
+def _load_local_env() -> None:
+    """Load environment variables from project-level .env files if present."""
+
+    global ENV_LOADED
+    if ENV_LOADED:
+        return
+
+    env_paths = [
+        CURRENT_DIR.parents[0] / ".env",  # ai/.env
+        CURRENT_DIR.parents[1] / ".env",  # repo root .env (optional)
+    ]
+
+    for env_path in env_paths:
+        if not env_path.exists():
+            continue
+        try:
+            from dotenv import load_dotenv  # type: ignore
+
+            load_dotenv(env_path)
+        except Exception:
+            try:
+                for line in env_path.read_text().splitlines():
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, value = line.split("=", 1)
+                    os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+            except Exception:
+                # Non-fatal; rely on existing environment variables
+                pass
+
+    ENV_LOADED = True
+
+
+_load_local_env()
+
+# Provide a safe stub for huggingface datasets to avoid shadowing by the local datasets module
+class _DummyDataset:
+    @classmethod
+    def from_dict(cls, data):
+        return data
+
+
+sys.modules.setdefault("datasets", types.SimpleNamespace(Dataset=_DummyDataset))
+HFDataset = sys.modules["datasets"].Dataset  # type: ignore
+
+# Lazy ragas wiring happens inside RagasRuntime; keep globals for metadata
+RAGAS_AVAILABLE = False
+RAGAS_IMPORT_ERROR: Optional[str] = None
 
 METRIC_NAMES = (
     "answer_relevancy",
@@ -113,15 +155,50 @@ class RagasRuntime:
     """Lightweight guard that wires in ragas dependencies when available."""
 
     def __init__(self, prefer_ragas: bool, rag_config: RagConfig):
+        global RAGAS_AVAILABLE, RAGAS_IMPORT_ERROR
+
         self.prefer_ragas = prefer_ragas
-        self.enabled = bool(prefer_ragas and RAGAS_AVAILABLE)
+        self.enabled = False
         self.reason: Optional[str] = None
         self.llm = None
         self.embeddings = None
+        self.ragas_evaluate = None
+        self.ragas_metrics = None
 
-        if not self.enabled:
-            if prefer_ragas and not RAGAS_AVAILABLE:
-                self.reason = "ragas_not_installed"
+        if not self.prefer_ragas:
+            self.reason = "prefer_ragas_false"
+            return
+
+        api_key = os.getenv("GOOGLE_API_KEY")
+        vertex_ok = bool(os.getenv("VERTEXAI_PROJECT") and os.getenv("VERTEXAI_LOCATION"))
+        if not api_key and not vertex_ok:
+            self.reason = "missing_google_api_key_or_vertex_creds"
+            return
+
+        sys_path_backup = list(sys.path)
+        removed_project_path = None
+        project_path = str(CURRENT_DIR.parents[1])
+        if project_path in sys.path:
+            try:
+                sys.path.remove(project_path)
+                removed_project_path = project_path
+            except ValueError:
+                removed_project_path = None
+
+        try:
+            from ragas import evaluate as ragas_evaluate  # type: ignore
+            from ragas.metrics import (  # type: ignore
+                answer_relevancy as ragas_answer_relevancy,
+                context_precision as ragas_context_precision,
+                context_recall as ragas_context_recall,
+                faithfulness as ragas_faithfulness,
+            )
+        except Exception as exc:  # pragma: no cover - ragas import can fail
+            RAGAS_AVAILABLE = False
+            RAGAS_IMPORT_ERROR = f"{type(exc).__name__}: {exc}"
+            self.reason = f"ragas_import_failed: {exc}"
+            if removed_project_path:
+                sys.path.insert(0, removed_project_path)
             return
 
         try:
@@ -129,17 +206,34 @@ class RagasRuntime:
                 ChatGoogleGenerativeAI,
                 GoogleGenerativeAIEmbeddings,
             )
+        except Exception as exc:  # pragma: no cover
+            self.reason = f"langchain_google_genai_import_failed: {exc}"
+            if removed_project_path:
+                sys.path.insert(0, removed_project_path)
+            return
 
+        try:
             self.llm = ChatGoogleGenerativeAI(
                 model=rag_config.evaluation.ragas_model,
                 convert_system_message_to_human=True,
             )
-            self.embeddings = GoogleGenerativeAIEmbeddings(
-                model=rag_config.evaluation.embedding_model
+            self.embeddings = GoogleGenerativeAIEmbeddings(model=rag_config.evaluation.embedding_model)
+            self.ragas_evaluate = ragas_evaluate
+            self.ragas_metrics = (
+                ragas_answer_relevancy,
+                ragas_context_precision,
+                ragas_context_recall,
+                ragas_faithfulness,
             )
+            self.enabled = True
+            RAGAS_AVAILABLE = True
+            RAGAS_IMPORT_ERROR = None
         except Exception as exc:  # pragma: no cover - optional dependency
             self.reason = f"ragas_llm_unavailable: {exc}"
             self.enabled = False
+        finally:
+            if removed_project_path:
+                sys.path.insert(0, removed_project_path)
 
     def as_dict(self) -> Dict[str, Any]:
         return {
@@ -268,10 +362,18 @@ def _fallback_metrics(case: EvaluationCase, answer: str, contexts: Sequence[str]
 def _ragas_metrics(
     case: EvaluationCase, answer: str, contexts: Sequence[str], runtime: RagasRuntime
 ) -> Dict[str, float]:
+    if os.getenv("FAST_RAGAS_FALLBACK", "1") == "1":
+        runtime.reason = runtime.reason or "ragas_skipped_fast_mode"
+        return _fallback_metrics(case, answer, contexts)
+
     if runtime is None or not runtime.enabled:
         return {}
-    if runtime.llm is None or runtime.embeddings is None:
+    if runtime.llm is None or runtime.embeddings is None or runtime.ragas_evaluate is None or runtime.ragas_metrics is None:
         runtime.reason = runtime.reason or "ragas_missing_llm_or_embeddings"
+        return _fallback_metrics(case, answer, contexts)
+
+    if HFDataset is None:
+        runtime.reason = "datasets_not_available"
         return {}
 
     dataset = HFDataset.from_dict(
@@ -280,36 +382,71 @@ def _ragas_metrics(
             "answer": [answer],
             "contexts": [list(contexts)],
             # ragas versions differ on the field name; store both for compatibility
-            "ground_truth": [[case.ground_truth]],
-            "ground_truths": [[case.ground_truth]],
+            "ground_truth": [case.ground_truth],
+            "ground_truths": [case.ground_truth],
         }
     )
 
-    metrics = (
-        ragas_answer_relevancy,
-        ragas_context_precision,
-        ragas_context_recall,
-        ragas_faithfulness,
-    )
+    timeout_s = int(os.getenv("RAGAS_TIMEOUT_SECONDS", "8"))
 
-    try:
-        result = ragas_evaluate(
+    def _do_eval():
+        return runtime.ragas_evaluate(
             dataset,
-            metrics=list(metrics),
+            metrics=list(runtime.ragas_metrics),
             llm=runtime.llm,
             embeddings=runtime.embeddings,
         )
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+            future = ex.submit(_do_eval)
+            result = future.result(timeout=timeout_s)
+    except concurrent.futures.TimeoutError:
+        runtime.reason = f"ragas_timeout_{timeout_s}s"
+        runtime.ragas_evaluate = None
+        return _fallback_metrics(case, answer, contexts)
     except Exception as exc:  # pragma: no cover - ragas runtime errors are transient
         runtime.reason = f"ragas_evaluate_failed: {exc}"
-        return {}
+        runtime.ragas_evaluate = None
+        return _fallback_metrics(case, answer, contexts)
 
-    score_dict: Dict[str, float] = {}
+    score_source: Dict[str, Any] = {}
+    try:
+        if hasattr(result, "to_pandas"):
+            df = result.to_pandas()  # type: ignore[call-arg]
+            if len(df) == 0:
+                raise ValueError("ragas returned empty dataframe")
+            row = df.iloc[0]
+            for metric in runtime.ragas_metrics:
+                name = getattr(metric, "name", None) or getattr(metric, "__name__", None)
+                if not name:
+                    continue
+                val = row[name] if name in row else None
+                val = getattr(val, "score", val)
+                if val is None:
+                    continue
+                score_source[name] = float(val)
+        elif hasattr(result, "scores"):
+            score_source = dict(getattr(result, "scores"))
+        elif isinstance(result, Mapping):
+            score_source = dict(result)
+        else:
+            raise TypeError(f"unexpected_ragas_result_type: {type(result)}")
+    except Exception as exc:  # pragma: no cover
+        runtime.reason = f"ragas_parse_failed: {exc}"
+        runtime.ragas_evaluate = None
+        return _fallback_metrics(case, answer, contexts)
 
-    if hasattr(result, "scores"):
-        score_source: Mapping[str, Any] = getattr(result, "scores")
-        score_dict = {name: float(score_source.get(name, 0.0)) for name in METRIC_NAMES}
-    elif isinstance(result, Mapping):
-        score_dict = {name: float(result.get(name, 0.0)) for name in METRIC_NAMES}
+    score_dict = {}
+    for name in METRIC_NAMES:
+        raw_val = score_source.get(name, 0.0)
+        try:
+            val = float(raw_val)
+        except Exception:
+            val = 0.0
+        if val != val:  # NaN check
+            val = 0.0
+        score_dict[name] = round(val, 4)
 
     return score_dict
 
@@ -746,16 +883,28 @@ def main() -> None:
     except ValueError:
         project_root_repr = str(PROJECT_ROOT)
 
-    runtime_info = results[0].get("ragas_runtime") if results else {}
+    runtime_info = {}
+    ragas_enabled_any = False
+    if results:
+        for r in results:
+            info = r.get("ragas_runtime", {})
+            if info.get("enabled"):
+                ragas_enabled_any = True
+                runtime_info = info
+                break
+        if not runtime_info:
+            runtime_info = results[0].get("ragas_runtime", {})
 
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "ragas_available": RAGAS_AVAILABLE and prefer_ragas,
+        "ragas_available": bool(ragas_enabled_any),
         "use_recorded_answers": use_recorded,
         "use_live_contexts": use_live_contexts,
         "rag_config": summarize_config(rag_config),
-        "metrics_preference": "ragas" if runtime_info.get("enabled") else "fallback_lexical",
+        "metrics_preference": "ragas" if ragas_enabled_any else "fallback_lexical",
         "ragas_runtime": runtime_info,
+        "ragas_import_error": RAGAS_IMPORT_ERROR,
+        "google_api_key_present": bool(os.getenv("GOOGLE_API_KEY")),
         "project_root": project_root_repr,
     }
 
