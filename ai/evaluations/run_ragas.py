@@ -29,6 +29,14 @@ if __package__ is None or __package__ == "":
 else:  # pragma: no cover
     from .datasets import AGENT_REGISTRY, EVALUATION_DATA, EvaluationCase, PROJECT_ROOT
 
+from ai.rag_config import (
+    ChunkingConfig,
+    RagConfig,
+    RetrievalConfig,
+    load_rag_config,
+    summarize_config,
+)
+
 for _logger_name in (
     "google",
     "google.genai",
@@ -101,6 +109,48 @@ METRIC_NAMES = (
 )
 
 
+class RagasRuntime:
+    """Lightweight guard that wires in ragas dependencies when available."""
+
+    def __init__(self, prefer_ragas: bool, rag_config: RagConfig):
+        self.prefer_ragas = prefer_ragas
+        self.enabled = bool(prefer_ragas and RAGAS_AVAILABLE)
+        self.reason: Optional[str] = None
+        self.llm = None
+        self.embeddings = None
+
+        if not self.enabled:
+            if prefer_ragas and not RAGAS_AVAILABLE:
+                self.reason = "ragas_not_installed"
+            return
+
+        try:
+            from langchain_google_genai import (  # type: ignore
+                ChatGoogleGenerativeAI,
+                GoogleGenerativeAIEmbeddings,
+            )
+
+            self.llm = ChatGoogleGenerativeAI(
+                model=rag_config.evaluation.ragas_model,
+                convert_system_message_to_human=True,
+            )
+            self.embeddings = GoogleGenerativeAIEmbeddings(
+                model=rag_config.evaluation.embedding_model
+            )
+        except Exception as exc:  # pragma: no cover - optional dependency
+            self.reason = f"ragas_llm_unavailable: {exc}"
+            self.enabled = False
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "enabled": self.enabled,
+            "prefer_ragas": self.prefer_ragas,
+            "reason": self.reason,
+            "llm": bool(self.llm),
+            "embeddings": bool(self.embeddings),
+        }
+
+
 def _tokenize(text: str) -> List[str]:
     return re.findall(r"[a-z0-9]+", text.lower())
 
@@ -128,12 +178,78 @@ def _f1_score(reference_tokens: Sequence[str], prediction_tokens: Sequence[str])
     return 2 * precision * recall / (precision + recall)
 
 
-def _fallback_metrics(case: EvaluationCase, answer: str) -> Dict[str, float]:
+def _split_text_for_eval(text: str, chunk_size: int, chunk_overlap: int) -> List[str]:
+    """Chunk text for evaluation while trying to respect sentence/word boundaries."""
+    text = text.strip()
+    if not text:
+        return []
+
+    if len(text) <= chunk_size:
+        return [text]
+
+    chunks: List[str] = []
+    start = 0
+    end: int
+    length = len(text)
+
+    while start < length:
+        end = min(length, start + chunk_size)
+        window = text[start:end]
+
+        if end < length:
+            last_period = window.rfind(". ")
+            last_space = window.rfind(" ")
+            soft_end = max(last_period, last_space)
+            if soft_end > chunk_size * 0.5:
+                end = start + soft_end + 1
+                window = text[start:end]
+
+        window = window.strip()
+        if window:
+            chunks.append(window)
+
+        if end >= length:
+            break
+
+        start = max(end - chunk_overlap, start + 1)
+
+    return chunks
+
+
+def _prepare_contexts(raw_contexts: Sequence[str], chunking: ChunkingConfig) -> List[str]:
+    """Apply evaluation chunking and de-duplicate contexts while preserving order."""
+    chunks: List[str] = []
+    seen = set()
+    for ctx in raw_contexts:
+        for piece in _split_text_for_eval(ctx, chunking.chunk_size, chunking.chunk_overlap):
+            if piece and piece not in seen:
+                chunks.append(piece)
+                seen.add(piece)
+    return chunks
+
+
+def _normalize_program(program: str) -> str:
+    program = (program or "").lower()
+    if program.startswith("data_science"):
+        return "ds"
+    if program.startswith("electronic_systems"):
+        return "es"
+    return program
+
+
+def _normalize_level(level: str) -> str:
+    level = (level or "").lower()
+    if level.startswith("level:"):
+        return level.split(":", 1)[1]
+    return level
+
+
+def _fallback_metrics(case: EvaluationCase, answer: str, contexts: Sequence[str]) -> Dict[str, float]:
     """Compute lightweight lexical metrics when ragas is unavailable."""
 
     answer_tokens = _tokenize(answer)
     ground_tokens = _tokenize(case.ground_truth)
-    context_token_lists = [_tokenize(ctx) for ctx in case.contexts]
+    context_token_lists = [_tokenize(ctx) for ctx in contexts]
     context_union = set().union(*context_token_lists) if context_token_lists else set()
 
     answer_relevancy = _f1_score(ground_tokens, answer_tokens)
@@ -149,16 +265,23 @@ def _fallback_metrics(case: EvaluationCase, answer: str) -> Dict[str, float]:
     }
 
 
-def _ragas_metrics(case: EvaluationCase, answer: str) -> Dict[str, float]:
-    if not RAGAS_AVAILABLE:
+def _ragas_metrics(
+    case: EvaluationCase, answer: str, contexts: Sequence[str], runtime: RagasRuntime
+) -> Dict[str, float]:
+    if runtime is None or not runtime.enabled:
+        return {}
+    if runtime.llm is None or runtime.embeddings is None:
+        runtime.reason = runtime.reason or "ragas_missing_llm_or_embeddings"
         return {}
 
     dataset = HFDataset.from_dict(
         {
             "question": [case.question],
             "answer": [answer],
-            "contexts": [list(case.contexts)],
+            "contexts": [list(contexts)],
+            # ragas versions differ on the field name; store both for compatibility
             "ground_truth": [[case.ground_truth]],
+            "ground_truths": [[case.ground_truth]],
         }
     )
 
@@ -169,7 +292,16 @@ def _ragas_metrics(case: EvaluationCase, answer: str) -> Dict[str, float]:
         ragas_faithfulness,
     )
 
-    result = ragas_evaluate(dataset, metrics=list(metrics))
+    try:
+        result = ragas_evaluate(
+            dataset,
+            metrics=list(metrics),
+            llm=runtime.llm,
+            embeddings=runtime.embeddings,
+        )
+    except Exception as exc:  # pragma: no cover - ragas runtime errors are transient
+        runtime.reason = f"ragas_evaluate_failed: {exc}"
+        return {}
 
     score_dict: Dict[str, float] = {}
 
@@ -333,13 +465,93 @@ def _invoke_google_adk_agent(agent_key: str, agent_obj: Any, question: str) -> O
 
     raise RuntimeError("Agent produced no textual response.")
 
+
+def _retrieve_contexts_for_case(
+    case: EvaluationCase,
+    agent_key: str,
+    retrieval_cfg: RetrievalConfig,
+    chunking_cfg: ChunkingConfig,
+) -> Dict[str, Any]:
+    """Pull contexts from ChromaDB (if available) for the given case."""
+
+    try:
+        from ai.agents.tools import chromadb_tools
+    except Exception as exc:  # pragma: no cover - optional path
+        return {
+            "contexts": [],
+            "source": "retriever_import_failed",
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+    if not getattr(chromadb_tools, "CHROMA_AVAILABLE", False):
+        return {"contexts": [], "source": "retriever_unavailable", "error": "ChromaDB not available"}
+
+    registry_entry = AGENT_REGISTRY.get(agent_key, {})
+    program_hint = _normalize_program(str(registry_entry.get("program", "")))
+    level_hint = _normalize_level(str(registry_entry.get("level", "")))
+
+    if not program_hint:
+        program_hint = _normalize_program(str(case.metadata.get("program", "")))
+    if not level_hint:
+        level_hint = _normalize_level(str(case.metadata.get("level", "")))
+
+    try:
+        results = chromadb_tools.smart_query(
+            query=case.question,
+            program=program_hint or None,
+            level=level_hint or None,
+            n_results=retrieval_cfg.top_k,
+            score_threshold=retrieval_cfg.score_threshold,
+            rerank_top_k=retrieval_cfg.rerank_top_k,
+            config=retrieval_cfg,
+        )
+        contexts = _prepare_contexts(results.get("documents") or [], chunking_cfg)
+        summary = {
+            "collections_searched": results.get("collections_searched")
+            or ([results.get("collection")] if results.get("collection") else []),
+            "total_results": results.get("total_results", len(contexts)),
+            "distances": results.get("distances", []),
+            "program": program_hint,
+            "level": level_hint,
+            "score_threshold": retrieval_cfg.score_threshold,
+            "top_k": retrieval_cfg.top_k,
+        }
+        return {
+            "contexts": contexts,
+            "source": "retrieved",
+            "summary": summary,
+        }
+    except Exception as exc:
+        return {
+            "contexts": [],
+            "source": "retrieval_error",
+            "error": f"{type(exc).__name__}: {exc}",
+            "program": program_hint,
+            "level": level_hint,
+        }
+
 def evaluate_agent(
     agent_key: str,
     *,
     use_recorded: bool,
-    prefer_ragas: bool,
+    prefer_ragas: Optional[bool] = None,
+    use_live_contexts: Optional[bool] = None,
+    rag_config: Optional[RagConfig] = None,
+    retrieval_config: Optional[RetrievalConfig] = None,
+    chunking_config: Optional[ChunkingConfig] = None,
 ) -> Dict[str, Any]:
     """Evaluate a single agent."""
+
+    config = rag_config or load_rag_config()
+    retrieval_cfg = retrieval_config or config.retrieval
+    chunking_cfg = chunking_config or config.chunking
+
+    prefer_ragas = prefer_ragas if prefer_ragas is not None else config.evaluation.prefer_ragas
+    use_live_contexts = (
+        use_live_contexts if use_live_contexts is not None else config.evaluation.use_live_contexts
+    )
+
+    ragas_runtime = RagasRuntime(prefer_ragas, config)
 
     cases = EVALUATION_DATA[agent_key]
     per_case_results: List[Dict[str, Any]] = []
@@ -357,10 +569,24 @@ def evaluate_agent(
             )
             use_recorded = True
 
-    metrics_source = "ragas" if prefer_ragas and RAGAS_AVAILABLE else "fallback_lexical"
+    metrics_source = "ragas" if ragas_runtime.enabled else "fallback_lexical"
 
     for case in cases:
         failure_reason: Optional[str] = load_failure_reason if (use_recorded or agent_obj is None) else None
+        contexts_in_use: List[str] = list(case.contexts)
+        context_source = "fixture"
+        retrieval_info: Dict[str, Any] = {}
+
+        if use_live_contexts:
+            retrieval_info = _retrieve_contexts_for_case(case, agent_key, retrieval_cfg, chunking_cfg)
+            retrieved_contexts = retrieval_info.get("contexts") or []
+            if retrieved_contexts:
+                contexts_in_use = retrieved_contexts
+                context_source = retrieval_info.get("source", "retrieved")
+            else:
+                contexts_in_use = list(case.contexts)
+                context_source = retrieval_info.get("source", "fixture_fallback")
+
         if use_recorded or agent_obj is None:
             answer = case.reference_answer
             answer_origin = "recorded_reference"
@@ -380,13 +606,13 @@ def evaluate_agent(
                 answer = case.reference_answer
                 answer_origin = "recorded_reference"
 
-        if prefer_ragas and RAGAS_AVAILABLE:
-            metrics = _ragas_metrics(case, answer)
+        if prefer_ragas and ragas_runtime.enabled:
+            metrics = _ragas_metrics(case, answer, contexts_in_use, ragas_runtime)
         else:
             metrics = {}
 
         if not metrics:
-            metrics = _fallback_metrics(case, answer)
+            metrics = _fallback_metrics(case, answer, contexts_in_use)
             metrics_source = "fallback_lexical"
 
         per_case_results.append(
@@ -394,6 +620,9 @@ def evaluate_agent(
                 "case": asdict(case),
                 "answer": answer,
                 "answer_origin": answer_origin,
+                "contexts_used": contexts_in_use,
+                "context_source": context_source,
+                "retrieval_info": retrieval_info,
                 "metrics": metrics,
                 "failure_reason": failure_reason,
             }
@@ -406,6 +635,7 @@ def evaluate_agent(
         "agent_label": AGENT_REGISTRY[agent_key]["label"],
         "cases_evaluated": len(per_case_results),
         "metrics_source": metrics_source,
+        "ragas_runtime": ragas_runtime.as_dict(),
         "aggregated_metrics": aggregated,
         "cases": per_case_results,
     }
@@ -455,6 +685,18 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip ragas even if it is available (useful for deterministic runs).",
     )
+    parser.add_argument(
+        "--live-contexts",
+        dest="live_contexts",
+        action="store_true",
+        help="Fetch fresh contexts from the retriever instead of fixture contexts.",
+    )
+    parser.add_argument(
+        "--config",
+        dest="config_path",
+        type=Path,
+        help="Optional path to a rag_config.json override.",
+    )
     return parser.parse_args()
 
 
@@ -462,8 +704,11 @@ def main() -> None:
     args = _parse_args()
     agent_keys = args.agent_keys or tuple(EVALUATION_DATA.keys())
 
-    prefer_ragas = not args.force_fallback
+    rag_config = load_rag_config(args.config_path) if args.config_path else load_rag_config()
+
+    prefer_ragas = rag_config.evaluation.prefer_ragas and not args.force_fallback
     use_recorded = args.use_recorded
+    use_live_contexts = bool(rag_config.evaluation.use_live_contexts or args.live_contexts)
 
     results = []
     for key in agent_keys:
@@ -476,6 +721,8 @@ def main() -> None:
                 key,
                 use_recorded=use_recorded,
                 prefer_ragas=prefer_ragas,
+                use_live_contexts=use_live_contexts,
+                rag_config=rag_config,
             )
         )
 
@@ -487,11 +734,16 @@ def main() -> None:
     except ValueError:
         project_root_repr = str(PROJECT_ROOT)
 
+    runtime_info = results[0].get("ragas_runtime") if results else {}
+
     metadata = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "ragas_available": RAGAS_AVAILABLE and not args.force_fallback,
+        "ragas_available": RAGAS_AVAILABLE and prefer_ragas,
         "use_recorded_answers": use_recorded,
-        "metrics_preference": "ragas" if prefer_ragas and RAGAS_AVAILABLE else "fallback_lexical",
+        "use_live_contexts": use_live_contexts,
+        "rag_config": summarize_config(rag_config),
+        "metrics_preference": "ragas" if runtime_info.get("enabled") else "fallback_lexical",
+        "ragas_runtime": runtime_info,
         "project_root": project_root_repr,
     }
 

@@ -16,6 +16,8 @@ from typing import Any, Dict, List
 from util.hierarchical_aggregator import HierarchicalTextAggregator
 from util.chromadb.xml_chroma_uploader import upload_all_xml_files
 
+from ai.rag_config import load_rag_config
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -121,7 +123,15 @@ def main() -> None:
         print("Step 1: Aggregating text from DS and ES programs...")
         print("Using hierarchical XML chunking strategy...")
 
-        aggregator = HierarchicalTextAggregator("outputs", chunk_size=1000, chunk_overlap=200)
+        rag_config = load_rag_config()
+        chunking_cfg = rag_config.chunking
+        print(
+            f"Chunking with size={chunking_cfg.chunk_size}, overlap={chunking_cfg.chunk_overlap}"
+        )
+
+        aggregator = HierarchicalTextAggregator(
+            "outputs", chunk_size=chunking_cfg.chunk_size, chunk_overlap=chunking_cfg.chunk_overlap
+        )
         doc_stats = None
         try:
             stats = aggregator.aggregate_programs(["ds", "es"])

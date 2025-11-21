@@ -11,3 +11,7 @@ urllib3
 google-genai
 chromadb
 dotenv
+ragas 
+langchain-google-genai 
+google-genai 
+google-generativeai

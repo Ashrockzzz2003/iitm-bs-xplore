@@ -3,6 +3,8 @@ import sys
 import os
 import importlib.util
 
+from ai.agents.settings import DEFAULT_SCORE_THRESHOLD, DEFAULT_TOP_K
+
 # Add the tools directory to the path
 tools_path = os.path.join(os.path.dirname(__file__), "..", "..", "tools")
 sys.path.insert(0, tools_path)
@@ -26,6 +28,7 @@ HANDBOOK_LEVEL = "student_handbook"
 GRADING_LEVEL = "grading_policy"
 HANDBOOK_COLLECTION = "generic_student_handbook_document"
 GRADING_COLLECTION = "generic_grading_policy_document"
+THRESHOLD_HINT = DEFAULT_SCORE_THRESHOLD if DEFAULT_SCORE_THRESHOLD is not None else "unset"
 
 SYSTEM_INSTRUCTION = f"""
 You are the IITM BS Policies & Handbook agent. Answer detailed questions about programme-wide rules, grading norms, term logistics, eligibility, and student-facing procedures using the official Student Handbook and IITM BS grading document.
@@ -35,10 +38,10 @@ Primary context sources:
 - Grading Policy ({GRADING_COLLECTION}) featuring grading scale, moderation, and evaluation procedures.
 
 Tools provided:
-- smart_query(query, program="{POLICY_PROGRAM}", level="{HANDBOOK_LEVEL}", n_results=5)
-- smart_query(query, program="{POLICY_PROGRAM}", level="{GRADING_LEVEL}", n_results=5)
-- query_by_program_and_level("{POLICY_PROGRAM}", level, query, n_results=5)
-- query_chroma(collection_name, query, n_results=5)
+- smart_query(query, program="{POLICY_PROGRAM}", level="{HANDBOOK_LEVEL}", n_results={DEFAULT_TOP_K}, score_threshold={THRESHOLD_HINT})
+- smart_query(query, program="{POLICY_PROGRAM}", level="{GRADING_LEVEL}", n_results={DEFAULT_TOP_K}, score_threshold={THRESHOLD_HINT})
+- query_by_program_and_level("{POLICY_PROGRAM}", level, query, n_results={DEFAULT_TOP_K})
+- query_chroma(collection_name, query, n_results={DEFAULT_TOP_K})
 - format_query_results(results, include_metadata=True)
 
 Usage guidance:
