@@ -33,21 +33,29 @@ from ai.rag_config import (
 
 RESULTS_MD = CURRENT_DIR / "results" / "hparam_tuning.md"
 
-# Search space (kept intentionally small for quick iterations)
-CHUNK_SIZES = (700, 1000)
-CHUNK_OVERLAPS = (120, 200)
-TOP_K_VALUES = (4, 8)
-SCORE_THRESHOLDS: Tuple[float | None, ...] = (None, 0.35)
+# Expanded search space
+CHUNK_SIZES = (500, 700, 900, 1100, 1300)
+CHUNK_OVERLAPS = (60, 120, 200, 280)
+TOP_K_VALUES = (3, 5, 8, 10)
+SCORE_THRESHOLDS: Tuple[float | None, ...] = (None, 0.2, 0.3, 0.35, 0.45)
+RERANK_TOP_K_VALUES: Tuple[int | None, ...] = (None, 3, 5)
+MAX_CONTEXT_CHARS = (1200, 1800, 2400)
 
 
 def _build_trial_config(
-    base: RagConfig, chunk_size: int, chunk_overlap: int, top_k: int, threshold: float | None
+    base: RagConfig,
+    chunk_size: int,
+    chunk_overlap: int,
+    top_k: int,
+    threshold: float | None,
+    rerank_top_k: int | None,
+    max_context_chars: int,
 ) -> RagConfig:
     retrieval = RetrievalConfig(
         top_k=top_k,
         score_threshold=threshold,
-        rerank_top_k=base.retrieval.rerank_top_k,
-        max_context_chars=base.retrieval.max_context_chars,
+        rerank_top_k=rerank_top_k,
+        max_context_chars=max_context_chars,
     )
     chunking = ChunkingConfig(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     evaluation = EvaluationConfig(
@@ -108,13 +116,14 @@ def _write_markdown_report(
     lines.append("")
 
     lines.append("## Trials")
-    lines.append("|Trial|Chunk Size|Overlap|Top K|Score Threshold|Score|Metrics source|")
-    lines.append("|---|---|---|---|---|---|---|")
+    lines.append("|Trial|Chunk Size|Overlap|Top K|Score Threshold|Rerank Top K|Max Context Chars|Score|Metrics source|")
+    lines.append("|---|---|---|---|---|---|---|---|---|")
     for idx, trial in enumerate(trials, start=1):
         cfg = summarize_config(trial["config"])
         threshold = cfg["score_threshold"] if cfg["score_threshold"] is not None else "-"
+        rerank_val = cfg["rerank_top_k"] if cfg["rerank_top_k"] is not None else "-"
         lines.append(
-            f"|{idx}|{cfg['chunk_size']}|{cfg['chunk_overlap']}|{cfg['top_k']}|{threshold}|{trial['score']:.4f}|{trial['metrics_source']}|"
+            f"|{idx}|{cfg['chunk_size']}|{cfg['chunk_overlap']}|{cfg['top_k']}|{threshold}|{rerank_val}|{cfg['max_context_chars']}|{trial['score']:.4f}|{trial['metrics_source']}|"
         )
 
     lines.append("")
@@ -165,10 +174,12 @@ def main() -> None:
     use_recorded = bool(args.use_recorded)
 
     trials: List[Dict[str, Any]] = []
-    for chunk_size, chunk_overlap, top_k, threshold in itertools.product(
-        CHUNK_SIZES, CHUNK_OVERLAPS, TOP_K_VALUES, SCORE_THRESHOLDS
+    for chunk_size, chunk_overlap, top_k, threshold, rerank_top_k, max_ctx in itertools.product(
+        CHUNK_SIZES, CHUNK_OVERLAPS, TOP_K_VALUES, SCORE_THRESHOLDS, RERANK_TOP_K_VALUES, MAX_CONTEXT_CHARS
     ):
-        trial_config = _build_trial_config(base_config, chunk_size, chunk_overlap, top_k, threshold)
+        trial_config = _build_trial_config(
+            base_config, chunk_size, chunk_overlap, top_k, threshold, rerank_top_k, max_ctx
+        )
         trial_results = []
 
         for agent_key in agent_keys:

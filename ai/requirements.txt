@@ -4,6 +4,7 @@ ragas
 datasets
 google-generativeai>=0.8.3
 google-genai>=0.8.0
+neo4j
 langchain-core 
 langchain-community
 langchain
