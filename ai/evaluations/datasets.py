@@ -600,6 +600,14 @@ AGENT_REGISTRY: Dict[str, Dict[str, object]] = {
         "agent_attr": "root_agent",
         "runner_app_name": "agents",
     },
+    "policy_docs": {
+        "label": "IITM BS Policies & Handbook",
+        "program": "generic",
+        "level": "policies",
+        "module_path": PROJECT_ROOT / "agents" / "generic" / "policies" / "agent.py",
+        "agent_attr": "root_agent",
+        "runner_app_name": "agents",
+    },
     "orchestrator": {
         "label": "IITM Multi-Agent Orchestrator",
         "program": "multi",

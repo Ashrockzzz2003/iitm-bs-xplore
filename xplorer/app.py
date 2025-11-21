@@ -11,7 +11,7 @@ import os
 import shutil
 import sys
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from util.hierarchical_aggregator import HierarchicalTextAggregator
 from util.chromadb.xml_chroma_uploader import upload_all_xml_files
@@ -19,6 +19,28 @@ from util.chromadb.xml_chroma_uploader import upload_all_xml_files
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+ADDITIONAL_DOCUMENT_SOURCES: List[Dict[str, Any]] = [
+    {
+        "url": "https://docs.google.com/document/u/1/d/e/2PACX-1vSBP6TJyZDklGPMyRtTwQc1cWZKOrozsOy5qmBwB8awTFvBbPN33-IxUV2WYupNdlXQOCgKwV9fDQKq/pub?urp=gmail_link",
+        "program": "GENERIC",
+        "type": "document",
+        "level": "grading_policy",
+        "label": "IITM BS Grading Policy",
+        "source": "google_docs",
+        "tags": ["grading", "policies", "assessments"],
+    },
+    {
+        "url": "https://docs.google.com/document/u/0/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub?pli=1",
+        "program": "GENERIC",
+        "type": "document",
+        "level": "student_handbook",
+        "label": "IITM BS Student Handbook",
+        "source": "google_docs",
+        "tags": ["handbook", "policies", "guidelines"],
+    },
+]
 
 
 def cleanup_directories() -> None:
@@ -49,16 +71,19 @@ def print_banner() -> None:
     print()
 
 
-def print_summary(stats: Dict[str, Any]) -> None:
+def print_summary(stats: Dict[str, Any], segment_label: str) -> None:
     """Print processing summary.
 
     Args:
         stats: Processing statistics dictionary.
+        segment_label: Human friendly label for the processed data slice.
     """
     print("\n" + "=" * 80)
-    print("PROCESSING SUMMARY")
+    print(f"PROCESSING SUMMARY: {segment_label}")
     print("=" * 80)
-    print(f"Programs processed: DS, ES")
+    programs = stats.get("programs") or []
+    program_display = ", ".join(programs) if programs else segment_label
+    print(f"Programs processed: {program_display}")
     print(f"Total URLs: {stats['total_urls']}")
     print(f"Successful extractions: {stats['successful']}")
     print(f"Failed extractions: {stats['failed']}")
@@ -97,19 +122,28 @@ def main() -> None:
         print("Using hierarchical XML chunking strategy...")
 
         aggregator = HierarchicalTextAggregator("outputs", chunk_size=1000, chunk_overlap=200)
+        doc_stats = None
         try:
             stats = aggregator.aggregate_programs(["ds", "es"])
+
+            # Optional Step 2: Additional document sources
+            if ADDITIONAL_DOCUMENT_SOURCES:
+                print("\nStep 2: Aggregating policy documents (handbook + grading)...")
+                doc_stats = aggregator.aggregate_text_from_urls(ADDITIONAL_DOCUMENT_SOURCES)
         finally:
             aggregator.close()
 
-        # Step 2: Text extraction complete
-        print("\nStep 2: Text extraction and organization complete")
+        # Text extraction complete for DS/ES
+        print("\n✓ Text extraction and organization complete for DS/ES")
+        print_summary(stats, "DS & ES Programs")
 
-        # Print summary
-        print_summary(stats)
+        if doc_stats:
+            print("\n✓ Policy documents processed successfully")
+            print_summary(doc_stats, "Policy & Handbook Documents")
 
-        # Step 3: Upload to ChromaDB
-        print("\nStep 3: Uploading to ChromaDB...")
+        # Step 3 (or 4 if docs processed): Upload to ChromaDB
+        next_step = 4 if doc_stats else 3
+        print(f"\nStep {next_step}: Uploading to ChromaDB...")
         try:
             upload_all_xml_files("outputs")
             print("✓ ChromaDB upload completed successfully!")

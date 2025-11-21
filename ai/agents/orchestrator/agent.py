@@ -207,6 +207,13 @@ _register_sub_agent(
 )
 
 _register_sub_agent(
+    "policy_docs",
+    "generic_policies",
+    ("generic", "policies"),
+    "Policy & handbook agent covering IITM BS rules, grading norms, and student lifecycle guidance.",
+)
+
+_register_sub_agent(
     "knowledge_graph",
     "kg",
     ("kg",),
@@ -338,6 +345,7 @@ Responsibilities:
 1. Interpret the user's full query and break it into sub-goals that map to the available specialist agents:
    - ds_foundation / ds_diploma / ds_degree for Data Science level-specific guidance
    - es_foundation / es_diploma / es_degree for Electronic Systems programme details
+   - policy_docs for handbook, grading, and programme-wide policy clarifications
    {KG_AGENT_INSTRUCTION}
 2. Call delegate_to_agent with concise, level-aware prompts. Include the user's wording and any clarifications you derive so the delegated agent receives full context.
 3. When questions span multiple programmes or levels, consult every relevant agent so that coverage is complete. For structural or cross-linking needs, combine KG outputs with DS/ES narrative agents.

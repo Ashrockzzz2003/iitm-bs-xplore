@@ -179,8 +179,11 @@ class HierarchicalTextAggregator:
         elif program.upper() == "ES":
             level_dir = os.path.join(self.es_dir, normalized_level)
         else:
-            # Generic content goes to generic directory
-            level_dir = self.generic_dir
+            # Generic content gets its own subdirectory when level is specified
+            if normalized_level == "main":
+                level_dir = self.generic_dir
+            else:
+                level_dir = os.path.join(self.generic_dir, normalized_level)
 
         os.makedirs(level_dir, exist_ok=True)
         return level_dir

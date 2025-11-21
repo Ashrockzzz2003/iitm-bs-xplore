@@ -38,7 +38,7 @@
 -   Student Handbook \- link sourced from [acegrade.in](http://acegrade.in)
     -   [https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub](https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub)
 -   Grading Policy \- link sourced from [acegrade.in](http://acegrade.in)
-    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vRKOWaLjxsts3qAM4h00EDvlB-GYRSPqqVXTfq3nGWFQBx91roxcU1qGv2ksS7jT4EQPNo8Rmr2zaE9/pub\#h.cbcq4ial1xkk](https://docs.google.com/document/u/1/d/e/2PACX-1vRKOWaLjxsts3qAM4h00EDvlB-GYRSPqqVXTfq3nGWFQBx91roxcU1qGv2ksS7jT4EQPNo8Rmr2zaE9/pub#h.cbcq4ial1xkk)
+    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vSBP6TJyZDklGPMyRtTwQc1cWZKOrozsOy5qmBwB8awTFvBbPN33-IxUV2WYupNdlXQOCgKwV9fDQKq/pub?urp=gmail_link](https://docs.google.com/document/u/1/d/e/2PACX-1vSBP6TJyZDklGPMyRtTwQc1cWZKOrozsOy5qmBwB8awTFvBbPN33-IxUV2WYupNdlXQOCgKwV9fDQKq/pub?urp=gmail_link)
 
 #### ES
 
@@ -335,17 +335,18 @@ python app.py --url https://study.iitm.ac.in/ds/academics.html
 1. **Web Scraping**: Automated scraping of IITM DS/ES academics pages and all course pages
 2. **Content Parsing**: Extracts and cleans text content from 127+ pages
 3. **Hierarchical Organization**: Organizes content by program and level:
-    - `outputs/ds/foundation/content.txt` (Data Science Foundation)
-    - `outputs/ds/diploma/content.txt` (Data Science Diploma)
-    - `outputs/ds/degree/content.txt` (Data Science Degree)
-    - `outputs/es/foundation/content.txt` (Electronics Systems Foundation)
-    - `outputs/es/diploma/content.txt` (Electronics Systems Diploma)
-    - `outputs/es/degree/content.txt` (Electronics Systems Degree)
+    - `outputs/ds/foundation/content.xml` (Data Science Foundation)
+    - `outputs/ds/diploma/content.xml` (Data Science Diploma)
+    - `outputs/ds/degree/content.xml` (Data Science Degree)
+    - `outputs/es/foundation/content.xml` (Electronics Systems Foundation)
+    - `outputs/es/diploma/content.xml` (Electronics Systems Diploma)
+    - `outputs/es/degree/content.xml` (Electronics Systems Degree)
+    - `outputs/generic/{student_handbook,grading_policy}/content.xml` (Handbook + grading documents)
 4. **Content Processing**: Processes 7+ lakh characters across all levels
 
 ### ChromaDB RAG Pipeline
 
-1. **Collection Creation**: Each content.txt file becomes a unique ChromaDB collection
+1. **Collection Creation**: Each content.xml file becomes a unique ChromaDB collection
 2. **Vector Embeddings**: Uses Google Gemini `gemini-embedding-001` model for embeddings
 3. **Collection Management**: Collections range from 50k to 2 lakh characters each
 4. **Semantic Search**: Enables natural language queries across all content
@@ -376,23 +377,28 @@ python app.py --url https://study.iitm.ac.in/ds/academics.html
 outputs/
 ├── ds/                     # Data Science Program
 │   ├── foundation/         # Foundation Level
-│   │   └── content.txt     # ~50k-100k characters
+│   │   └── content.xml     # ~50k-100k characters
 │   ├── diploma/            # Diploma Level
-│   │   └── content.txt     # ~100k-150k characters
+│   │   └── content.xml     # ~100k-150k characters
 │   └── degree/             # Degree Level
-│       └── content.txt     # ~150k-200k characters
-└── es/                     # Electronics Systems Program
-    ├── foundation/         # Foundation Level
-    │   └── content.txt     # ~50k-100k characters
-    ├── diploma/            # Diploma Level
-    │   └── content.txt     # ~100k-150k characters
-    └── degree/             # Degree Level
-        └── content.txt     # ~150k-200k characters
+│       └── content.xml     # ~150k-200k characters
+├── es/                     # Electronics Systems Program
+│   ├── foundation/         # Foundation Level
+│   │   └── content.xml     # ~50k-100k characters
+│   ├── diploma/            # Diploma Level
+│   │   └── content.xml     # ~100k-150k characters
+│   └── degree/             # Degree Level
+│       └── content.xml     # ~150k-200k characters
+└── generic/                # Programme-wide policies & docs
+    ├── grading_policy/     # Official grading document
+    │   └── content.xml     # Evaluation norms, moderation, scale
+    └── student_handbook/   # Student handbook guidelines
+        └── content.xml     # Orientation, term logistics, support
 ```
 
 ### ChromaDB Collections
 
--   **Collection Names**: `{program}_{level}` (e.g., `ds_foundation`, `es_diploma`)
+-   **Collection Names**: `{program}_{level}` (e.g., `ds_foundation`, `es_diploma`, `generic_student_handbook_document`)
 -   **Embeddings**: Google Gemini `gemini-embedding-001` (768 dimensions)
 -   **Content Range**: 50k to 2 lakh characters per collection
 -   **Total Content**: 7+ lakh characters across all collections
@@ -415,6 +421,7 @@ outputs/
 -   **DS Foundation Agent**: Specialized knowledge for foundational Data Science concepts and courses
 -   **DS Diploma Agent**: Expertise in both Diploma in Programming and Diploma in Data Science tracks
 -   **DS Degree Agent**: Advanced knowledge for degree-level Data Science courses and requirements
+-   **Policies & Handbook Agent**: Covers grading norms, probation rules, onboarding, and programme-wide FAQs sourced from official documents
 -   **Enhanced ChromaDB Integration**: Smart querying across multiple collections with automatic routing
 -   **Advanced RAG Pipeline**: Context-aware responses using chunked data and similarity scoring
 -   **Natural Language Processing**: Understands complex academic queries with level-specific context

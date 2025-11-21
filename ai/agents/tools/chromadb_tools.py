@@ -134,17 +134,40 @@ def query_by_program_and_level(program: str, level: str, query: str,
     }
     
     normalized_level = level_mapping.get(level.lower(), level)
-    collection_name = f"{program}_{normalized_level}_course"
-    
-    try:
-        return query_chroma(collection_name, query, n_results)
-    except Exception as e:
-        # Try alternative collection naming
-        alt_collection = f"{program}_{normalized_level}"
+    normalized_program = program.lower()
+    normalized_level_lower = normalized_level.lower()
+
+    candidate_collections = [
+        f"{normalized_program}_{normalized_level_lower}_course",
+        f"{normalized_program}_{normalized_level_lower}",
+        f"{normalized_program}_{normalized_level_lower}_document",
+        f"{normalized_program}_{normalized_level_lower}_doc",
+    ]
+
+    errors = []
+
+    for collection_name in candidate_collections:
         try:
-            return query_chroma(alt_collection, query, n_results)
-        except:
-            raise Exception(f"Could not find collection for {program}/{level}: {e}")
+            return query_chroma(collection_name, query, n_results)
+        except Exception as e:
+            errors.append(f"{collection_name}: {e}")
+            continue
+
+    # Fallback: inspect available collections and look for substring matches
+    available = get_available_collections()
+    for collection_name in available:
+        name_lower = collection_name.lower()
+        if normalized_program in name_lower and normalized_level_lower in name_lower:
+            try:
+                return query_chroma(collection_name, query, n_results)
+            except Exception as e:
+                errors.append(f"{collection_name}: {e}")
+                continue
+
+    error_hint = "; ".join(errors) if errors else "No matching collections in ChromaDB"
+    raise Exception(
+        f"Could not find collection for {program}/{level}. Attempts: {', '.join(candidate_collections)}. Details: {error_hint}"
+    )
 
 
 def smart_query(query: str, program: Optional[str] = None, level: Optional[str] = None,
