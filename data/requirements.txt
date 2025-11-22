@@ -1,0 +1,7 @@
+requests
+psycopg[binary]
+pydantic
+python-dotenv
+beautifulsoup4
+google-genai
+html2text

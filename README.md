@@ -1,474 +1,451 @@
 # IITM BS Xplore
 
-## Problem Statement
+> Intelligent querying system for IITM course information and academic documents powered by Google GenAI and Neon PostgreSQL.
 
--   Students face difficulty planning academic progression (which courses to take according to prerequisite requirements, academic goals, number of terms in which they wish to complete the program).
--   Information is spread across websites, student handbooks, grading documents, and other PDFs.
-
-✦ Similar challenges exist in most universities and online education platforms where course structures are complex and requirements vary.
-
----
-
-## Target Users
-
--   Students enrolled in the online program
--   Academic advisors/staff assisting students with course planning
--   Prospective learners exploring program requirements
-
-✦ Can extend to learners across MOOCs, degree programs, or professional certifications.
-
----
-
-## Feasibility & Data Sources
-
--   **IITM online degree website**: Academics page, Course pages, NPTEL website for electives
--   **Documents**: Grading document, Student handbook
--   **Control UI**: Allows staff to configure additional URLs/PDFs
-
-✦ Generic sources: University/college/MOOC websites, program brochures, policy handbooks.
-
-### Data Sources List
-
-#### DS
-
--   [https://study.iitm.ac.in/ds/academics.html\#AC1](https://study.iitm.ac.in/ds/academics.html#AC1)
-    -   All course subpages linked in this page
-    -   Pattern \- [https://study.iitm.ac.in/ds/course_pages/{course_id}.html](https://study.iitm.ac.in/ds/course_pages/BSSE2001.html)
--   [https://study.iitm.ac.in/ds/admissions.html\#AD0](https://study.iitm.ac.in/ds/admissions.html#AD0)
--   Student Handbook \- link sourced from [acegrade.in](http://acegrade.in)
-    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub](https://docs.google.com/document/u/1/d/e/2PACX-1vRxGnnDCVAO3KX2CGtMIcJQuDrAasVk2JHbDxkjsGrTP5ShhZK8N6ZSPX89lexKx86QPAUswSzGLsOA/pub)
--   Grading Policy \- link sourced from [acegrade.in](http://acegrade.in)
-    -   [https://docs.google.com/document/u/1/d/e/2PACX-1vSBP6TJyZDklGPMyRtTwQc1cWZKOrozsOy5qmBwB8awTFvBbPN33-IxUV2WYupNdlXQOCgKwV9fDQKq/pub?urp=gmail_link](https://docs.google.com/document/u/1/d/e/2PACX-1vSBP6TJyZDklGPMyRtTwQc1cWZKOrozsOy5qmBwB8awTFvBbPN33-IxUV2WYupNdlXQOCgKwV9fDQKq/pub?urp=gmail_link)
-
-#### ES
-
--   [https://study.iitm.ac.in/es/academics.html\#AC1](https://study.iitm.ac.in/es/academics.html#AC1)
-    -   All course subpages linked in this page
-    -   Pattern \- [https://study.iitm.ac.ine/es/course_pages/{course_id}.html](https://study.iitm.ac.ine/es/course_pages/{course_id}.html)
--   [https://study.iitm.ac.in/es/admissions.html\#AD0](https://study.iitm.ac.in/es/admissions.html#AD0)
--   [https://study.iitm.ac.in/es/inthemedia.html](https://study.iitm.ac.in/es/inthemedia.html)
--   [https://study.iitm.ac.in/es/archive.html](https://study.iitm.ac.in/es/archive.html)
--   [https://study.iitm.ac.in/es/faq.html](https://study.iitm.ac.in/es/faq.html)
--   Similarly other links for ES
-
-#### Anonymous
-
--   [https://study.iitm.ac.in/ds/student_life.html](https://study.iitm.ac.in/ds/student_life.html)
--   [https://paradox-showcase.web.app/](https://paradox-showcase.web.app/)
--   [https://study.iitm.ac.in/student-achievements/interns](https://study.iitm.ac.in/student-achievements/interns)
--   [https://study.iitm.ac.in/ds/testimonials.html](https://study.iitm.ac.in/ds/testimonials.html)
--   [https://study.iitm.ac.in/student-achievements/toppers](https://study.iitm.ac.in/student-achievements/toppers)
--   [https://study.iitm.ac.in/student-achievements/projects](https://study.iitm.ac.in/student-achievements/projects)
--   Docs listed in
-    -   [https://study.iitm.ac.in/ds/archive.html](https://study.iitm.ac.in/ds/archive.html)
--   [https://study.iitm.ac.in/ds/aboutIITM.html](https://study.iitm.ac.in/ds/aboutIITM.html)
--   Future
-    -   [https://bsinsider.in/](https://bsinsider.in/)
-    -   [https://podgoodies.iitmadrasonline.in/](https://podgoodies.iitmadrasonline.in/)
--   Any Additional PDF docs can be added through Control UI by authorized personnel.
-
----
-
-## Existing Solutions & Limitations
-
--   Dedicated sessions for course selection and orientation sessions for different courses
--   Scattered information across websites & documents
-
-✦ Existing university chatbots are often FAQ/rule-based and lack personalization or academic planning capability.
-
----
-
-## Proposed Solution
-
-A **scraper** to extract structured/unstructured data from websites & documents.
-
-### Approach I: KG + RAG based pipeline
-
--   **Knowledge Graph (KG)** will store rules: Course prerequisites, Credit requirements for any level, Course mapping to levels, Compulsory courses per level
--   **Retrieval Augmented Generation (RAG)** will store unstructured descriptive context about a course or topic.
-
-### Approach II: Multi-Agent Orchestration
-
-Each agent will have its own responsibility:
-
--   **Data Agent** – Fetch info about a particular course or topic
--   **Validation Agent** – Check prerequisites for a course
--   **Recommendation Agent** – Suggest courses/paths
-
-### UI for Students
-
-Natural language query interface, e.g.:
-
--   _"I have completed 2 courses (X & Y) of the diploma level (DS) and plan to complete my diploma in the next 2 terms. Which courses should I take next term that continue from X & Y?"_
--   _"I have already completed the Deep Learning course and want to do some hands-on work. Which elective course would best help me with this?"_
-
-### Control UI for Staff
-
--   Manage/update data sources dynamically
--   Add new sources (websites, PDFs, brochures)
-
-✦ **Generic applicability**: The same pipeline can be applied to any academic institution or program.
-
----
-
-## 🚀 Current Implementation Status
-
-### ✅ Completed Features
-
--   **Daily Data Pipeline**: Automated scraping of 127+ IITM DS/ES pages with 7+ lakh characters of content
--   **Hierarchical Text Organization**: Content organized by program and level (ds/{level}/content.txt, es/{level}/content.txt)
--   **ChromaDB RAG Pipeline**: Vector embeddings using Google Gemini for semantic search across 50k-2L character collections
--   **Multi-Agent AI System**: Google ADK-based agents with ChromaDB integration for RAG capabilities
--   **Complete DS Agent Suite**: All three DS agents implemented (Foundation, Diploma, Degree levels)
--   **Enhanced ChromaDB Tools**: Advanced querying capabilities with smart_query, program/level filtering, and metadata support
--   **Chunked Data Processing**: Improved retrieval precision with chunked content and similarity scoring
--   **Agent Orchestration Framework**: Architecture for sub-agents and orchestrator agent routing
-
-### 🏗️ Architecture
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    IITM BS Xplore Pipeline                      │
-└─────────────────────────────────────────────────────────────────┘
+│                        IITM Advisor Agent                        │
+│              (Google ADK Agent with Gemini 3 Pro)                │
+└────────────────────────────┬────────────────────────────────────┘
+                              │
+                              │ Uses 3 Specialized Tools
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌──────────────────┐
+│  Handbook     │    │   Grading     │    │   Course         │
+│  Policy       │    │   Policy      │    │   Database       │
+│  Search       │    │   Search      │    │   Query          │
+└───────┬───────┘    └───────┬───────┘    └────────┬─────────┘
+        │                    │                      │
+        │                    │                      │
+        ▼                    ▼                      ▼
+┌──────────────────────────────────────────────────────────────┐
+│              Google GenAI File Search API                     │
+│  • Semantic search over PDF documents                        │
+│  • Returns answers with grounding sources                    │
+│  • Model: gemini-3-pro-preview                               │
+└───────────────────────┬──────────────────────────────────────┘
+                        │
+                        │ Queries
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+        ▼                               ▼
+┌───────────────┐            ┌──────────────────┐
+│ student_      │            │ grading_doc.pdf  │
+│ handbook.pdf  │            │                  │
+└───────────────┘            └──────────────────┘
 
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Data Sources  │    │  Text Aggregation │    │  ChromaDB RAG   │
-│                 │    │                  │    │                 │
-│ • DS Academics  │───▶│ • 127+ pages     │───▶│ • Collections   │
-│ • ES Academics  │    │ • 7L+ chars      │    │ • 50k-2L chars  │
-│ • Course Pages  │    │ • Hierarchical   │    │ • Gemini Embed  │
-│ • Daily Updates │    │ • Chunked Data   │    │ • Vector Search │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                │                        │
-                                ▼                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    AI Agent System                              │
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │ Enhanced        │    │  DS Agent Suite │    │  Context     │ │
-│  │ ChromaDB Tools  │───▶│                 │    │  Agent       │ │
-│  │                 │    │ • Foundation    │    │              │ │
-│  │ • smart_query   │    │ • Diploma       │    │ • Ask for    │ │
-│  │ • Program/Level │    │ • Degree        │    │   Program    │ │
-│  │ • Metadata      │    │ • Specialized   │    │ • Clarify    │ │
-│  │ • Chunked Data  │    │   Knowledge     │    │   Level      │ │
-│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    User Interface                               │
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │  Web UI         │    │  Natural        │    │  Student     │ │
-│  │  (Google ADK)   │    │  Language       │    │  Interface   │ │
-│  │                 │    │  Queries        │    │              │ │
-│  │ • Chat Interface│    │                 │    │ • Course     │ │
-│  │ • Real-time     │    │ • "What courses │    │   Planning   │ │
-│  │   Responses     │    │   should I take │    │ • Prereq     │ │
-│  │ • Context Aware │    │   next term?"   │    │   Validation │ │
-│  │ • Multi-Agent   │    │ • Level-specific│    │ • Academic   │ │
-│  │   Routing       │    │   Queries       │    │   Guidance   │ │
-│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│              Neon PostgreSQL Database                         │
+│  • Serverless PostgreSQL hosted at *.neon.tech               │
+│  • Automatic SSL/endpoint configuration                       │
+└───────────────────────┬──────────────────────────────────────┘
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+        ▼                               ▼
+┌──────────────────┐        ┌──────────────────────────┐
+│   courses        │        │ file_search_store_       │
+│   table          │        │ mappings table          │
+│                  │        │                          │
+│ • course_code    │        │ • pdf_path               │
+│ • title          │        │ • store_name             │
+│ • description    │        │                          │
+│ • credits        │        │ Maps PDFs to GenAI       │
+│ • level          │        │ file search stores       │
+│ • instructors    │        │                          │
+│ • syllabus       │        │                          │
+│ • prerequisites  │        │                          │
+│ • ...            │        │                          │
+└──────────────────┘        └──────────────────────────┘
 ```
 
-### 📁 Chunking Pipeline
+### Architecture Components
+
+#### 1. **IITM Advisor Agent** (`agents/iitm_advisor_agent/agent.py`)
+- Built with Google ADK (Agent Development Kit)
+- Uses Gemini 3 Pro Preview model
+- Intelligent tool routing based on query type
+- Synthesizes responses from multiple data sources
+
+#### 2. **Google GenAI File Search**
+- **Purpose**: Semantic search and Q&A over PDF documents
+- **Technology**: Google GenAI SDK (`google-genai`)
+- **Model**: `gemini-3-pro-preview` (default)
+- **Documents**:
+  - `student_handbook.pdf` - Academic policies, eligibility, program structure
+  - `grading_doc.pdf` - Grading policies, assessment structures, GPA calculation
+- **Features**:
+  - Automatic store name lookup from database
+  - Returns answers with grounding sources
+  - Full grounding metadata for traceability
+
+#### 3. **Neon PostgreSQL Database**
+- **Purpose**: Structured course information storage
+- **Technology**: Serverless PostgreSQL via Neon
+- **Connection**: Automatic SSL/endpoint configuration for Neon
+- **Tables**:
+  - `courses` - Comprehensive course catalog data
+  - `file_search_store_mappings` - PDF to GenAI store mappings
+
+## 📦 Project Structure
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    IITM BS Xplore Chunking Pipeline             │
-└─────────────────────────────────────────────────────────────────┘
-
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Raw Content   │    │  Text Processing │    │  Chunking Logic │
-│                 │    │                  │    │                 │
-│ • HTML Pages    │───▶│ • Clean HTML     │───▶│ • Split by Size │
-│ • PDF Documents │    │ • Extract Text   │    │ • Split by Topic│
-│ • Course Pages  │    │ • Remove Noise   │    │ • Overlap Chunks│
-│ • 127+ Sources  │    │ • Normalize Text │    │ • Metadata Tags │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                │                        │
-                                ▼                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Chunked Content Storage                      │
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │  Chunk Metadata │    │  Content Chunks │    │  Embeddings  │ │
-│  │                 │    │                 │    │              │ │
-│  │ • Program (DS/ES)│   │ • 1000-2000     │    │ • Gemini     │ │
-│  │ • Level         │    │   characters    │    │   Embeddings │ │
-│  │ • Course ID     │    │ • Semantic      │    │ • 768 dims   │ │
-│  │ • URL Source    │    │   boundaries    │    │ • Vector DB  │ │
-│  │ • Chunk Index   │    │ • Overlap for   │    │ • Similarity │ │
-│  │ • Timestamp     │    │   context       │    │   Search     │ │
-│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    ChromaDB Collections                         │
-│                                                                 │
-│  ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
-│  │  DS Collections │    │  ES Collections │    │  Generic     │ │
-│  │                 │    │                 │    │  Collections │ │
-│  │ • ds_foundation │    │ • es_foundation │    │ • generic    │ │
-│  │ • ds_diploma    │    │ • es_diploma    │    │ • main       │ │
-│  │ • ds_degree     │    │ • es_degree     │    │ • shared     │ │
-│  │                 │    │                 │    │              │ │
-│  │ Each collection:│    │ Each collection:│    │ Cross-program│ │
-│  │ • 50k-200k chars│    │ • 50k-200k chars│    │   content    │ │
-│  │ • 100-500 chunks│    │ • 100-500 chunks│    │ • Common     │ │
-│  │ • Program-specific│  │ • Program-specific│  │   policies   │ │
-│  └─────────────────┘    └─────────────────┘    └──────────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### 📁 Project Structure
-
-```
-├── xplorer/               # Data Pipeline & ChromaDB
+iitm-bs-xplore/
+├── agents/
+│   ├── iitm_advisor_agent/
+│   │   └── agent.py              # Main ADK agent with routing logic
+│   ├── tools/
+│   │   ├── __init__.py           # Tool exports
+│   │   ├── tools.py              # ADK-compatible tool wrappers
+│   │   ├── file_search_query.py  # PDF query implementation
+│   │   └── query_neon.py         # Database query implementation
+│   └── requirements.txt          # Agent dependencies
+├── data/
+│   ├── dump/
+│   │   ├── student_handbook.pdf  # Student handbook PDF
+│   │   ├── grading_doc.pdf       # Grading document PDF
+│   │   └── academics.html        # Course listings HTML
 │   ├── util/
-│   │   ├── chromadb/      # ChromaDB upload & query tools
-│   │   └── hierarchical_aggregator.py
-│   ├── outputs/           # Hierarchical content storage
-│   │   ├── ds/            # Data Science program
-│   │   │   ├── foundation/content.txt
-│   │   │   ├── diploma/content.txt
-│   │   │   └── degree/content.txt
-│   │   └── es/            # Electronics Systems program
-│   │       ├── foundation/content.txt
-│   │       ├── diploma/content.txt
-│   │       └── degree/content.txt
-│   └── app.py             # Main data pipeline
-├── ai/                    # Multi-Agent AI System
-│   ├── agents/
-│   │   ├── ds/            # Data Science Agents (Complete)
-│   │   │   ├── foundation/ # DS Foundation Level Agent ✅
-│   │   │   ├── diploma/   # DS Diploma Level Agent ✅
-│   │   │   └── degree/    # DS Degree Level Agent ✅
-│   │   ├── es/            # Electronics Systems Agents (Planned)
-│   │   │   ├── foundation/ # ES Foundation Level Agent (planned)
-│   │   │   ├── diploma/   # ES Diploma Level Agent (planned)
-│   │   │   └── degree/    # ES Degree Level Agent (planned)
-│   │   └── tools/         # Enhanced ChromaDB query tools
-│   │       └── chromadb_tools.py # Advanced querying capabilities
-│   └── requirements.txt
-└── kg/                    # Legacy Knowledge Graph (paused)
-    └── ...                # Neo4j integration (not actively used)
+│   │   ├── file_search.py        # File search initialization
+│   │   ├── course.py             # Course data utilities
+│   │   └── academics.py          # Academics page parsing
+│   ├── config/                   # Configuration modules
+│   ├── setup_db.py               # Database schema setup
+│   └── app.py                    # Main application
+└── README.md                     # This file
 ```
 
-**Key Features**: Daily data pipeline, hierarchical organization, ChromaDB RAG, Google ADK agents, orchestrated sub-agents
+## 🛠️ Available Tools
 
-## 🚀 Quick Start
+The system provides three specialized tools for the agent:
 
-### 1. Data Pipeline & ChromaDB Setup
+### 1. `search_handbook_policy(query, model=None)`
+Search the IITM BS student handbook for policy and rule information.
 
+**Use for:**
+- Eligibility criteria and admission requirements (Regular/JEE)
+- Fees, scholarships, and financial information
+- Document verification procedures
+- Program structure and exit options
+- Maximum duration (8 years) and CCC (Credit Clearing Capability)
+- Academic rules and regulations
+
+**Returns:**
+```python
+{
+    "response": str,              # Generated answer
+    "sources": [                  # Grounding sources
+        {"title": str, "uri": str}
+    ],
+    "grounding_metadata": object, # Full grounding metadata
+    "query": str,                 # Original query
+    "model": str,                 # Model used
+    "store_name": str             # Store name used
+}
+```
+
+**Example:**
+```python
+from agents.tools import search_handbook_policy
+
+result = search_handbook_policy(
+    "What are the eligibility criteria for the qualifier exam?"
+)
+print(result["response"])
+```
+
+### 2. `search_grading_policy(query, model=None)`
+Search the IITM BS grading policy document for assessment and grading information.
+
+**Use for:**
+- Grading scale (S, A, B, C, D, E, U grades)
+- GPA and CGPA calculation methods
+- Assignment weightage and assessment structure
+- "Best of X" rules for assignments/exams
+- Eligibility criteria for End-Term exams
+- Marks distribution and evaluation policies
+
+**Returns:** Same structure as `search_handbook_policy`
+
+**Example:**
+```python
+from agents.tools import search_grading_policy
+
+result = search_grading_policy(
+    "What is the grading scale and how is GPA calculated?"
+)
+```
+
+### 3. `query_course_database(query, params=None)`
+Query the IITM course knowledge database for structured course information.
+
+**Use for:**
+- Course specifics: syllabus topics, instructor names, credit count, titles
+- Course lists: "List all Diploma courses", "Show courses with 4 credits"
+- Course details: descriptions, prerequisites, learning outcomes
+
+**Important Notes:**
+- Only SELECT queries are allowed (read-only for safety)
+- Use exact level names: `"Foundation Level"`, `"Diploma Level"`, `"BSc Degree Level"`, `"BS Degree Level"`
+- Use `ILIKE` for case-insensitive matching (e.g., `title ILIKE '%python%'`)
+
+**Returns:**
+```python
+{
+    "rows": [                     # List of dicts (column names as keys)
+        {"course_code": "...", "title": "...", ...}
+    ],
+    "row_count": int,             # Number of rows returned
+    "columns": [str],             # Column names
+    "query": str                  # Executed query
+}
+```
+
+**Example:**
+```python
+from agents.tools import query_course_database
+
+# Simple query
+result = query_course_database(
+    "SELECT course_code, title, credits FROM courses WHERE level = 'Foundation Level' LIMIT 10"
+)
+
+# Parameterized query (recommended)
+result = query_course_database(
+    "SELECT * FROM courses WHERE course_code = %s",
+    params=("BSMA1001",)
+)
+```
+
+## 🗄️ Database Schema
+
+### `courses` Table
+Stores comprehensive course information from IITM's course catalog:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `course_code` | VARCHAR(50) | Primary key, e.g., "BSMA1001" |
+| `title` | VARCHAR(500) | Course title |
+| `description` | TEXT | Course description |
+| `credits` | INTEGER | Number of credits |
+| `level` | VARCHAR(100) | "Foundation Level", "Diploma Level", "BSc Degree Level", "BS Degree Level" |
+| `prerequisites` | TEXT | Prerequisite courses/knowledge |
+| `video_link` | VARCHAR(500) | Course introduction video URL |
+| `instructors` | JSONB | Array of instructor objects |
+| `learning_outcomes` | JSONB | Array of learning outcomes |
+| `syllabus` | JSONB | Array of week-by-week syllabus |
+| `resources_and_books` | JSONB | Array of books/resources |
+| `assessment_structure` | TEXT | Grading/assessment description |
+| `extra` | JSONB | Additional metadata |
+| `source_url` | VARCHAR(500) | Original course page URL |
+| `status` | VARCHAR(20) | 'active' or 'wip' (default: 'active') |
+| `created_at` | TIMESTAMP | Creation timestamp |
+| `last_updated` | TIMESTAMP | Last update timestamp |
+
+**Indexes:**
+- Primary key on `course_code`
+- Index on `level` for faster filtering
+
+### `file_search_store_mappings` Table
+Maps PDF filenames to their Google GenAI file search store names:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `pdf_path` | VARCHAR(1000) | Primary key, PDF filename (e.g., "student_handbook.pdf") |
+| `store_name` | VARCHAR(500) | GenAI file search store name |
+| `created_at` | TIMESTAMP | Creation timestamp |
+| `last_updated` | TIMESTAMP | Last update timestamp |
+
+**Indexes:**
+- Primary key on `pdf_path`
+- Index on `store_name` for faster lookups
+
+## 🔄 Data Flow
+
+### PDF Query Flow
+```
+User Query
+    ↓
+Agent routes to search_handbook_policy or search_grading_policy
+    ↓
+Tool looks up store_name from file_search_store_mappings table
+    ↓
+Calls Google GenAI File Search API with store_name
+    ↓
+GenAI searches PDF chunks semantically
+    ↓
+Returns answer with grounding sources
+    ↓
+Agent synthesizes response
+```
+
+### Course Database Query Flow
+```
+User Query
+    ↓
+Agent routes to query_course_database
+    ↓
+Tool validates query is SELECT-only
+    ↓
+Executes parameterized query on Neon PostgreSQL
+    ↓
+Returns structured course data (rows, columns, count)
+    ↓
+Agent formats response (tables, lists, etc.)
+```
+
+## ⚙️ Setup & Configuration
+
+### Prerequisites
+- Python 3.8+
+- Google GenAI API key
+- Neon PostgreSQL database
+
+### Installation
+
+1. **Clone the repository:**
 ```bash
-cd xplorer/
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-echo "GOOGLE_API_KEY=your_gemini_api_key" >> .env
-# Start ChromaDB server (in separate terminal)
-chroma run --host localhost --port 8000
-
-# Run daily data pipeline - scrapes 127+ pages and organizes hierarchically
-python app.py
+git clone <repository-url>
+cd iitm-bs-xplore
 ```
 
-This will:
-
--   Scrape IITM DS/ES academics pages and all course pages
--   Parse and organize content into `outputs/ds/{level}/content.txt` and `outputs/es/{level}/content.txt`
--   Generate ChromaDB collections with Gemini embeddings for each content file
--   Process 7+ lakh characters across 127+ pages
-
-### 2. AI Agents Setup
-
+2. **Install dependencies:**
 ```bash
-cd ai/
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+# Agent dependencies
+pip install -r agents/requirements.txt
 
-# Set environment variables in a .env file
-echo "CHROMA_HOST=localhost" >> .env
-echo "CHROMA_PORT=8000" >> .env
-echo "GOOGLE_API_KEY=your_gemini_api_key" >> .env
-
-# Run any of the available DS agents with web UI
-cd agents/ds/foundation/  # For Foundation Level Agent
-# OR
-cd agents/ds/diploma/     # For Diploma Level Agent
-# OR
-cd agents/ds/degree/      # For Degree Level Agent
-# OR 
-cd ai
-adk web agents/ds --port 8080
-adk web agents/es --port 8080
-
-adk web
+# Data processing dependencies (if needed)
+pip install -r data/requirements.txt
 ```
 
-This will:
+3. **Set up environment variables:**
+Create a `.env` file in the project root:
+```env
+# Required
+GEMINI_API_KEY=your_google_genai_api_key
+DATABASE_URL=postgresql://user:password@host.neon.tech/dbname
 
--   Start the selected DS agent (Foundation, Diploma, or Degree level)
--   Launch Google ADK web interface for testing
--   Enable natural language queries about the specific level
--   Provide context-aware responses using enhanced ChromaDB RAG
--   Access specialized knowledge for each academic level
+# Optional
+GENAI_FILE_SEARCH_STORE_NAME=default_store_name
+GENAI_MODEL_ID=gemini-3-pro-preview
+```
 
-### 3. Legacy Knowledge Graph (Optional)
-
+4. **Initialize database:**
 ```bash
-cd kg/
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-
-# Parse single URLs (legacy approach - paused)
-python app.py --url https://study.iitm.ac.in/ds/academics.html
+cd data
+python setup_db.py
 ```
 
-## 🔧 How It Works
+5. **Initialize file search stores:**
+Upload PDFs to GenAI file search and store mappings in the database:
+```python
+from data.util.file_search import initialize_file_search_store
 
-### Daily Data Pipeline
+# Initialize student handbook
+initialize_file_search_store("data/dump/student_handbook.pdf")
 
-1. **Web Scraping**: Automated scraping of IITM DS/ES academics pages and all course pages
-2. **Content Parsing**: Extracts and cleans text content from 127+ pages
-3. **Hierarchical Organization**: Organizes content by program and level:
-    - `outputs/ds/foundation/content.xml` (Data Science Foundation)
-    - `outputs/ds/diploma/content.xml` (Data Science Diploma)
-    - `outputs/ds/degree/content.xml` (Data Science Degree)
-    - `outputs/es/foundation/content.xml` (Electronics Systems Foundation)
-    - `outputs/es/diploma/content.xml` (Electronics Systems Diploma)
-    - `outputs/es/degree/content.xml` (Electronics Systems Degree)
-    - `outputs/generic/{student_handbook,grading_policy}/content.xml` (Handbook + grading documents)
-4. **Content Processing**: Processes 7+ lakh characters across all levels
-
-### ChromaDB RAG Pipeline
-
-1. **Collection Creation**: Each content.xml file becomes a unique ChromaDB collection
-2. **Vector Embeddings**: Uses Google Gemini `gemini-embedding-001` model for embeddings
-3. **Collection Management**: Collections range from 50k to 2 lakh characters each
-4. **Semantic Search**: Enables natural language queries across all content
-
-### AI Agent System
-
-1. **Sub-Agent Architecture**: Specialized agents for each program-level combination
-2. **ChromaDB Integration**: Agents query relevant collections for context
-3. **RAG Pipeline**: Retrieval-Augmented Generation for accurate, context-aware responses
-4. **Orchestrator Agent**: Routes queries to appropriate sub-agents
-5. **Context Agent**: Asks for clarification when program/level is ambiguous
-6. **Web UI**: Google ADK provides built-in web interface for testing
-
-### Agent Orchestration Flow
-
-1. **Query Reception**: User asks natural language question
-2. **Orchestrator Routing**: Determines which sub-agent can best answer
-3. **Context Clarification**: If needed, asks user for program/level specification
-4. **Sub-Agent Processing**: Relevant agent queries ChromaDB for context
-5. **Response Generation**: Agent provides context-aware answer using RAG
-6. **User Interaction**: Response delivered through web UI
-
-## 📊 Data Pipeline Output
-
-### Content Organization
-
-```
-outputs/
-├── ds/                     # Data Science Program
-│   ├── foundation/         # Foundation Level
-│   │   └── content.xml     # ~50k-100k characters
-│   ├── diploma/            # Diploma Level
-│   │   └── content.xml     # ~100k-150k characters
-│   └── degree/             # Degree Level
-│       └── content.xml     # ~150k-200k characters
-├── es/                     # Electronics Systems Program
-│   ├── foundation/         # Foundation Level
-│   │   └── content.xml     # ~50k-100k characters
-│   ├── diploma/            # Diploma Level
-│   │   └── content.xml     # ~100k-150k characters
-│   └── degree/             # Degree Level
-│       └── content.xml     # ~150k-200k characters
-└── generic/                # Programme-wide policies & docs
-    ├── grading_policy/     # Official grading document
-    │   └── content.xml     # Evaluation norms, moderation, scale
-    └── student_handbook/   # Student handbook guidelines
-        └── content.xml     # Orientation, term logistics, support
+# Initialize grading document
+initialize_file_search_store("data/dump/grading_doc.pdf")
 ```
 
-### ChromaDB Collections
+### Environment Variables
 
--   **Collection Names**: `{program}_{level}` (e.g., `ds_foundation`, `es_diploma`, `generic_student_handbook_document`)
--   **Embeddings**: Google Gemini `gemini-embedding-001` (768 dimensions)
--   **Content Range**: 50k to 2 lakh characters per collection
--   **Total Content**: 7+ lakh characters across all collections
+**Required:**
+- `GEMINI_API_KEY`: Google GenAI API key for file search
+- `DATABASE_URL` or `DB_URL`: Neon PostgreSQL connection string
 
-## 🎯 Use Cases
+**Optional:**
+- `GENAI_FILE_SEARCH_STORE_NAME`: Default file search store name
+- `GENAI_MODEL_ID`: Default model ID (defaults to `gemini-3-pro-preview`)
 
-### Current Capabilities
+## 🎯 Agent Routing Logic
 
--   **Daily Data Updates**: Automated scraping and processing of 127+ IITM pages
--   **Hierarchical Content Organization**: Structured storage by program and level
--   **Enhanced Semantic Search**: Advanced ChromaDB querying with smart_query, program/level filtering
--   **Complete DS Agent Suite**: All three DS agents (Foundation, Diploma, Degree) fully implemented
--   **Chunked Data Processing**: Improved retrieval precision with similarity scoring
--   **Web Interface**: Google ADK built-in web UI for testing and interaction
--   **Context-Aware Responses**: RAG-powered answers with relevant course information
--   **Metadata-Rich Queries**: Access to course IDs, URLs, and chunk information
+The IITM Advisor Agent uses intelligent routing to select the appropriate tool:
 
-### AI Agent Capabilities
+### Use `query_course_database` (SQL) for:
+- **Course Specifics:** Syllabus topics, instructor names, credit count, titles
+- **Lists:** "List all Diploma courses", "Show courses with 4 credits"
+- **SQL Guidelines:**
+  - Table: `courses` (cols: `course_code`, `title`, `credits`, `level`, `instructors`, `syllabus`)
+  - Use `ILIKE` for case-insensitive matching (e.g., `title ILIKE '%python%'`)
+  - Select specific columns to keep responses concise
+  - Use exact level names: `"Foundation Level"`, `"Diploma Level"`, `"BSc Degree Level"`, `"BS Degree Level"`
 
--   **DS Foundation Agent**: Specialized knowledge for foundational Data Science concepts and courses
--   **DS Diploma Agent**: Expertise in both Diploma in Programming and Diploma in Data Science tracks
--   **DS Degree Agent**: Advanced knowledge for degree-level Data Science courses and requirements
--   **Policies & Handbook Agent**: Covers grading norms, probation rules, onboarding, and programme-wide FAQs sourced from official documents
--   **Enhanced ChromaDB Integration**: Smart querying across multiple collections with automatic routing
--   **Advanced RAG Pipeline**: Context-aware responses using chunked data and similarity scoring
--   **Natural Language Processing**: Understands complex academic queries with level-specific context
--   **Program-Specific Knowledge**: Specialized knowledge for each academic level and program track
+### Use `search_handbook_policy` (PDF) for:
+- **Rules:** Eligibility, admission (Regular/JEE), fees, scholarships, document verification
+- **Structure:** Exit options, maximum duration (8 years), CCC (Credit Clearing Capability)
 
-### Example Queries
+### Use `search_grading_policy` (PDF) for:
+- **Marks:** Grading scale (S, A, B...), GPA/CGPA calculation
+- **Assessments:** Assignment weightage, "Best of X" rules, eligibility for End-Term exams
 
-**Foundation Level:**
+## 🔒 Security Features
 
--   "What courses should I take in my next term for DS foundation level?"
--   "Which foundation courses are most important for data science?"
--   "What are the prerequisites for foundation level courses?"
+1. **Read-only Database Access**: Only SELECT queries are allowed
+2. **Parameterized Queries**: SQL injection prevention via parameterized queries
+3. **Neon Connection Security**: Automatic SSL and channel binding configuration
+4. **Store Name Validation**: PDF queries validate store names before execution
 
-**Diploma Level:**
+## 📚 Key Features
 
--   "What's the difference between Diploma in Programming and Diploma in Data Science?"
--   "Which diploma courses should I take after completing foundation?"
--   "What are the requirements for diploma level courses?"
+1. **Semantic PDF Search**: Natural language queries over student handbooks and grading documents
+2. **Structured Course Data**: Comprehensive course information in a queryable database
+3. **Automatic Store Management**: File search stores are automatically mapped and reused
+4. **Neon Integration**: Handles Neon-specific connection requirements automatically
+5. **Intelligent Routing**: Agent automatically selects the best tool for each query type
+6. **Grounding Sources**: All PDF queries return source citations for transparency
 
-**Degree Level:**
+## 🧪 Usage Example
 
--   "What are the prerequisites for BSDA1001?"
--   "Which degree level courses are most challenging?"
--   "What's the difference between DS and ES foundation courses?"
+```python
+from agents.iitm_advisor_agent.agent import root_agent
 
-## 🚀 Next Steps
+# The agent automatically routes queries to appropriate tools
+response = root_agent.send("What are the eligibility criteria for the qualifier exam?")
+# Routes to: search_handbook_policy
 
-### Immediate Development
+response = root_agent.send("List all Foundation Level courses with 4 credits")
+# Routes to: query_course_database
 
--   **ES Agent Suite**: Complete Electronics Systems agents (Foundation, Diploma, Degree levels)
--   **Orchestrator Agent**: Central agent to route queries to appropriate sub-agents
--   **Context Agent**: Agent to ask for clarification when program/level is ambiguous
--   **Enhanced Web UI**: Improved user interface for better interaction
--   **Cross-Program Queries**: Agents that can answer questions spanning multiple programs
+response = root_agent.send("How is GPA calculated?")
+# Routes to: search_grading_policy
+```
 
-### Future Enhancements
+## 📦 Dependencies
 
--   **Advanced Analytics**: Course difficulty analysis and success prediction
--   **Integration APIs**: REST APIs for external system integration
--   **Mobile Interface**: Mobile-optimized student interface
--   **Real-time Updates**: Dynamic data source updates and synchronization
--   **Multi-Program Orchestration**: Unified interface for DS and ES program queries
+### Agent Dependencies (`agents/requirements.txt`)
+- `psycopg[binary]`: PostgreSQL database connectivity
+- `python-dotenv`: Environment variable management
+- `google-genai`: Google GenAI SDK for file search
+- `google-adk`: Google Agent Development Kit
 
-This system enables building:
+### Data Processing Dependencies (`data/requirements.txt`)
+- `requests`: HTTP requests for web scraping
+- `psycopg[binary]`: PostgreSQL connectivity
+- `pydantic`: Data validation
+- `python-dotenv`: Environment variables
+- `beautifulsoup4`: HTML parsing
+- `google-genai`: GenAI SDK
+- `html2text`: HTML to text conversion
 
--   Intelligent course recommendation systems with AI agents
--   Academic planning assistants with context-aware responses
--   Prerequisite validation tools with semantic search
--   Curriculum analysis dashboards with hierarchical data
--   Multi-agent educational platforms with orchestrated sub-agents
+## 🤝 Contributing
+
+1. Follow the existing code structure
+2. Maintain type hints and docstrings for ADK compatibility
+3. Ensure all tools return TypedDict-compatible results
+4. Test with both PDF and database queries
+
+## 📄 License
+
+[Add your license here]
+
+---
+
+**Built with ❤️ for IITM BS Data Science students**
+
