@@ -34,12 +34,12 @@ from ai.rag_config import (
 RESULTS_MD = CURRENT_DIR / "results" / "hparam_tuning.md"
 
 # Expanded search space
-CHUNK_SIZES = (500, 700, 900, 1100, 1300)
-CHUNK_OVERLAPS = (60, 120, 200, 280)
-TOP_K_VALUES = (3, 5, 8, 10)
-SCORE_THRESHOLDS: Tuple[float | None, ...] = (None, 0.2, 0.3, 0.35, 0.45)
+CHUNK_SIZES = (500,900, 1300)
+CHUNK_OVERLAPS = (60, 200)
+TOP_K_VALUES = (3, 5, 8)
+SCORE_THRESHOLDS: Tuple[float | None, ...] = (None,0.3, 0.5,0.7)
 RERANK_TOP_K_VALUES: Tuple[int | None, ...] = (None, 3, 5)
-MAX_CONTEXT_CHARS = (1200, 1800, 2400)
+MAX_CONTEXT_CHARS = (1200, 2400)
 
 
 def _build_trial_config(
