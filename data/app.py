@@ -10,6 +10,7 @@ from google.genai.types import GenerateContentConfig
 from config import GENAI_MODEL_ID, DB_CONNECTION_STR
 
 from util.course import get_course_listings, save_course_to_db, save_wip_course_to_db, extract_course_code_from_url, CoursePageSchema
+from util.file_search import initialize_all_pdfs
 
 # Optional: Set LOG_FILE environment variable to enable file logging
 # Example: LOG_FILE=logs/app.log python app.py
@@ -395,7 +396,26 @@ def main():
                             print(f"  ✗ Failed to reconnect. Exiting.")
                             return
             
+            print("\n" + "="*80)
+            print("Course processing completed.")
+            print("="*80)
+            
+            # Step 3: Initialize file search stores for PDF documents
+            print("\n" + "="*80)
+            print("--- Step 3: Initializing File Search Stores for PDFs ---")
+            print("="*80)
+            try:
+                initialize_all_pdfs()
+                print("✓ File search store initialization completed!")
+            except Exception as e:
+                print(f"✗ Error initializing file search stores: {e}")
+                import traceback
+                traceback.print_exc()
+                # Continue - don't fail the entire process
+            
+            print("\n" + "="*80)
             print("All done.")
+            print("="*80)
         except Exception as e:
             print(f"Database connection failed: {e}")
             import traceback

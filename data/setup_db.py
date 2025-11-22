@@ -67,6 +67,43 @@ def create_courses_table():
         print("Database setup failed.")
         print(e)
 
+def create_file_search_store_mappings_table():
+    """
+    Creates the file_search_store_mappings table in the database.
+    Stores mappings between PDF file paths and their GenAI file search store names.
+    """
+    try:
+        with psycopg.connect(DB_CONNECTION_STR) as conn:
+            print("Connection established")
+            
+            with conn.cursor() as cur:
+                # Create the file_search_store_mappings table
+                cur.execute("""
+                    CREATE TABLE IF NOT EXISTS file_search_store_mappings (
+                        pdf_path VARCHAR(1000) PRIMARY KEY,
+                        store_name VARCHAR(500) NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+                print("Created file_search_store_mappings table.")
+                
+                # Create an index on store_name for faster lookups
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_file_search_store_name 
+                    ON file_search_store_mappings(store_name);
+                """)
+                print("Created index on store_name column.")
+                
+                # Commit the changes
+                conn.commit()
+                print("File search store mappings table setup completed successfully!")
+                
+    except Exception as e:
+        print("File search store mappings table setup failed.")
+        print(e)
+
 if __name__ == "__main__":
     create_courses_table()
+    create_file_search_store_mappings_table()
 
