@@ -1,4 +1,4 @@
 psycopg[binary]
 python-dotenv
 google-genai
-
+google-adk

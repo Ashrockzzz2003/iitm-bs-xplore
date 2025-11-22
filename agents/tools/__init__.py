@@ -1,8 +1,11 @@
-"""Tools for GenAI file search operations."""
+"""Tools for GenAI file search operations and database queries."""
 
-from .file_search_query import query_pdf
+# Import wrapped tools with proper type hints for ADK
+from .tools import search_handbook_policy, search_grading_policy, query_course_database
 
 __all__ = [
-    "query_pdf",
+    "search_handbook_policy",
+    "search_grading_policy",
+    "query_course_database",
 ]
 
