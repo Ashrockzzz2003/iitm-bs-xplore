@@ -42,7 +42,7 @@ const InputArea: React.FC<InputAreaProps> = ({ onSend, disabled, suggestions }) 
       {/* Gradient Fade for scroll under */}
       <div className="absolute bottom-full left-0 w-full h-12 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-black dark:via-black/80 pointer-events-none"></div>
       
-      <div className="bg-white dark:bg-black p-4 md:p-6 pt-2">
+      <div className="bg-white dark:bg-black p-4 md:p-6 pt-2 pb-[max(3rem,env(safe-area-inset-bottom))] md:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="max-w-5xl mx-auto space-y-4">
           
           {/* Suggestions (Chips) */}

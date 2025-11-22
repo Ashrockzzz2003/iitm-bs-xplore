@@ -10,7 +10,7 @@ const AppContent: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 dark:bg-black overflow-hidden transition-colors duration-300">
+    <div className="flex h-[100dvh] w-full bg-slate-50 dark:bg-black overflow-hidden transition-colors duration-300">
       {/* Background Pattern */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40 dark:opacity-20"
            style={{
