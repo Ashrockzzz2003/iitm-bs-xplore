@@ -1,0 +1,5 @@
+requests
+psycopg[binary]
+pydantic
+python-dotenv
+beautifulsoup4

@@ -1,4 +1,0 @@
-neo4j
-python-dotenv
-beautifulsoup4
-requests
