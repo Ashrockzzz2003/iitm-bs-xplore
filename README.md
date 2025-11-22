@@ -5,75 +5,84 @@
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        IITM Advisor Agent                        │
-│              (Google ADK Agent with Gemini 3 Pro)                │
-└────────────────────────────┬────────────────────────────────────┘
-                              │
-                              │ Uses 3 Specialized Tools
-                              │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-        ▼                     ▼                     ▼
-┌───────────────┐    ┌───────────────┐    ┌──────────────────┐
-│  Handbook     │    │   Grading     │    │   Course         │
-│  Policy       │    │   Policy      │    │   Database       │
-│  Search       │    │   Search      │    │   Query          │
-└───────┬───────┘    └───────┬───────┘    └────────┬─────────┘
-        │                    │                      │
-        │                    │                      │
-        ▼                    ▼                      ▼
-┌──────────────────────────────────────────────────────────────┐
-│              Google GenAI File Search API                     │
-│  • Semantic search over PDF documents                        │
-│  • Returns answers with grounding sources                    │
-│  • Model: gemini-3-pro-preview                               │
-└───────────────────────┬──────────────────────────────────────┘
-                        │
-                        │ Queries
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-        ▼                               ▼
-┌───────────────┐            ┌──────────────────┐
-│ student_      │            │ grading_doc.pdf  │
-│ handbook.pdf  │            │                  │
-└───────────────┘            └──────────────────┘
+┌──────────────────┐      REST API      ┌─────────────────────────────────────────────────────────────────┐
+│  Frontend (Web)  │ ◄────────────────► │                        IITM Advisor Agent                        │
+│  (React + Vite)  │                    │              (Google ADK Agent with Gemini 3 Pro)                │
+└──────────────────┘                    └────────────────────────────┬────────────────────────────────────┘
+                                                                     │
+                                                                     │ Uses 3 Specialized Tools
+                                                                     │
+                                               ┌─────────────────────┼─────────────────────┐
+                                               │                     │                     │
+                                               ▼                     ▼                     ▼
+                                       ┌───────────────┐    ┌───────────────┐    ┌──────────────────┐
+                                       │  Handbook     │    │   Grading     │    │   Course         │
+                                       │  Policy       │    │   Policy      │    │   Database       │
+                                       │  Search       │    │   Search      │    │   Query          │
+                                       └───────┬───────┘    └───────┬───────┘    └────────┬─────────┘
+                                               │                    │                      │
+                                               │                    │                      │
+                                               ▼                    ▼                      ▼
+                                       ┌──────────────────────────────────────────────────────────────┐
+                                       │              Google GenAI File Search API                     │
+                                       │  • Semantic search over PDF documents                        │
+                                       │  • Returns answers with grounding sources                    │
+                                       │  • Model: gemini-3-pro-preview                               │
+                                       └───────────────────────┬──────────────────────────────────────┘
+                                                               │
+                                                               │ Queries
+                                                               │
+                                               ┌───────────────┴───────────────┐
+                                               │                               │
+                                               ▼                               ▼
+                                       ┌───────────────┐            ┌──────────────────┐
+                                       │ student_      │            │ grading_doc.pdf  │
+                                       │ handbook.pdf  │            │                  │
+                                       └───────────────┘            └──────────────────┘
 
-┌──────────────────────────────────────────────────────────────┐
-│              Neon PostgreSQL Database                         │
-│  • Serverless PostgreSQL hosted at *.neon.tech               │
-│  • Automatic SSL/endpoint configuration                       │
-└───────────────────────┬──────────────────────────────────────┘
-                        │
-        ┌───────────────┴───────────────┐
-        │                               │
-        ▼                               ▼
-┌──────────────────┐        ┌──────────────────────────┐
-│   courses        │        │ file_search_store_       │
-│   table          │        │ mappings table          │
-│                  │        │                          │
-│ • course_code    │        │ • pdf_path               │
-│ • title          │        │ • store_name             │
-│ • description    │        │                          │
-│ • credits        │        │ Maps PDFs to GenAI       │
-│ • level          │        │ file search stores       │
-│ • instructors    │        │                          │
-│ • syllabus       │        │                          │
-│ • prerequisites  │        │                          │
-│ • ...            │        │                          │
-└──────────────────┘        └──────────────────────────┘
+                                       ┌──────────────────────────────────────────────────────────────┐
+                                       │              Neon PostgreSQL Database                         │
+                                       │  • Serverless PostgreSQL hosted at *.neon.tech               │
+                                       │  • Automatic SSL/endpoint configuration                       │
+                                       └───────────────────────┬──────────────────────────────────────┘
+                                                               │
+                                               ┌───────────────┴───────────────┐
+                                               │                               │
+                                               ▼                               ▼
+                                       ┌──────────────────┐        ┌──────────────────────────┐
+                                       │   courses        │        │ file_search_store_       │
+                                       │   table          │        │ mappings table          │
+                                       │                  │        │                          │
+                                       │ • course_code    │        │ • pdf_path               │
+                                       │ • title          │        │ • store_name             │
+                                       │ • description    │        │                          │
+                                       │ • credits        │        │ Maps PDFs to GenAI       │
+                                       │ • level          │        │ file search stores       │
+                                       │ • instructors    │        │                          │
+                                       │ • syllabus       │        │                          │
+                                       │ • prerequisites  │        │                          │
+                                       │ • ...            │        │                          │
+                                       └──────────────────┘        └──────────────────────────┘
 ```
 
 ### Architecture Components
 
-#### 1. **IITM Advisor Agent** (`agents/iitm_advisor_agent/agent.py`)
+#### 1. **Frontend Application** (`app/`)
+- **Technology**: React 19, Vite, Tailwind CSS, Lucide React
+- **Features**:
+  - Chat interface with streaming responses
+  - Markdown rendering for rich text answers
+  - Citations and grounding sources display
+  - Responsive design
+
+#### 2. **IITM Advisor Agent** (`agents/iitm_advisor_agent/agent.py`)
 - Built with Google ADK (Agent Development Kit)
 - Uses Gemini 3 Pro Preview model
 - Intelligent tool routing based on query type
 - Synthesizes responses from multiple data sources
+- Exposed as a REST API using FastAPI via `agents/main.py`
 
-#### 2. **Google GenAI File Search**
+#### 3. **Google GenAI File Search**
 - **Purpose**: Semantic search and Q&A over PDF documents
 - **Technology**: Google GenAI SDK (`google-genai`)
 - **Model**: `gemini-3-pro-preview` (default)
@@ -85,7 +94,7 @@
   - Returns answers with grounding sources
   - Full grounding metadata for traceability
 
-#### 3. **Neon PostgreSQL Database**
+#### 4. **Neon PostgreSQL Database**
 - **Purpose**: Structured course information storage
 - **Technology**: Serverless PostgreSQL via Neon
 - **Connection**: Automatic SSL/endpoint configuration for Neon
@@ -105,7 +114,15 @@ iitm-bs-xplore/
 │   │   ├── tools.py              # ADK-compatible tool wrappers
 │   │   ├── file_search_query.py  # PDF query implementation
 │   │   └── query_neon.py         # Database query implementation
+│   ├── main.py                   # FastAPI server entry point
 │   └── requirements.txt          # Agent dependencies
+├── app/                          # Frontend Application
+│   ├── components/               # React UI components
+│   ├── services/                 # API integration services
+│   ├── constants.ts              # App constants & Config
+│   ├── App.tsx                   # Main App component
+│   ├── index.html                # Entry HTML
+│   └── package.json              # Frontend dependencies
 ├── data/
 │   ├── dump/
 │   │   ├── student_handbook.pdf  # Student handbook PDF
@@ -150,16 +167,6 @@ Search the IITM BS student handbook for policy and rule information.
 }
 ```
 
-**Example:**
-```python
-from agents.tools import search_handbook_policy
-
-result = search_handbook_policy(
-    "What are the eligibility criteria for the qualifier exam?"
-)
-print(result["response"])
-```
-
 ### 2. `search_grading_policy(query, model=None)`
 Search the IITM BS grading policy document for assessment and grading information.
 
@@ -172,15 +179,6 @@ Search the IITM BS grading policy document for assessment and grading informatio
 - Marks distribution and evaluation policies
 
 **Returns:** Same structure as `search_handbook_policy`
-
-**Example:**
-```python
-from agents.tools import search_grading_policy
-
-result = search_grading_policy(
-    "What is the grading scale and how is GPA calculated?"
-)
-```
 
 ### 3. `query_course_database(query, params=None)`
 Query the IITM course knowledge database for structured course information.
@@ -205,22 +203,6 @@ Query the IITM course knowledge database for structured course information.
     "columns": [str],             # Column names
     "query": str                  # Executed query
 }
-```
-
-**Example:**
-```python
-from agents.tools import query_course_database
-
-# Simple query
-result = query_course_database(
-    "SELECT course_code, title, credits FROM courses WHERE level = 'Foundation Level' LIMIT 10"
-)
-
-# Parameterized query (recommended)
-result = query_course_database(
-    "SELECT * FROM courses WHERE course_code = %s",
-    params=("BSMA1001",)
-)
 ```
 
 ## 🗄️ Database Schema
@@ -303,11 +285,12 @@ Agent formats response (tables, lists, etc.)
 ## ⚙️ Setup & Configuration
 
 ### Prerequisites
-- Python 3.8+
+- Node.js 18+ (for Frontend)
+- Python 3.9+ (for Backend)
 - Google GenAI API key
 - Neon PostgreSQL database
 
-### Installation
+### Backend Installation
 
 1. **Clone the repository:**
 ```bash
@@ -315,7 +298,7 @@ git clone <repository-url>
 cd iitm-bs-xplore
 ```
 
-2. **Install dependencies:**
+2. **Install backend dependencies:**
 ```bash
 # Agent dependencies
 pip install -r agents/requirements.txt
@@ -334,6 +317,7 @@ DATABASE_URL=postgresql://user:password@host.neon.tech/dbname
 # Optional
 GENAI_FILE_SEARCH_STORE_NAME=default_store_name
 GENAI_MODEL_ID=gemini-3-pro-preview
+PORT=8080
 ```
 
 4. **Initialize database:**
@@ -354,15 +338,37 @@ initialize_file_search_store("data/dump/student_handbook.pdf")
 initialize_file_search_store("data/dump/grading_doc.pdf")
 ```
 
-### Environment Variables
+### Frontend Installation
 
-**Required:**
-- `GEMINI_API_KEY`: Google GenAI API key for file search
-- `DATABASE_URL` or `DB_URL`: Neon PostgreSQL connection string
+1. **Install dependencies:**
+```bash
+cd app
+npm install
+```
 
-**Optional:**
-- `GENAI_FILE_SEARCH_STORE_NAME`: Default file search store name
-- `GENAI_MODEL_ID`: Default model ID (defaults to `gemini-3-pro-preview`)
+2. **Configuration:**
+The frontend connects to the backend via `API_URL` in `app/constants.ts`.
+By default it points to the deployed production instance.
+For local development, update `app/constants.ts`:
+```typescript
+export const API_URL = "http://localhost:8080"; 
+```
+
+### Running the Application
+
+1. **Start the Backend Server:**
+```bash
+# From project root
+python agents/main.py
+# Server runs at http://localhost:8080
+```
+
+2. **Start the Frontend Development Server:**
+```bash
+# From app/ directory
+npm run dev
+# App runs at http://localhost:3000
+```
 
 ## 🎯 Agent Routing Logic
 
@@ -424,6 +430,14 @@ response = root_agent.send("How is GPA calculated?")
 - `python-dotenv`: Environment variable management
 - `google-genai`: Google GenAI SDK for file search
 - `google-adk`: Google Agent Development Kit
+- `fastapi`, `uvicorn`: API Server
+
+### Frontend Dependencies (`app/package.json`)
+- `react`, `react-dom`: UI Framework
+- `vite`: Build tool
+- `lucide-react`: Icons
+- `react-markdown`: Markdown rendering
+- `@copilotkit/*`: Copilot integration
 
 ### Data Processing Dependencies (`data/requirements.txt`)
 - `requests`: HTTP requests for web scraping
@@ -441,11 +455,6 @@ response = root_agent.send("How is GPA calculated?")
 3. Ensure all tools return TypedDict-compatible results
 4. Test with both PDF and database queries
 
-## 📄 License
-
-[Add your license here]
-
 ---
 
 **Built with ❤️ for IITM BS Data Science students**
-
