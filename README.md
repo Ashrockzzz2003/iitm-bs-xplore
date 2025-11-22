@@ -372,11 +372,11 @@ graph TD
     C -->|For each URL| D[Fetch Page HTML]
     D --> E[Convert to Text]
     E --> F[Use Gemini AI to extract course information as structured JSON]
-    F -->|Structured JSON| G[Save to Postgres (courses table)]
+    F -->|Structured JSON| G["Save to Postgres (courses table)"]
     G --> C
-    C -->|Done| H[Initialize PDF Stores (grading_doc, student_handbook)]
+    C -->|Done| H["Initialize PDF Stores (grading_doc, student_handbook)"]
     H --> I[Upload PDFs to GenAI]
-    I --> J[Map Stores in DB (to use in retrieval)]
+    I --> J["Map Stores in DB (to use in retrieval)"]
     J --> K[End]
 ```
 
