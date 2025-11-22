@@ -1,10 +1,9 @@
-import json
 import os
-import requests
+
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from psycopg.types.json import Json
-from config import COURSE_PREFIX, FIRECRAWL_API_KEY, COURSE_LISTING_URL
+from config import COURSE_PREFIX, COURSE_LISTING_URL
 
 # --- Schema for the Listing Page ---
 class CourseLink(BaseModel):
@@ -41,16 +40,33 @@ class Book(BaseModel):
 class CoursePageSchema(BaseModel):
     course_code: str = Field(..., description="The course ID, e.g., BSMA1001")
     title: str
-    description: str
+    description: Optional[str] = None
     credits: Optional[int]
     level: Optional[str] = Field(None, description="Foundational, Diploma, etc.")
     prerequisites: Optional[str]
     video_link: Optional[str] = Field(None, description="Link to course videos/intro")
     instructors: List[Instructor]
-    learning_outcomes: List[str]
+    learning_outcomes: List[str] = Field(
+        default_factory=list,
+        description="List of learning outcomes for the course"
+    )
     syllabus: List[WeekSyllabus]
-    assessment_structure: Optional[str]
-    resources_and_books: List[Book]
+    
+    @field_validator('learning_outcomes', 'resources_and_books', mode='before')
+    @classmethod
+    def convert_none_to_empty_list(cls, v):
+        """Convert None to empty list for list fields"""
+        if v is None:
+            return []
+        return v
+    assessment_structure: Optional[str] = Field(
+        None,
+        description="Textual description of how the course is graded"
+    )
+    resources_and_books: List[Book] = Field(
+        default_factory=list,
+        description="List of books and resources for the course"
+    )
     extra: Dict[str, Any] = Field(
         default_factory=dict,
         description="Any other relevant information that does not fit into the fields above."
@@ -142,12 +158,15 @@ def save_course_to_db(cursor, course_data: CoursePageSchema, final_level: str, s
             description = EXCLUDED.description,
             level = EXCLUDED.level, 
             credits = EXCLUDED.credits,
+            prerequisites = EXCLUDED.prerequisites,
+            video_link = EXCLUDED.video_link,
             syllabus = EXCLUDED.syllabus,
             instructors = EXCLUDED.instructors,
             learning_outcomes = EXCLUDED.learning_outcomes,
             resources_and_books = EXCLUDED.resources_and_books,
             assessment_structure = EXCLUDED.assessment_structure,
             extra = EXCLUDED.extra,
+            source_url = EXCLUDED.source_url,
             status = 'active',
             last_updated = CURRENT_TIMESTAMP;
     """

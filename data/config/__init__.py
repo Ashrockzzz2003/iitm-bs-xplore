@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- Configuration ---
-FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY", "fc-YOUR_API_KEY")
+# Google GenAI configuration
+GOOGLE_GENAI_API_KEY = os.getenv("GOOGLE_GENAI_API_KEY", "")
+GENAI_MODEL_ID = os.getenv("GENAI_MODEL_ID", "gemini-2.5-flash")
 
 def _fix_neon_connection_string(conn_str: str) -> str:
     """
