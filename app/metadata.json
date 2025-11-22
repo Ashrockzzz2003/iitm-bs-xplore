@@ -1,0 +1,5 @@
+{
+  "name": "IITM BS Xplore",
+  "description": "Intelligent querying system for IITM course information and academic documents powered by Gemini.",
+  "requestFramePermissions": []
+}
