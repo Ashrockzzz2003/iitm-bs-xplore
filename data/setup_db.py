@@ -1,6 +1,7 @@
 import psycopg
 from config import DB_CONNECTION_STR
 
+
 def create_courses_table():
     """
     Creates the courses table in the database.
@@ -9,14 +10,15 @@ def create_courses_table():
     try:
         with psycopg.connect(DB_CONNECTION_STR) as conn:
             print("Connection established")
-            
+
             with conn.cursor() as cur:
                 # Drop the table if it already exists (optional, for clean setup)
                 # cur.execute("DROP TABLE IF EXISTS courses;")
                 # print("Dropped existing table (if it existed).")
-                
+
                 # Create the courses table
-                cur.execute("""
+                cur.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS courses (
                         course_code VARCHAR(50) PRIMARY KEY,
                         title VARCHAR(500),
@@ -36,11 +38,13 @@ def create_courses_table():
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     );
-                """)
+                """
+                )
                 print("Created courses table.")
-                
+
                 # Add status column to existing table if it doesn't exist
-                cur.execute("""
+                cur.execute(
+                    """
                     DO $$ 
                     BEGIN
                         IF NOT EXISTS (
@@ -50,22 +54,26 @@ def create_courses_table():
                             ALTER TABLE courses ADD COLUMN status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'wip'));
                         END IF;
                     END $$;
-                """)
+                """
+                )
                 print("Ensured status column exists.")
-                
+
                 # Create an index on level for faster queries
-                cur.execute("""
+                cur.execute(
+                    """
                     CREATE INDEX IF NOT EXISTS idx_courses_level ON courses(level);
-                """)
+                """
+                )
                 print("Created index on level column.")
-                
+
                 # Commit the changes
                 conn.commit()
                 print("Database setup completed successfully!")
-                
+
     except Exception as e:
         print("Database setup failed.")
         print(e)
+
 
 def create_file_search_store_mappings_table():
     """
@@ -75,35 +83,39 @@ def create_file_search_store_mappings_table():
     try:
         with psycopg.connect(DB_CONNECTION_STR) as conn:
             print("Connection established")
-            
+
             with conn.cursor() as cur:
                 # Create the file_search_store_mappings table
-                cur.execute("""
+                cur.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS file_search_store_mappings (
                         pdf_path VARCHAR(1000) PRIMARY KEY,
                         store_name VARCHAR(500) NOT NULL,
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                         last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     );
-                """)
+                """
+                )
                 print("Created file_search_store_mappings table.")
-                
+
                 # Create an index on store_name for faster lookups
-                cur.execute("""
+                cur.execute(
+                    """
                     CREATE INDEX IF NOT EXISTS idx_file_search_store_name 
                     ON file_search_store_mappings(store_name);
-                """)
+                """
+                )
                 print("Created index on store_name column.")
-                
+
                 # Commit the changes
                 conn.commit()
                 print("File search store mappings table setup completed successfully!")
-                
+
     except Exception as e:
         print("File search store mappings table setup failed.")
         print(e)
 
+
 if __name__ == "__main__":
     create_courses_table()
     create_file_search_store_mappings_table()
-

@@ -8,4 +8,3 @@ __all__ = [
     "search_grading_policy",
     "query_course_database",
 ]
-
