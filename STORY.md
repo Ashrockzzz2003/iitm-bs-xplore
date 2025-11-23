@@ -2,7 +2,7 @@
 
 ## v1.0: The RAG & Knowledge Graph Attempt (The "Dead End")
 
-Our initial approach (visible in the `v1.0.0` branch) followed the standard industry trend for LLM applications: **Retrieval Augmented Generation (RAG)** on everything.
+Our initial approach (visible in the [`v1.0.0` branch](https://github.com/Ashrockzzz2003/iitm-bs-xplore/tree/v1.0.0)) followed the standard industry trend for LLM applications: **Retrieval Augmented Generation (RAG)** on everything.
 
 ### The Architecture
 

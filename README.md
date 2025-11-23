@@ -4,6 +4,24 @@
 
 ![IITM BS Xplore UI](docs/ui.png)
 
+## 🚩 Problem Statement
+
+-   Students face difficulty planning academic progression (which courses to take according to prerequisite requirements, academic goals, number of terms in which they wish to complete the program).
+-   Information is spread across websites, student handbooks, grading documents, and other PDFs.
+
+> ✦ Similar challenges exist in most universities and online education platforms where course structures are complex and requirements vary.
+
+## 🎯 Target Users
+
+-   **Students**: Enrolled in the online program needing guidance.
+-   **Academic Advisors**: Staff assisting students with course planning.
+-   **Prospective Learners**: Exploring program requirements.
+
+## 🧩 Existing Solutions & Limitations
+
+-   Dedicated sessions for course selection and orientation sessions.
+-   Scattered information across websites & documents.
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -73,7 +91,7 @@ Why two different data systems?
 -   **Structured Data (SQL)**: Course information (credits, prerequisites, syllabus) is composed of structured facts. Vector search (RAG) often struggles with precise numerical or boolean queries (e.g., "Which courses have exactly 4 credits?"). By extracting this into a Postgres database, we achieve **99% accuracy** on course-related queries.
 -   **Unstructured Data (GenAI File Search)**: Policies and handbooks are dense text requiring semantic understanding. Google's GenAI File Search excels here, providing grounded answers with citations.
 
-For the full story of how we evolved from a pure RAG/Knowledge Graph approach (v1.0) to this hybrid solution, see [STORY.md](STORY.md).
+For the full story of how we evolved from a pure RAG/Knowledge Graph approach ([v1.0](https://github.com/Ashrockzzz2003/iitm-bs-xplore/tree/v1.0.0)) to this hybrid solution, see [STORY.md](STORY.md).
 
 ## 📦 Project Structure
 
