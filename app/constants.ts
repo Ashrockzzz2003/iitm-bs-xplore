@@ -3,6 +3,7 @@ import { Developer } from './types';
 export const API_URL = "https://iitm-bs-xplore-296465730011.europe-west1.run.app";
 export const AGENT_APP_NAME = "iitm_advisor_agent";
 export const APP_NAME = "IITM BS Xplore";
+export const APP_VERSION = "v2.0.0";
 export const MODEL_NAME = "gemini-3-pro-preview";
 
 export const DEVELOPERS: Developer[] = [

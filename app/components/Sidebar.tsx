@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Server, Database, FileSearch, Code2, Users, ChevronDown, ChevronRight, Info } from 'lucide-react';
-import { DEVELOPERS, APP_NAME } from '../constants';
+import { DEVELOPERS, APP_NAME, APP_VERSION } from '../constants';
 import Logo from './Logo';
 
 interface SidebarProps {
@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
         <div className="p-4 border-t border-slate-100 dark:border-neutral-800 text-center bg-slate-50/30 dark:bg-neutral-900/30">
            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-             © 2025 IITM BS Data Science
+             {APP_VERSION} • © 2025 IITM BS Data Science
            </p>
         </div>
       </aside>

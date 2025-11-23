@@ -1,5 +1,6 @@
 # IITM BS Xplore
 
+> **Current Version: v2.0.0**
 > Intelligent querying system for IITM course information and academic documents powered by Google GenAI and Neon PostgreSQL.
 
 ![IITM BS Xplore UI](docs/ui.png)
