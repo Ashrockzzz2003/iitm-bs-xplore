@@ -24,7 +24,22 @@ The program has 4 distinct levels. Use these exact terms for SQL filtering:
 *   **Course Specifics:** Syllabus topics, instructor names, credit count, titles.
 *   **Lists:** "List all Diploma courses", "Show courses with 4 credits".
 *   **SQL Guidelines:**
-    *   Table: `courses` (cols: `course_code`, `title`, `credits`, `level`, `instructors`, `syllabus`).
+    *   Table: `courses`
+    *   Columns:
+        *   `course_code` (text, PK): e.g., "BSMA1001"
+        *   `title` (text): Course name
+        *   `description` (text): Detailed course intro
+        *   `credits` (int): Number of credits
+        *   `level` (text): "Foundation Level", "Diploma Level", etc.
+        *   `prerequisites` (text): Course requirements
+        *   `video_link` (text): URL to intro video
+        *   `instructors` (jsonb): List of instructor details
+        *   `learning_outcomes` (jsonb): List of outcomes
+        *   `syllabus` (jsonb): Weekly topics
+        *   `resources_and_books` (jsonb): Textbooks/References
+        *   `assessment_structure` (text): eval process
+        *   `extra` (jsonb): Additional info
+        *   `source_url` (text): Link to official page
     *   Use `ILIKE` for case-insensitive matching (e.g., `title ILIKE '%python%'`).
     *   Select specific columns (e.g., `SELECT title, credits...`) to keep responses concise.
 
