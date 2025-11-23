@@ -66,6 +66,15 @@ graph TD
     -   `courses` - Comprehensive course catalog data
     -   `file_search_store_mappings` - PDF to GenAI store mappings
 
+### 🧠 Design Philosophy: The Hybrid Approach
+
+Why two different data systems?
+
+-   **Structured Data (SQL)**: Course information (credits, prerequisites, syllabus) is composed of structured facts. Vector search (RAG) often struggles with precise numerical or boolean queries (e.g., "Which courses have exactly 4 credits?"). By extracting this into a Postgres database, we achieve **99% accuracy** on course-related queries.
+-   **Unstructured Data (GenAI File Search)**: Policies and handbooks are dense text requiring semantic understanding. Google's GenAI File Search excels here, providing grounded answers with citations.
+
+For the full story of how we evolved from a pure RAG/Knowledge Graph approach (v1.0) to this hybrid solution, see [STORY.md](STORY.md).
+
 ## 📦 Project Structure
 
 ```
