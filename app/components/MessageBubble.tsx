@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Message, Source } from '../types';
 import { Bot, User, FileText, Database, ExternalLink, Zap, ChevronDown, ChevronUp, Copy, Check } from 'lucide-react';
+
+const THINKING_MESSAGES = [
+  "Thinking...",
+  "Analyzing your request...",
+  "Consulting the knowledge base...",
+  "Formulating response...",
+  "Checking academic records...",
+  "Synthesizing information...",
+];
 
 interface MessageBubbleProps {
   message: Message;
@@ -11,8 +20,20 @@ interface MessageBubbleProps {
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isBot = message.role === 'bot';
   const [isToolsExpanded, setIsToolsExpanded] = useState(false);
-  const [isSourcesExpanded, setIsSourcesExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [thinkingText, setThinkingText] = useState(THINKING_MESSAGES[0]);
+
+  useEffect(() => {
+    if (!message.isThinking) return;
+
+    let index = 0;
+    const interval = setInterval(() => {
+      index = (index + 1) % THINKING_MESSAGES.length;
+      setThinkingText(THINKING_MESSAGES[index]);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [message.isThinking]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(message.content);
@@ -66,7 +87,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                   <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce [animation-delay:-0.15s]"></span>
                   <span className="w-1.5 h-1.5 bg-current rounded-full animate-bounce"></span>
                 </div>
-                <span className="text-xs animate-pulse">Thinking...</span>
+                <span className="text-xs animate-pulse">{thinkingText}</span>
               </div>
             ) : (
               <div className={`prose ${isBot ? 'prose-slate dark:prose-invert' : 'prose-invert'} max-w-none prose-sm prose-p:leading-relaxed prose-pre:bg-slate-800 prose-pre:text-slate-100 prose-pre:border prose-pre:border-slate-700`}>
