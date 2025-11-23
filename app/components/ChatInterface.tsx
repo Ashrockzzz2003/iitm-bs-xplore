@@ -25,17 +25,16 @@ const ChatInterface: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sessionData, setSessionData] = useState<SessionData | null>(() => {
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
+
+  // Clear any existing session on mount
+  useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEYS.SESSION);
-      if (stored) {
-        return JSON.parse(stored);
-      }
+      localStorage.removeItem(STORAGE_KEYS.SESSION);
     } catch (e) {
-      console.warn('Failed to load session from storage', e);
+      console.warn('Failed to clear session from storage', e);
     }
-    return null;
-  });
+  }, []);
   
   const [userId] = useState(() => "web-user");
   const messagesEndRef = useRef<HTMLDivElement>(null);
