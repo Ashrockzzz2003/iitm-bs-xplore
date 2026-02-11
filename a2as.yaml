@@ -1,0 +1,300 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: ashrockzzz2003/iitm-bs-xplore
+    source: https://github.com/ashrockzzz2003/iitm-bs-xplore
+    branch: main
+    commit: "02480637"
+    scope: [agents/iitm_advisor_agent/__init__.py, agents/iitm_advisor_agent/agent.py, agents/tools/__init__.py, agents/tools/file_search_query.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:43:45Z'
+    url: https://a2as.org/certified/agents/ashrockzzz2003/iitm-bs-xplore
+  signatures:
+    digest: sha256:tsNYikD8Nznn3RqmdLCe0lm6fvBkWk4Zn4rns28ou3M
+    key: ed25519:EqbRCznFspRtl2q1qqKNT6VSgEYRC8lMH3zT7FiwnI0
+    sig: ed25519:hqxO2p7k67fwVRScot9c3ujRd26MBalObS6nTU1awiRqq5QPX7cHciNRTmPLVaNsf19pvSDk1uPKGW8LyjjFCQ
+
+agents:
+  root_agent:
+    type: instance
+    models: [gemini-3-pro-preview]
+    tools: [search_handbook_policy, search_grading_policy, query_course_database]
+    params:
+      name: iitm_advisor
+      description: Expert advisor for IITM BS Data Science students handling academic and administrative queries.
+      instruction: [You are the **IITM BS Degree Academic Advisor**. Your goal is to answer student queries accurately using
+          the provided tools., '### 🧠 GLOBAL CONTEXT', 'The program has 4 distinct levels. Use these exact terms for SQL filtering:',
+        1. "Foundation Level", 2. "Diploma Level", 3. "BSc Degree Level", 4. "BS Degree Level", '### 🛠️ TOOL ROUTING LOGIC',
+        '**1. USE `query_course_database` (SQL) ONLY for:**', '*   **Course Specifics:** Syllabus topics, instructor names,
+          credit count, titles.', '*   **Lists:** "List all Diploma courses", "Show courses with 4 credits".', '*   **SQL
+          Guidelines:**', '*   Table: `courses`', '*   Columns:', '*   `course_code` (text, PK): e.g., "BSMA1001"', '*   `title`
+          (text): Course name', '*   `description` (text): Detailed course intro', '*   `credits` (int): Number of credits',
+        '*   `level` (text): "Foundation Level", "Diploma Level", etc.', '*   `prerequisites` (text): Course requirements',
+        '*   `video_link` (text): URL to intro video', '*   `instructors` (jsonb): List of instructor details', '*   `learning_outcomes`
+          (jsonb): List of outcomes', '*   `syllabus` (jsonb): Weekly topics', '*   `resources_and_books` (jsonb): Textbooks/References',
+        '*   `assessment_structure` (text): eval process', '*   `extra` (jsonb): Additional info', '*   `source_url` (text):
+          Link to official page', '*   Use `ILIKE` for case-insensitive matching (e.g., `title ILIKE ''%python%''`).', '*   Select
+          specific columns (e.g., `SELECT title, credits...`) to keep responses concise.', '**2. USE `search_handbook_policy`
+          (PDF) for:**', '*   **Rules:** Eligibility, admission (Regular/JEE), fees, scholarships, document verification.',
+        '*   **Structure:** Exit options, maximum duration (8 years), CCC (Credit Clearing Capability).', '**3. USE `search_grading_policy`
+          (PDF) for:**', '*   **Marks:** Grading scale (S, A, B...), GPA/CGPA calculation.', '*   **Assessments:** Assignment
+          weightage, "Best of X" rules, eligibility for End-Term exams.', '### 📝 RESPONSE GUIDELINES', '*   Synthesize tool
+          outputs into a natural, helpful response.', '*   If a tool returns no data, clearly state: "I could not find that
+          information in the official records."', '*   Use **bullet points** for rules and **tables** for course lists.']
+
+models:
+  gemini-3-pro-preview:
+    type: literal
+    agents: [root_agent]
+
+tools:
+  query_course_database:
+    type: function
+    agents: [root_agent]
+    params:
+      description: |-
+        Query the IITM course knowledge database for structured course information.
+
+        This tool allows querying the Neon PostgreSQL database containing structured
+        course information from IITM's course catalog. Only SELECT queries are
+        permitted for safety reasons. Use this for queries about:
+        - Course specifics: syllabus topics, instructor names, credit count, titles
+        - Course lists: "List all Diploma courses", "Show courses with 4 credits"
+        - Course details: descriptions, prerequisites, learning outcomes
+
+        The database contains course information including:
+        - Course codes, titles, descriptions
+        - Credits, academic levels (Foundation Level, Diploma Level, BSc Degree Level, BS Degree Level)
+        - Instructors (stored as JSONB)
+        - Syllabus (week-by-week, stored as JSONB)
+        - Learning outcomes, resources, assessment structure
+        - Prerequisites and video links
+
+        Args:
+            query: SQL SELECT query to execute. Must start with 'SELECT' (case-insensitive).
+                Common tables include:
+                - 'courses': Main course information table
+                - 'file_search_store_mappings': Maps PDFs to GenAI file search stores
+                Use exact level names: "Foundation Level", "Diploma Level", "BSc Degree Level", "BS Degree Level"
+                Use ILIKE for case-insensitive matching (e.g., `title ILIKE '%python%'`)
+                Example: "SELECT course_code, title, credits FROM courses WHERE level = 'Foundation Level' LIMIT 10"
+            params: Optional tuple of parameters for parameterized queries. This helps
+                prevent SQL injection. Use %s placeholders in the query for parameters.
+                Example: ("Foundation Level",) for query with "WHERE level = %s"
+
+        Returns:
+            DatabaseQueryResult: A dictionary containing:
+                - rows (List[dict]): List of result rows, where each row is a dictionary
+                  with column names as keys and values as the corresponding data
+                - row_count (int): Number of rows returned
+                - columns (List[str]): List of column names in the result set
+                - query (str): The SQL query that was executed
+
+        Raises:
+            ValueError: If the query is not a SELECT statement (for safety) or if
+                the database connection fails.
+            Exception: If the query execution fails, including SQL syntax errors or
+                database connection issues.
+
+        Example:
+            >>> result = query_course_database(
+            ...     "SELECT course_code, title, credits FROM courses WHERE level = %s LIMIT 10",
+            ...     params=("Foundation Level",)
+            ... )
+            >>> print(f"Found {result['row_count']} courses")
+            >>> for row in result['rows']:
+            ...     print(f"{row['course_code']}: {row['title']} ({row['credits']} credits)")
+  search_grading_policy:
+    type: function
+    agents: [root_agent]
+    params:
+      description: |-
+        Search the IITM BS grading policy document for assessment and grading information.
+
+        This tool enables semantic search over the IITM BS grading policy PDF using
+        Google's GenAI file search capabilities. Use this for queries about:
+        - Grading scale (S, A, B, C, D, E, U grades)
+        - GPA and CGPA calculation methods
+        - Assignment weightage and assessment structure
+        - "Best of X" rules for assignments/exams
+        - Eligibility criteria for End-Term exams
+        - Marks distribution and evaluation policies
+
+        Args:
+            query: The question or query to ask about the grading policy. This should be
+                a natural language question about marks, grades, assessments, or evaluation.
+            model: Optional model name to use for generation. Defaults to
+                'gemini-3-pro-preview' if not specified.
+
+        Returns:
+            PDFQueryResult: A dictionary containing:
+                - response (str): The generated answer to the query
+                - sources (List[PDFSource]): List of source documents that were
+                  referenced, each with 'title' and optional 'uri'
+                - grounding_metadata (Any): Full grounding metadata from the API
+                - query (str): The original query that was executed
+                - model (str): The model that was used for generation
+                - store_name (str): The store name that was used
+
+        Raises:
+            ValueError: If the grading document has not been initialized in the
+                file search store, or if the store name cannot be found.
+            Exception: If the query operation fails or the API call encounters an error.
+
+        Example:
+            >>> result = search_grading_policy(
+            ...     "What is the grading scale and how is GPA calculated?"
+            ... )
+            >>> print(result["response"])
+            >>> for source in result["sources"]:
+            ...     print(f"Source: {source['title']}")
+  search_handbook_policy:
+    type: function
+    agents: [root_agent]
+    params:
+      description: |-
+        Search the IITM BS student handbook for policy and rule information.
+
+        This tool enables semantic search over the IITM BS student handbook PDF using
+        Google's GenAI file search capabilities. Use this for queries about:
+        - Eligibility criteria and admission requirements (Regular/JEE)
+        - Fees, scholarships, and financial information
+        - Document verification procedures
+        - Program structure and exit options
+        - Maximum duration (8 years) and CCC (Credit Clearing Capability)
+        - Academic rules and regulations
+
+        Args:
+            query: The question or query to ask about the student handbook. This should be
+                a natural language question about policies, rules, or procedures.
+            model: Optional model name to use for generation. Defaults to
+                'gemini-3-pro-preview' if not specified.
+
+        Returns:
+            PDFQueryResult: A dictionary containing:
+                - response (str): The generated answer to the query
+                - sources (List[PDFSource]): List of source documents that were
+                  referenced, each with 'title' and optional 'uri'
+                - grounding_metadata (Any): Full grounding metadata from the API
+                - query (str): The original query that was executed
+                - model (str): The model that was used for generation
+                - store_name (str): The store name that was used
+
+        Raises:
+            ValueError: If the student handbook has not been initialized in the
+                file search store, or if the store name cannot be found.
+            Exception: If the query operation fails or the API call encounters an error.
+
+        Example:
+            >>> result = search_handbook_policy(
+            ...     "What are the eligibility criteria for the qualifier exam?"
+            ... )
+            >>> print(result["response"])
+            >>> for source in result["sources"]:
+            ...     print(f"Source: {source['title']}")
+
+imports:
+  _query_iitm_course_knowledge_db: query_neon.query_iitm_course_knowledge_db
+  _query_pdf: file_search_query.query_pdf
+  Agent: google.adk.agents.Agent
+  Any: typing.Any
+  Dict: typing.Dict
+  genai: google.genai
+  List: typing.List
+  load_dotenv: dotenv.load_dotenv
+  Optional: typing.Optional
+  os: os
+  parse_qs: urllib.parse.parse_qs
+  Path: pathlib.Path
+  psycopg: psycopg
+  query_course_database: tools.query_course_database
+  root_agent: agent.root_agent
+  search_grading_policy: tools.search_grading_policy
+  search_handbook_policy: tools.search_handbook_policy
+  sys: sys
+  Tuple: typing.Tuple
+  TypedDict: typing.TypedDict
+  types: google.genai.types
+  urlencode: urllib.parse.urlencode
+  urlparse: urllib.parse.urlparse
+  urlunparse: urllib.parse.urlunparse
+
+functions:
+  _fix_neon_connection_string:
+    type: sync
+    module: agents.tools.file_search_query
+    args: [conn_str]
+    params:
+      returns: str
+  _get_db_connection_string:
+    type: sync
+    module: agents.tools.file_search_query
+    params:
+      returns: str
+  get_store_name_for_pdf:
+    type: sync
+    module: agents.tools.file_search_query
+    args: [pdf_path]
+    params:
+      returns: Optional[str]
+  query_course_database:
+    type: sync
+    module: agents.tools.tools
+    args: [query, params]
+    params:
+      returns: DatabaseQueryResult
+  query_pdf:
+    type: sync
+    module: agents.tools.file_search_query
+    args: [query, store_name, pdf_path, model]
+    params:
+      returns: Dict
+  search_grading_policy:
+    type: sync
+    module: agents.tools.tools
+    args: [query, model]
+    params:
+      returns: PDFQueryResult
+  search_handbook_policy:
+    type: sync
+    module: agents.tools.tools
+    args: [query, model]
+    params:
+      returns: PDFQueryResult
+
+variables:
+  DATABASE_URL:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.tools.file_search_query]
+  DB_URL:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.tools.file_search_query]
+  GENAI_FILE_SEARCH_STORE_NAME:
+    type: env
+    params:
+      caller: [os.getenv]
+      path: [agents.tools.file_search_query]
+
+files:
+  .pdf:
+    type: literal
+    actions: [read]
+    params:
+      caller: [query_pdf]
+      path: [project_root]
+  pdf_path:
+    type: variable
+    actions: [read]
+    params:
+      caller: [Path]
+  pdf_path_obj:
+    type: literal
+    actions: [read]
+    params:
+      caller: [Path(pdf_path)]
